@@ -4,7 +4,13 @@ import bcrypt from "bcrypt"
 const prisma = new PrismaClient()
 
 export const signupUser = async (req, res) => {
+    const apiauthkey = req.headers['apiauthkey'];
+      // Check if the API key is valid
+      if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
     const { username, email, password } = req.body;
+
     try {
         const user = await prisma.user.findUnique({
             where:{
