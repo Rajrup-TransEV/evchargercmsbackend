@@ -23,16 +23,36 @@ model User {
   userType  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  profile   UserProfile?
+ 
+}
+model UserProfile {
+  id                Int              @id @default(autoincrement())
+  uid               String?          @unique
+  firstname         String?
+  lastname          String?
+  email             String?
+  password          String?
+  address           String?
+  phonenumber       String?
+  role              String?
+  designation       String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  financialDetails  Financial_details? @relation("UserFinancialDetails") // Define relation name
 }
 
-model UserProfile {
-  id      Int    @id @default(autoincrement())
-  user    User   @relation(fields: [userid], references: [uid])
-  userid  String @unique
-  firstname String?
-  lastname String?
-  address String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Financial_details {
+  id                Int              @id @default(autoincrement())
+  uid               String?          @unique
+  bank_account_number String?
+  isfc_code        String?
+  bank_name        String?
+  branch_name      String?
+  branch_address    String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  userProfileId    Int?             @unique // Ensure this is unique for a one-to-one relationship
+  userProfile      UserProfile?     @relation("UserFinancialDetails", fields: [userProfileId], references: [id]) // Define relation name and fields
 }
