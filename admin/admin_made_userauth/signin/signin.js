@@ -44,7 +44,7 @@ const adminuserlogin = async (req, res) => {
             {
                 email: existingUser.email,
                 userid: existingUser.uid,
-                userType: existingUser.userType,
+                userType: existingUser.role,
             },
             process.env.JWT_SECRET, // Make sure to set your JWT secret in environment variables
             { expiresIn: '1h' } // Token expiration time

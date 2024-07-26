@@ -1,10 +1,34 @@
+//admin users routes all routes which created by super user hasbeen assigned here
 import { Router } from "express"
-// import {admincreateuser} from "
 import admincreateuser from "../admin_to_user_profile/admin_to_user_profile_create.js"
 import adminuserlogin from "../admin_made_userauth/signin/signin.js"
+import asssign_buy_charger from "../crud/charger_crud_ops/charger_unit_ops.js"
+import alladminuserdata from "../crud/admin_made_user_cruds/fetch_all_admin_data.js"
+import get_all_charger from "../crud/charger_crud_ops/get_all_charger_unit_ops.js"
+import edit_charger_details from "../crud/charger_crud_ops/edit_chargerunit.js"
+import delete_charger_units from "../crud/charger_crud_ops/delete_charger_units.js"
+import user_who_bought_the_charger_details from "../crud/charger_crud_ops/user_who_bought_which_charger.js"
+import updateuserdata from "../crud/admin_made_user_cruds/update_admin_made_users.js"
+import delete_user_profile from "../crud/admin_made_user_cruds/delete_admin_made_users.js"
 const adminmadeuserroutes = Router()
-
+//create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
+//super usermade login endpoint
 adminmadeuserroutes.post("/login/userlogin",adminuserlogin)
-
+//charger using buy assign
+adminmadeuserroutes.post("/createchargerunit",asssign_buy_charger)
+//get all of the super admin made admin data through route
+adminmadeuserroutes.get("/getalladmindata",alladminuserdata)
+//all of the charger list data
+adminmadeuserroutes.get("/listofcharges",get_all_charger)
+//edit charger details one by one
+adminmadeuserroutes.post("/editchargerdetails",edit_charger_details)
+//delete charger details one by one
+adminmadeuserroutes.post("/deletechargerunits",delete_charger_units)
+// which user bought which charger that details
+adminmadeuserroutes.post("/getchargerbyuserid",user_who_bought_the_charger_details)
+//update superuser made user data
+adminmadeuserroutes.post("/updateadmindata",updateuserdata)
+//delete admin data made by super admin
+adminmadeuserroutes.post("/deleteadmindata",delete_user_profile)
 export default adminmadeuserroutes;
