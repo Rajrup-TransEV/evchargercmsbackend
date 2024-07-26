@@ -18,30 +18,29 @@ const delete_user_profile = async (req, res) => {
             return res.status(400).json({ error: 'please provide the user id that you want to delete' });
         }
 
-        // Delete the charger unit by UID
-        const deleteduser = await prisma.userProfile.delete({
+        // Delete the charger units associated with the user
+        await prisma.charger_Unit.deleteMany({
             where: {
-                uid:uid
+                userId: uid
             }
         });
-        if(!deleteduser){
-            return res.status(404).json({message:"user data not found or already deleted from the database"})
-        }
-        //delete all charges associated with the user
-        const deleteallassociatedcharges =  await prisma.charger_Unit.delete(
-            {
-                where:{
-                    userId:uid
-                }
+
+        // Delete the user profile
+        const deleteduser = await prisma.userProfile.delete({
+            where: {
+                uid
             }
-        )
-        if (!deleteallassociatedcharges){
-            return res.status(404).json({message:"cannot delete charger units information has already been removed"})
+        });
+
+        if (!deleteduser) {
+            return res.status(404).json({ message: "User data not found or already deleted from the database" });
         }
+
         // Return a success message
-        return res.status(200).json({ message: 'User associated with all of the chargers hasbeen deleted'});
+        return res.status(200).json({ message: 'User associated with all of the chargers has been deleted' });
     } catch (error) {
-        return res.status(500).json({ message:  `An error occurred while deleting the user data :: ${error} ` });
+        console.error('Error deleting user profile:', error);
+        return res.status(500).json({ message: `An error occurred while deleting the user data :: ${error}` });
     }
 };
 
