@@ -8,6 +8,8 @@ import get_all_charger from "../crud/charger_crud_ops/get_all_charger_unit_ops.j
 import edit_charger_details from "../crud/charger_crud_ops/edit_chargerunit.js"
 import delete_charger_units from "../crud/charger_crud_ops/delete_charger_units.js"
 import user_who_bought_the_charger_details from "../crud/charger_crud_ops/user_who_bought_which_charger.js"
+import updateuserdata from "../crud/admin_made_user_cruds/update_admin_made_users.js"
+import delete_user_profile from "../crud/admin_made_user_cruds/delete_admin_made_users.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -25,4 +27,8 @@ adminmadeuserroutes.post("/editchargerdetails",edit_charger_details)
 adminmadeuserroutes.post("/deletechargerunits",delete_charger_units)
 // which user bought which charger that details
 adminmadeuserroutes.post("/getchargerbyuserid",user_who_bought_the_charger_details)
+//update superuser made user data
+adminmadeuserroutes.post("/updateadmindata",updateuserdata)
+//delete admin data made by super admin
+adminmadeuserroutes.post("/deleteadmindata",delete_user_profile)
 export default adminmadeuserroutes;
