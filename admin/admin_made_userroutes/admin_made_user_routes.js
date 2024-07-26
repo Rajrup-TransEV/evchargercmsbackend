@@ -7,6 +7,7 @@ import alladminuserdata from "../crud/admin_made_user_cruds/fetch_all_admin_data
 import get_all_charger from "../crud/charger_crud_ops/get_all_charger_unit_ops.js"
 import edit_charger_details from "../crud/charger_crud_ops/edit_chargerunit.js"
 import delete_charger_units from "../crud/charger_crud_ops/delete_charger_units.js"
+import user_who_bought_the_charger_details from "../crud/charger_crud_ops/user_who_bought_which_charger.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -20,5 +21,8 @@ adminmadeuserroutes.get("/getalladmindata",alladminuserdata)
 adminmadeuserroutes.get("/listofcharges",get_all_charger)
 //edit charger details one by one
 adminmadeuserroutes.post("/editchargerdetails",edit_charger_details)
+//delete charger details one by one
 adminmadeuserroutes.post("/deletechargerunits",delete_charger_units)
+// which user bought which charger that details
+adminmadeuserroutes.post("/getchargerbyuserid",user_who_bought_the_charger_details)
 export default adminmadeuserroutes;
