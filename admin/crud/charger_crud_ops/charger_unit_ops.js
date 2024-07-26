@@ -1,6 +1,7 @@
 //all of charger related crud operatoins hasbeen written inside this file
 
 import { PrismaClient } from "@prisma/client";
+import generateRandomUID from "../../../lib/generaterandomuid.js";
 const prisma = new PrismaClient();
 
 
@@ -15,6 +16,7 @@ const asssign_buy_charger = async(req,res)=>{
         lattitude,longitute,full_address,charger_use_type,twenty_four_seven_open_status,charger_image,chargerbuyer
     }=req.body;
        
+    const ranuid  = generateRandomUID()
     try {
              // Validate the input data
              if (!chargerbuyer) {
@@ -23,6 +25,7 @@ const asssign_buy_charger = async(req,res)=>{
         const newChargerUnit = await     prisma.charger_Unit.create({
             data:{
                 ChargerName,
+                uid:ranuid,
                 Chargerhost,
                 Segment,
                 Subsegment,
@@ -50,4 +53,6 @@ const asssign_buy_charger = async(req,res)=>{
         res.status(500).json({error:`An error occurred while processing ${error}`})
     }
 }
-export default asssign_buy_charger;
+
+export default asssign_buy_charger
+
