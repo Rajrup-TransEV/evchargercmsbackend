@@ -38,9 +38,9 @@ model UserProfile {
   designation       String?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
-
+  
   financialDetails  Financial_details? @relation("UserFinancialDetails") // Define relation name
-  chargerUnits      Charger_Unit[]    @relation("ChargerUserProfiles") // Define relation name
+  chargerUnits      Charger_Unit[]     // Define the relationship with Charger_Unit
 }
 model Financial_details {
   id                Int              @id @default(autoincrement())
@@ -57,23 +57,25 @@ model Financial_details {
   userProfile      UserProfile?     @relation("UserFinancialDetails", fields: [userProfileId], references: [id]) // Define relation name and fields
 }
 model Charger_Unit {
-  id                Int              @id @default(autoincrement())
-  uid               String?          @unique
-  ChargerName       String?
-  Chargerhost       String?
-  Segment           String?
-  Subsegment        String?
-  Total_Capacity    String?
-  Chargertype       String?
-  parking           String?
-  number_of_connectors String?
-  Connector_type    String?
+  id                          Int              @id @default(autoincrement())
+  uid                         String?          @unique
+  ChargerName                 String?
+  Chargerhost                 String?
+  Segment                     String?
+  Subsegment                  String?
+  Total_Capacity              String?
+  Chargertype                 String?
+  parking                     String?
+  number_of_connectors        String?
+  Connector_type              String?
   connector_total_capacity    String?
-  lattitude         String?
-  longitute         String?
-  full_address      String?
-  charger_use_type  String? // if the charger will be used for private or commercial
+  lattitude                   String?
+  longitute                   String?
+  full_address                String?
+  charger_use_type            String? // if the charger will be used for private or commercial
   twenty_four_seven_open_status String?
-  charger_image     String?
-  userProfiles      UserProfile[]    @relation("ChargerUserProfiles") // Define relation name
+  charger_image               String?
+  
+  userId                      String?             // Foreign key to UserProfile
+  chargerbuyer                        UserProfile?     @relation(fields: [userId], references: [uid])
 }
