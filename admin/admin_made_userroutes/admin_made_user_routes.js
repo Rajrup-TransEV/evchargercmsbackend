@@ -10,6 +10,10 @@ import delete_charger_units from "../crud/charger_crud_ops/delete_charger_units.
 import user_who_bought_the_charger_details from "../crud/charger_crud_ops/user_who_bought_which_charger.js"
 import updateuserdata from "../crud/admin_made_user_cruds/update_admin_made_users.js"
 import delete_user_profile from "../crud/admin_made_user_cruds/delete_admin_made_users.js"
+import createrole from "../crud/admin_to_user_role_assignment/role_assignment_create.js"
+import get_all_roles from "../crud/admin_to_user_role_assignment/get_all_of_the_role.js"
+import update_user_role_details from "../crud/admin_to_user_role_assignment/update_a_role_details.js"
+import get_user_by_role from "../crud/admin_to_user_role_assignment/get_user_details_by_role.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -31,4 +35,13 @@ adminmadeuserroutes.post("/getchargerbyuserid",user_who_bought_the_charger_detai
 adminmadeuserroutes.post("/updateadmindata",updateuserdata)
 //delete admin data made by super admin
 adminmadeuserroutes.post("/deleteadmindata",delete_user_profile)
+//role creation route
+adminmadeuserroutes.post("/createuserrole",createrole)
+//get all role route
+adminmadeuserroutes.get("/getallroles",get_all_roles)
+//update a role according to the user
+adminmadeuserroutes.post("/updaterole",update_user_role_details)
+//get a role associated with the user 
+adminmadeuserroutes.post("/getroleanduser",get_user_by_role
+)
 export default adminmadeuserroutes;

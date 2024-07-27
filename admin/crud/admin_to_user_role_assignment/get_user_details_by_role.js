@@ -1,0 +1,34 @@
+//Get a signle user details by the role id or user id both are optional
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+const get_user_by_role = async(req,res)=>{
+    try {
+        const {get_the_unique_id} = req.body;
+    const get_the_user_data =  await prisma.userProfile.findFirstOrThrow({
+        where:{
+            uid:get_the_unique_id
+        }
+    })
+    if (!get_the_user_data){
+        return res.status(400).json("User data is not available for the id you've provided")
+    }
+    const get_role_data = await prisma.assignRoles.findFirstOrThrow({
+        where:{
+            OR: [
+                { uid: get_the_unique_id },
+                { userid: get_the_unique_id }
+            ],
+        }
+    })
+    if (!get_role_data){
+        return res.status(400).json("No role is availabe associated with user")
+    }
+    return res.status(200).json({message:"user data associated with role data",userdata:get_the_user_data,roledata:get_role_data})
+    } catch (error) {
+     console.log(error)   
+    }
+    
+}
+
+export default get_user_by_role

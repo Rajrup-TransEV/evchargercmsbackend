@@ -35,9 +35,13 @@ const delete_user_profile = async (req, res) => {
         if (!deleteduser) {
             return res.status(404).json({ message: "User data not found or already deleted from the database" });
         }
-
+        await prisma.assignRoles.deleteMany({
+            where:{
+                userid:uid
+            }
+        })
         // Return a success message
-        return res.status(200).json({ message: 'User associated with all of the chargers has been deleted' });
+        return res.status(200).json({ message: 'User associated all data hasbeen deleted' });
     } catch (error) {
         console.error('Error deleting user profile:', error);
         return res.status(500).json({ message: `An error occurred while deleting the user data :: ${error}` });
