@@ -17,6 +17,9 @@ import get_user_by_role from "../crud/admin_to_user_role_assignment/get_user_det
 import createlistofroles from "../crud/admin_to_user_role_assignment/role_create_main.js"
 import associateRoleToUser from "../crud/admin_to_user_role_assignment/role_assignment_create.js"
 import delete_a_role from "../crud/admin_to_user_role_assignment/delete_a_role.js"
+import adminUserLogout from "../admin_made_userauth/signin/logout.js"
+import add_user_financial_details from "../crud/financial_details/create_admin_financial_details.js"
+import getallfinancialdetails from "../crud/financial_details/get_all_financial_details.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -50,4 +53,11 @@ adminmadeuserroutes.post("/getroleanduser",get_user_by_role)
 adminmadeuserroutes.post("/createrole",createlistofroles)
 //delete role from the database
 adminmadeuserroutes.post("/deleterole",delete_a_role)
+//logout a user
+adminmadeuserroutes.post("/logoutusers",adminUserLogout)
+//create financial details and stored data into database
+adminmadeuserroutes.post("/createfins",add_user_financial_details)
+//get all fincancial details
+
+adminmadeuserroutes.get("/getallfindata",getallfinancialdetails)
 export default adminmadeuserroutes;

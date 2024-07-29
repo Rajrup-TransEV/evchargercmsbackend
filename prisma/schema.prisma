@@ -53,10 +53,11 @@ model Financial_details {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
-  userProfileId    Int?             @unique // Ensure this is unique for a one-to-one relationship
-  userProfile      UserProfile?     @relation("UserFinancialDetails", fields: [userProfileId], references: [id]) // Define relation name and fields
+  userProfileId    String?             @unique // Ensure this is unique for a one-to-one relationship
+  userProfile      UserProfile?     @relation("UserFinancialDetails", fields: [userProfileId], references: [uid]) // Define relation name and fields
   
 }
+
 model Charger_Unit {
   id                          Int              @id @default(autoincrement())
   uid                         String?          @unique
