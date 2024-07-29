@@ -1,6 +1,7 @@
 //super admin can able to generate admin below is the wirtten logic
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
+import emailSender from "../../lib/emailcreator.js";
 
 
 const prisma = new PrismaClient()
@@ -28,7 +29,7 @@ const prisma = new PrismaClient()
             }
         });
         if (findExistingUser){
-            return res.status(409).json({message:"One of user's details already exists , email,phone,or  username"})
+            return res.status(409).json({message:"One of user's details already exists , email ,phone"})
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt); 
@@ -48,7 +49,10 @@ const prisma = new PrismaClient()
         if(!createadminprofile){
             return res.statu(503).json({message:"user creation failed"})
         }
-        return res.status(201).json({message:"User hasbeen created successfully"})
+        const subject  = "Your email and password for login in service"
+        const text = `Hello - ${firstname} Your email is - ${email} and password is -> ${password} for login to the dashboard,</br> your role is - ${role} . Thanks for choosing our service`
+        emailSender(email,subject,text)
+        return res.status(201).json({message:"User hasbeen created successfully please check your email for the login details"})
     } catch (err) {
      return res.status(500).json({message:`something went wrong with the server:: ${err} `})   
     }
