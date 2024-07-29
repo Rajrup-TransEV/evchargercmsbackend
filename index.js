@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cros from "cors"
 import authRoutes from "./routes/authroutes.js"
 import adminmadeuserroutes from "./admin/admin_made_userroutes/admin_made_user_routes.js";
+import userRoutes from "./routes/userrouts.js";
 // import adminmadeuserroutes from "./admin_made_userroutes/admin_made_user_routes.js"
 
 const app = express()
@@ -19,7 +20,7 @@ app.use(cros({
 //normal user signup api gateway
 app.use("/api/auth",authRoutes),
 app.use("/admin",adminmadeuserroutes)
-
+app.use("/users",userRoutes)
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

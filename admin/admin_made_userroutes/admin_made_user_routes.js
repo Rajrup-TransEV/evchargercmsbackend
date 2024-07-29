@@ -10,7 +10,6 @@ import delete_charger_units from "../crud/charger_crud_ops/delete_charger_units.
 import user_who_bought_the_charger_details from "../crud/charger_crud_ops/user_who_bought_which_charger.js"
 import updateuserdata from "../crud/admin_made_user_cruds/update_admin_made_users.js"
 import delete_user_profile from "../crud/admin_made_user_cruds/delete_admin_made_users.js"
-import createrole from "../crud/admin_to_user_role_assignment/role_assignment_create.js"
 import get_all_roles from "../crud/admin_to_user_role_assignment/get_all_of_the_role.js"
 import update_user_role_details from "../crud/admin_to_user_role_assignment/update_a_role_details.js"
 import get_user_by_role from "../crud/admin_to_user_role_assignment/get_user_details_by_role.js"
@@ -20,6 +19,8 @@ import delete_a_role from "../crud/admin_to_user_role_assignment/delete_a_role.j
 import adminUserLogout from "../admin_made_userauth/signin/logout.js"
 import add_user_financial_details from "../crud/financial_details/create_admin_financial_details.js"
 import getallfinancialdetails from "../crud/financial_details/get_all_financial_details.js"
+import updatefinancialdata from "../crud/financial_details/update_financial_details.js"
+import getfindatawithuser from "../crud/financial_details/financial_data_with_users.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -58,6 +59,9 @@ adminmadeuserroutes.post("/logoutusers",adminUserLogout)
 //create financial details and stored data into database
 adminmadeuserroutes.post("/createfins",add_user_financial_details)
 //get all fincancial details
-
 adminmadeuserroutes.get("/getallfindata",getallfinancialdetails)
+//update financial data
+adminmadeuserroutes.post("/updatefindata",updatefinancialdata)
+//get user data associated 
+adminmadeuserroutes.post("/findataofauser",getfindatawithuser)
 export default adminmadeuserroutes;

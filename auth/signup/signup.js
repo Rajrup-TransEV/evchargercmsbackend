@@ -1,6 +1,7 @@
 //signup logic for normal user
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
+import nodemailer from "nodemailer";
 const prisma = new PrismaClient()
 
 export const signupUser = async (req, res) => {
@@ -28,18 +29,36 @@ export const signupUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10); // Await the salt generation
         const hashedPassword = await bcrypt.hash(password, salt); // Await the hashing
         const uuid = crypto.randomUUID()
+        //opt verification process has start here 
+        const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
+        const transporter = nodemailer.createTransport({
+            service:'Outlook365', // Use Outlook service
+            auth: {
+                user: process.env.OUTLOOK_EMAIL, // Your Outlook email
+                pass: process.env.OUTLOOK_PASS // Your Outlook email password
+            }
+        });
+        const mailOptions = {
+            from: process.env.OUTLOOK_EMAIL,
+            to: email,
+            subject: 'Email Verification for Account Creation',
+            text: `Your OTP for email verification is: ${otp}   ::: this otp only valid for 15 minutes`
+        };
+        await transporter.sendMail(mailOptions);
         const  newUser = await prisma.user.create({
             data:{
                 username:username,
                 uid:uuid,
                 email:email,
                 password:hashedPassword,
-                userType:"user"
+                userType:"user",
+                otp: otp, // Store the generated OTP in the database
+                otpExpiration: new Date(Date.now() + 15 * 60 * 1000) // Set OTP expiration to 15 minutes from now
             }
         })
         if(newUser){
             console.log("usersignup completed")
-           return res.status(201).json({ message: "User created successfully", user: username });
+           return res.status(201).json({ message: "An OTP has been sent to your email for verification. Please enter the OTP to complete the signup process.", user: username });
         }else{
             return res.status(503).json({message:"Something went worng with the server please try again"})
         }

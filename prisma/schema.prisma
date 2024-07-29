@@ -19,8 +19,11 @@ model User {
   uid       String   @unique
   username  String   @unique
   email     String   @unique
-  password  String
-  userType  String
+  password  String?
+  userType  String?
+  otp    String?
+  otpExpiration DateTime?
+  emailVerified Boolean?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
  
