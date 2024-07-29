@@ -13,7 +13,7 @@ const get_all_roles = async(req,res)=>{
     if(!allroles){
         return res.status(404).json("no data found in database please assign one first")
     }
-    return res.status(300).json({data:allroles})
+    return res.status(200).json({data:allroles})
   } catch (error) {
     console.log(error)
     return res.status(500).json({message:`error occurred :: ${error}`})

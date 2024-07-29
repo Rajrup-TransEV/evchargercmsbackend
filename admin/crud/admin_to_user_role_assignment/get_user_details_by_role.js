@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const get_user_by_role = async(req,res)=>{
+    const apiauthkey = req.headers['apiauthkey'];
+  // Check if the API key is valid
+  if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+    return res.status(403).json({ message: "API route access forbidden" });
+}
     try {
         const {get_the_unique_id} = req.body;
     const get_the_user_data =  await prisma.userProfile.findFirstOrThrow({
