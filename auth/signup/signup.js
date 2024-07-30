@@ -58,7 +58,7 @@ export const signupUser = async (req, res) => {
         })
         if(newUser){
             console.log("usersignup completed")
-           return res.status(201).json({ message: "An OTP has been sent to your email for verification. Please enter the OTP to complete the signup process.", user: username });
+           return res.status(201).json({ message: "An OTP has been sent to your email for verification. Please enter the OTP to complete the signup process.", user: email });
         }else{
             return res.status(503).json({message:"Something went worng with the server please try again"})
         }
