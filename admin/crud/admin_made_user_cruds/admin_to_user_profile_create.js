@@ -1,7 +1,7 @@
 //super admin can able to generate admin below is the wirtten logic
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
-import emailSender from "../../lib/emailcreator.js";
+import emailQueue from "../../../lib/emailqueue.js";
 
 
 const prisma = new PrismaClient()
@@ -51,7 +51,12 @@ const prisma = new PrismaClient()
         }
         const subject  = "Your email and password for login in service"
         const text = `Hello - ${firstname} Your email is - ${email} and password is -> ${password} for login to the dashboard,</br> your role is - ${role} . Thanks for choosing our service`
-        emailSender(email,subject,text)
+    // Add the email job to the queue
+    console.log('Adding email job to queue:', { to, subject, text });
+    await emailQueue.add({ to, subject, text }, {
+        attempts: 5, // Number of retry attempts
+        backoff: 10000 // Wait 10 seconds before retrying
+    });
         return res.status(201).json({message:"User hasbeen created successfully please check your email for the login details"})
     } catch (err) {
      return res.status(500).json({message:`something went wrong with the server:: ${err} `})   

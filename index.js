@@ -4,6 +4,9 @@ import cros from "cors"
 import authRoutes from "./routes/authroutes.js"
 import adminmadeuserroutes from "./admin/admin_made_userroutes/admin_made_user_routes.js";
 import userRoutes from "./routes/userrouts.js";
+import emailQueue from "./lib/emailqueue.js";
+// import emailQueue from './lib/emailQueue.js'; // Adjust the path as necessary
+
 // import adminmadeuserroutes from "./admin_made_userroutes/admin_made_user_routes.js"
 
 const app = express()
@@ -16,6 +19,8 @@ app.use(cros({
     origin:"*",
     methods:"*"
 }))
+
+
 
 //normal user signup api gateway
 app.use("/api/auth",authRoutes),
