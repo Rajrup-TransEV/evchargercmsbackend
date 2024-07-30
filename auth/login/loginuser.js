@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 
 const prisma = new PrismaClient();
 
@@ -54,25 +53,15 @@ export const loginUser = async (req, res) => {
             }
         });
 
-        // Create a transporter for Nodemailer using Outlook
-        const transporter = nodemailer.createTransport({
-            service: 'Outlook365',
-            auth: {
-                user: process.env.OUTLOOK_EMAIL,
-                pass: process.env.OUTLOOK_PASS
-            }
-        });
-
-        // Define the email options
-        const mailOptions = {
-            from: process.env.OUTLOOK_EMAIL,
-            to: email,
-            subject: 'OTP for Two-Step Authentication',
-            text: `Your OTP for two-step authentication is: ${otp}`
-        };
-
-        // Send the email
-        await transporter.sendMail(mailOptions);
+            const to = email
+            const subject= 'OTP for Two-Step Authentication'
+            const text = `Your OTP for two-step authentication is: ${otp}`
+              // Add the email job to the queue
+              console.log('Adding email job to queue:', { to, subject, text });
+              await emailQueue.add({ to, subject, text }, {
+                  attempts: 5, // Number of retry attempts
+                  backoff: 10000 // Wait 10 seconds before retrying
+              });
 
         return res.status(201).json({ message: "OTP sent to your email for two-step authentication." });
     } catch (err) {
