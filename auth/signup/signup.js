@@ -1,6 +1,7 @@
 //signup logic for normal user
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
+import emailQueue from "../../lib/emailqueue.js";
 const prisma = new PrismaClient()
 
 export const signupUser = async (req, res) => {
