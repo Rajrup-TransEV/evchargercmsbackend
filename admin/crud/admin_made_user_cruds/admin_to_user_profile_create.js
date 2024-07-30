@@ -49,6 +49,7 @@ const prisma = new PrismaClient()
         if(!createadminprofile){
             return res.statu(503).json({message:"user creation failed"})
         }
+        const to=email
         const subject  = "Your email and password for login in service"
         const text = `Hello - ${firstname} Your email is - ${email} and password is -> ${password} for login to the dashboard,</br> your role is - ${role} . Thanks for choosing our service`
     // Add the email job to the queue
