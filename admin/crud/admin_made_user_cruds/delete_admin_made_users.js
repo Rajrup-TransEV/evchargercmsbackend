@@ -1,6 +1,7 @@
 //delete data of the users who hasbeen previously created by super admin 
 //also delete all of the user bind with users
 import { PrismaClient } from "@prisma/client";
+import emailQueue from "../../../lib/emailqueue.js";
 const prisma = new PrismaClient();
 
 const delete_user_profile = async (req, res) => {
@@ -17,6 +18,15 @@ const delete_user_profile = async (req, res) => {
         if (!uid) {
             return res.status(400).json({ error: 'please provide the user id that you want to delete' });
         }
+        const userprofile = await prisma.userProfile.findFirstOrThrow({
+            where:{
+                uid:uid
+            },
+            select:{
+                firstname:true,
+                email: true
+            }
+        })
 
         // Delete the charger units associated with the user
         await prisma.charger_Unit.deleteMany({
@@ -40,6 +50,21 @@ const delete_user_profile = async (req, res) => {
                 userid:uid
             }
         })
+        await prisma.financial_details.deleteMany({
+            where:{
+                userProfileId:uid
+            }
+        })
+       const to =  userprofile.email
+       const subject  = `Hello ${userprofile.firstname} Your information hasbeen deleted`
+       const text = `Hello ${userprofile.email} All of your associated information hasbeen deleted from our database : Thanks for using our service`
+         // Add the email job to the queue
+         console.log('Adding email job to queue:', { to, subject, text });
+         await emailQueue.add({ to, subject, text }, {
+             attempts: 5, // Number of retry attempts
+             backoff: 10000 // Wait 10 seconds before retrying
+         });
+        
         // Return a success message
         return res.status(200).json({ message: 'User associated all data hasbeen deleted' });
     } catch (error) {
