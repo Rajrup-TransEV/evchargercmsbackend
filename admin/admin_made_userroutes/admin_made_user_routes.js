@@ -21,6 +21,9 @@ import getallfinancialdetails from "../crud/financial_details/get_all_financial_
 import updatefinancialdata from "../crud/financial_details/update_financial_details.js"
 import getfindatawithuser from "../crud/financial_details/financial_data_with_users.js"
 import admincreateuser from "../crud/admin_made_user_cruds/admin_to_user_profile_create.js"
+import passwordresetlogic from "../admin_made_userauth/signin/passwordreset.js"
+import verifyOtpLogic from "../admin_made_userauth/signin/verifyOTP.js"
+import resetPasswordLogic from "../admin_made_userauth/signin/resetPasswordlogic.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -64,4 +67,10 @@ adminmadeuserroutes.get("/getallfindata",getallfinancialdetails)
 adminmadeuserroutes.post("/updatefindata",updatefinancialdata)
 //get user data associated 
 adminmadeuserroutes.post("/findataofauser",getfindatawithuser)
+//send password reset email via api endpoint 
+adminmadeuserroutes.post("/resetadminpassword",passwordresetlogic)
+//verify password reset opt logic
+adminmadeuserroutes.post("/pwresetverifyotp",verifyOtpLogic)
+//password reset logic route
+adminmadeuserroutes.post("/respassword",resetPasswordLogic)
 export default adminmadeuserroutes;

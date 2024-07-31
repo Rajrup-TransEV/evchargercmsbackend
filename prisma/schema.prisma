@@ -39,6 +39,8 @@ model UserProfile {
   phonenumber       String?
   role              String?
   designation       String?
+  otp    String?
+  otpExpiration DateTime?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   
