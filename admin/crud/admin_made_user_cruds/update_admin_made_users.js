@@ -74,6 +74,7 @@ const updateuserdata = async (req, res) => {
         });
 
         // Prepare email content with updated information
+        
         const to = email || userProfile.email; // Use the new email if provided, otherwise the old one
         const subject = `Hello  ${firstname || userProfile.firstname}, Your Information Has Been Updated`;
         const text = `Hello ${firstname || userProfile.firstname},\n\nYour information has been updated. Here are the changes:\n\n${updatedFields.join('\n')}\n\nThank you!`;

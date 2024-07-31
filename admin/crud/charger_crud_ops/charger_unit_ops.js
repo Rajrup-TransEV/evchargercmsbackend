@@ -2,6 +2,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import generateRandomUID from "../../../lib/generaterandomuid.js";
+import emailQueue from "../../../lib/emailqueue.js";
 const prisma = new PrismaClient();
 
 
@@ -47,6 +48,44 @@ const asssign_buy_charger = async(req,res)=>{
         if(!newChargerUnit){
             return res.status(503).json("Charger operations not available at this moment")
         }
+        const associateuserfetch = await prisma.userProfile.findFirstOrThrow({
+            where:{
+                uid:chargerbuyer
+            },
+            select:{
+                email:true,
+                firstname:true
+            }
+        })
+        if(!associateuserfetch){
+            return res.status(404).json("User not found asked for charger")
+        }
+        const to =  associateuserfetch.email
+        const subject = "Thank you for buying a charger"
+       const text = `Hello  -  ${associateuserfetch.firstname} Thanks for ordering a new charger \n
+        your order details are :-
+        Charger name  - ${ChargerName} \n
+        Chargerhost - ${Chargerhost} \n
+          Segment    - ${Segment} \n
+          Subsegment - ${Subsegment} \n
+          Total_Capacity - ${Total_Capacity} \n
+          Chargertype- ${Chargertype} \n
+          parking - ${parking} \n
+          number_of_connectors - ${number_of_connectors} \n
+          Connector_type - ${Connector_type} \n
+          connector_total_capacity - ${connector_total_capacity} \n
+          lattitude -  ${lattitude} \n
+          longitute - ${longitute} \n
+          full_address - ${full_address} \n
+          charger_use_type - ${charger_use_type} \n
+          twenty_four_seven_open_status - ${twenty_four_seven_open_status} \n
+        `
+          // Add the email job to the queue
+          console.log('Adding email job to queue:', { to, subject, text });
+          await emailQueue.add({ to, subject, text }, {
+              attempts: 5, // Number of retry attempts
+              backoff: 10000 // Wait 10 seconds before retrying
+          });
         return res.status(201).json("Charger unit hasbeen created successfully")
     } catch (error) {
         console.log(error)
