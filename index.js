@@ -23,7 +23,7 @@ app.use(cros({
 
 
 //normal user signup api gateway
-app.use("/api/auth",authRoutes),
+app.use("/userauth",authRoutes),
 app.use("/admin",adminmadeuserroutes)
 app.use("/users",userRoutes)
 app.listen(PORT, () => {

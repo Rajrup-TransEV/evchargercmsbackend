@@ -58,6 +58,26 @@ const prisma = new PrismaClient()
         attempts: 5, // Number of retry attempts
         backoff: 10000 // Wait 10 seconds before retrying
     });
+    try {
+        const response = await fetch('http://localhost:5000/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error sending data to Flask API:', errorData.error);
+        } else {
+            const createdUser = await response.json();
+            console.log('User created in Flask:', createdUser);
+        } 
+    } catch (error) {
+        return res.status(201).json({message:"api endpoint is down still userdata hasbeen generated ",error:error})
+    }
+    
         return res.status(201).json({message:"User hasbeen created successfully please check your email for the login details"})
     } catch (err) {
      return res.status(500).json({message:`something went wrong with the server:: ${err} `})   

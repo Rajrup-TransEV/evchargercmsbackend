@@ -45,6 +45,7 @@ const asssign_buy_charger = async(req,res)=>{
                 userId:chargerbuyer
             }
         })
+        // const charger_unit_app = await fetch("/")
         if(!newChargerUnit){
             return res.status(503).json("Charger operations not available at this moment")
         }
@@ -86,6 +87,7 @@ const asssign_buy_charger = async(req,res)=>{
               attempts: 5, // Number of retry attempts
               backoff: 10000 // Wait 10 seconds before retrying
           });
+          
         return res.status(201).json("Charger unit hasbeen created successfully")
     } catch (error) {
         console.log(error)
