@@ -109,8 +109,7 @@ model Assigntovechicles {
   vehiclelicense   String?
   vehicleowner     String?
   vehicletype      String?
-
-  driverId        String?             // Foreign key to AssigntoDriver
+  driverId        String?          @unique // Ensure one vehicle per driver
   driver          AssigntoDriver?  @relation(fields: [driverId], references: [uid])
   isvehicleassigned Boolean?
   createdAt       DateTime         @default(now())
@@ -128,9 +127,10 @@ model AssigntoDriver {
   drivernationality   String?
   diverid             String?
   driveraddress       String?
+  driverrole          String?
 
   vehicles            Assigntovechicles[] // One driver can have multiple vehicles
-  
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
