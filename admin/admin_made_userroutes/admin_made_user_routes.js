@@ -24,6 +24,7 @@ import admincreateuser from "../crud/admin_made_user_cruds/admin_to_user_profile
 import passwordresetlogic from "../admin_made_userauth/signin/passwordreset.js"
 import verifyOtpLogic from "../admin_made_userauth/signin/verifyOTP.js"
 import resetPasswordLogic from "../admin_made_userauth/signin/resetPasswordlogic.js"
+import createdriver from "../crud/driver_crud_logics/driver_create.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -73,4 +74,6 @@ adminmadeuserroutes.post("/resetadminpassword",passwordresetlogic)
 adminmadeuserroutes.post("/pwresetverifyotp",verifyOtpLogic)
 //password reset logic route
 adminmadeuserroutes.post("/respassword",resetPasswordLogic)
+//create a driver or  user can self assign them as a driver
+adminmadeuserroutes.post("/createdriver",createdriver)
 export default adminmadeuserroutes;
