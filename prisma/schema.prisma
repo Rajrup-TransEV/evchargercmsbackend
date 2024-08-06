@@ -122,6 +122,7 @@ model Assigntovehicleowener {
   vehicleowenerfirstname     String?
   vehicleowenerlastename     String?
  vehicleoweneremail         String?
+ phonenumber                  String?
   vehicleowenerlicense       String?
  vehicleowenergovdocs       String?
   vehicleowenernationality   String?

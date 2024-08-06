@@ -26,6 +26,7 @@ import verifyOtpLogic from "../admin_made_userauth/signin/verifyOTP.js"
 import resetPasswordLogic from "../admin_made_userauth/signin/resetPasswordlogic.js"
 import createdriver from "../crud/driver_crud_logics/driver_create.js"
 import getalldrivers from "../crud/driver_crud_logics/get_all_drivers.js"
+import updateVehicleOwnerData from "../crud/driver_crud_logics/update_driver.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -79,4 +80,6 @@ adminmadeuserroutes.post("/respassword",resetPasswordLogic)
 adminmadeuserroutes.post("/createdriver",createdriver)
 // get the list of vehicleoweners
 adminmadeuserroutes.get("/getallvehicleowener",getalldrivers)
+//update all of driver specific data
+adminmadeuserroutes.post("/updatedriverdata",updateVehicleOwnerData)
 export default adminmadeuserroutes;

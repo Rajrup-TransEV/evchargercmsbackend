@@ -1,5 +1,3 @@
-//update the driver data
-
 import { PrismaClient } from "@prisma/client";
 import emailQueue from "../../../lib/emailqueue.js";
 
@@ -14,6 +12,7 @@ const updateVehicleOwnerData = async (req, res) => {
     }
 
     const {
+        uid,
         vehicleoweneremail,
         phonenumber,
         vehicleowenerfirstname,
@@ -27,13 +26,10 @@ const updateVehicleOwnerData = async (req, res) => {
     } = req.body;
 
     try {
-        // Find the vehicle owner profile by email or phone number
-        const vehicleOwnerProfile = await prisma.assigntovehicleowener.findFirstOrThrow({
+        // Find the vehicle owner profile by uid
+        const vehicleOwnerProfile = await prisma.assigntovehicleowener.findUnique({
             where: {
-                OR: [
-                    { vehicleoweneremail },
-                    { phonenumber }
-                ]
+                uid: uid
             }
         });
 
@@ -58,6 +54,10 @@ const updateVehicleOwnerData = async (req, res) => {
         if (vehicleoweneremail) {
             updateData.vehicleoweneremail = vehicleoweneremail;
             updatedFields.push(`Email: ${vehicleoweneremail}`);
+        }
+        if (phonenumber) {
+            updateData.phonenumber = phonenumber;
+            updatedFields.push(`Phone Number: ${phonenumber}`);
         }
         if (vehicleowenerlicense) {
             updateData.vehicleowenerlicense = vehicleowenerlicense;
@@ -86,30 +86,26 @@ const updateVehicleOwnerData = async (req, res) => {
 
         // Update the vehicle owner profile
         const updatedVehicleOwnerProfile = await prisma.assigntovehicleowener.update({
-            where: { uid: vehicleOwnerProfile.uid }, // Use the found UID for the update
-            data: updateData // Use the object with only the updated fields
+            where: { uid: uid },
+            data: updateData
         });
 
         // Prepare email content with updated information
-        const to = vehicleoweneremail || vehicleOwnerProfile.vehicleoweneremail; // Use the new email if provided, otherwise the old one
-        const subject = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname}, Your Information Has Been Updated`;
-        const text = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname},\n\nYour information has been updated. Here are the changes:\n\n${updatedFields.join('\n')}\n\nThank you!`;
+        // const to = vehicleoweneremail || vehicleOwnerProfile.vehicleoweneremail; // Use the new email if provided, otherwise the old one
+        // const subject = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname}, Your Information Has Been Updated`;
+        // const text = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname},\n\nYour information has been updated. Here are the changes:\n\n${updatedFields.join('\n')}\n\nThank you!`;
 
-        // Add the email job to the queue
-        console.log('Adding email job to queue:', { to, subject, text });
-        await emailQueue.add({ to, subject, text }, {
-            attempts: 5, // Number of retry attempts
-            backoff: 10000 // Wait 10 seconds before retrying
-        });
+        // // Add the email job to the queue
+        // console.log('Adding email job to queue:', { to, subject, text });
+        // await emailQueue.add({ to, subject, text }, {
+        //     attempts: 5, // Number of retry attempts
+        //     backoff: 10000 // Wait 10 seconds before retrying
+        // });
 
         // Return the updated vehicle owner profile
         return res.status(200).json(updatedVehicleOwnerProfile);
     } catch (error) {
         // Handle errors
-        if (error.code === 'P2025') {
-            // This error code indicates that the record was not found
-            return res.status(404).json({ error: 'Vehicle owner profile not found' });
-        }
         console.error('Error updating vehicle owner profile:', error);
         return res.status(500).json({ error: 'An error occurred while updating the vehicle owner profile' });
     }

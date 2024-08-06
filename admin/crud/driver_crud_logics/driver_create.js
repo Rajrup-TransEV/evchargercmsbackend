@@ -8,7 +8,7 @@ const createdriver = async(req,res)=>{
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
         return res.status(403).json({ message: "API route access forbidden" });
     }
-    const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,vehicleowenerid,vehicleoweneraddress,vehicleowenerrole} = req.body;
+    const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,phonenumber,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,vehicleowenerid,vehicleoweneraddress,vehicleowenerrole} = req.body;
     
     try {
         const getvehicleoweneremail = await prisma.assigntovehicleowener.findFirst({
@@ -16,12 +16,14 @@ const createdriver = async(req,res)=>{
                 OR:[
                     {uid:uid},
                     {vehicleoweneremail:vehicleoweneremail},
-                    {vehicleowenerlicense:vehicleowenerlicense}
+                    {vehicleowenerlicense:vehicleowenerlicense},
+                    {phonenumber:phonenumber}
                 ]
                 
             },select:{
                 vehicleoweneremail:true,
-                vehicleowenerlicense:true
+                vehicleowenerlicense:true,
+                phonenumber:true
             }
         })
     
@@ -40,6 +42,7 @@ const createdriver = async(req,res)=>{
                 vehicleowenerfirstname:vehicleowenerfirstname,
                 vehicleowenerlastename:vehicleowenerlastename,
                 vehicleoweneremail:vehicleoweneremail,
+                phonenumber:phonenumber,
                 vehicleowenerlicense:vehicleowenerlicense,
                 vehicleowenergovdocs:vehicleowenergovdocs,
                 vehicleowenernationality:vehicleowenernationality,
