@@ -30,6 +30,8 @@ import updateVehicleOwnerData from "../crud/driver_crud_logics/update_driver.js"
 import vehicle_assign from "../crud/vehicle_crud_logics/vehicle_assign.js"
 import vehilcle_create from "../crud/vehicle_crud_logics/vehicle_create.js"
 import get_all_vehicles from "../crud/vehicle_crud_logics/get_all_vehicledata.js"
+import update_vehicle_details from "../crud/vehicle_crud_logics/update_vehicle_details.js"
+import deleteavehicledata from "../crud/vehicle_crud_logics/delete_vehicle_data.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -93,4 +95,8 @@ adminmadeuserroutes.post("/assignvtod",vehicle_assign.assignVehicleToDriver)
 adminmadeuserroutes.post("/assigndtov",vehicle_assign.assignDriverToVehicle)
 //get all of the vehicles
 adminmadeuserroutes.get("/listofvehicle",get_all_vehicles)
+//update vehicle details
+adminmadeuserroutes.post("/updatevehicledetails",update_vehicle_details)
+//delete a vehicle
+adminmadeuserroutes.post("/deleteavehicle",deleteavehicledata)
 export default adminmadeuserroutes;
