@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 
 
 const vehilcle_create = async(req,res)=>{
-    const {vehiclename,vehiclemodel,vehiclelicense,vehicleowner,vehicletype} = req.body;
+    const {uid,vehiclename,vehiclemodel,vehiclelicense,vehicleowner,vehicletype,vehiclecategory} = req.body;
 
    
     try {
-        const vehicledatamatch = await prisma.assigntovechicles.findUnique({
+        const vehicledatamatch = await prisma.assigntovechicles.findFirst({
             where:{
-                vehiclelicense:vehiclelicense
+                    vehiclelicense:vehiclelicense
             },select:{
                 vehiclelicense:true
             }
@@ -26,7 +26,8 @@ const vehilcle_create = async(req,res)=>{
                 vehiclemodel:vehiclemodel,
                 vehiclelicense:vehiclelicense,
                 vehicleowner:vehicleowner,
-                vehicletype:vehicletype
+                vehicletype:vehicletype,
+                vehiclecategory:vehiclecategory,
                }
         })
         

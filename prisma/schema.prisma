@@ -108,26 +108,28 @@ model Assigntovechicles {
   vehiclemodel    String?
   vehiclelicense   String?
   vehicleowner     String?
+  vehiclecategory   String?
   vehicletype      String?
-  driverId        String?          @unique // Ensure one vehicle per driver
-  driver          AssigntoDriver?  @relation(fields: [driverId], references: [uid])
+  vehicleowenerId        String?          @unique // Ensure one vehicle per driver
+  vehicleowener          Assigntovehicleowener?  @relation(fields: [vehicleowenerId], references: [uid])
   isvehicleassigned Boolean?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 }
 
-model AssigntoDriver {
+model Assigntovehicleowener {
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
-  driverfirstname     String?
-  driverlastename     String?
-  driveremail         String?
-  driverlicense       String?
-  drivergovdocs       String?
-  drivernationality   String?
-  diverid             String?
-  driveraddress       String?
-  driverrole          String?
+  vehicleowenerfirstname     String?
+  vehicleowenerlastename     String?
+ vehicleoweneremail         String?
+ phonenumber                  String?
+  vehicleowenerlicense       String?
+ vehicleowenergovdocs       String?
+  vehicleowenernationality   String?
+ vehicleowenerid             String?
+ vehicleoweneraddress       String?
+ vehicleowenerrole          String?
 
   vehicles            Assigntovechicles[] // One driver can have multiple vehicles
   createdAt           DateTime             @default(now())

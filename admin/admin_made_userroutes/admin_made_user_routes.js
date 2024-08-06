@@ -25,6 +25,11 @@ import passwordresetlogic from "../admin_made_userauth/signin/passwordreset.js"
 import verifyOtpLogic from "../admin_made_userauth/signin/verifyOTP.js"
 import resetPasswordLogic from "../admin_made_userauth/signin/resetPasswordlogic.js"
 import createdriver from "../crud/driver_crud_logics/driver_create.js"
+import getalldrivers from "../crud/driver_crud_logics/get_all_drivers.js"
+import updateVehicleOwnerData from "../crud/driver_crud_logics/update_driver.js"
+import vehicle_assign from "../crud/vehicle_crud_logics/vehicle_assign.js"
+import vehilcle_create from "../crud/vehicle_crud_logics/vehicle_create.js"
+import get_all_vehicles from "../crud/vehicle_crud_logics/get_all_vehicledata.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -76,4 +81,16 @@ adminmadeuserroutes.post("/pwresetverifyotp",verifyOtpLogic)
 adminmadeuserroutes.post("/respassword",resetPasswordLogic)
 //create a driver or  user can self assign them as a driver
 adminmadeuserroutes.post("/createdriver",createdriver)
+// get the list of vehicleoweners
+adminmadeuserroutes.get("/getallvehicleowener",getalldrivers)
+//update all of driver specific data
+adminmadeuserroutes.post("/updatedriverdata",updateVehicleOwnerData)
+//vehicle create
+adminmadeuserroutes.post("/createav",vehilcle_create)
+//vehcile assign to user logics
+adminmadeuserroutes.post("/assignvtod",vehicle_assign.assignVehicleToDriver)
+//user to vehicle assign a driver to a vehilce
+adminmadeuserroutes.post("/assigndtov",vehicle_assign.assignDriverToVehicle)
+//get all of the vehicles
+adminmadeuserroutes.get("/listofvehicle",get_all_vehicles)
 export default adminmadeuserroutes;

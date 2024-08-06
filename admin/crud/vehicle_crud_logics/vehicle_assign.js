@@ -8,26 +8,26 @@ const assignVehicleToDriver = async (req, res) => {
 
     try {
         // Check if the driver is already assigned to another vehicle
-        const existingAssignment = await prisma.assigntovechicles.findFirst({
+        const existingDriverAssignment = await prisma.assigntovechicles.findFirst({
             where: {
-                driverId: driverId,
+                vehicleowenerId: driverId,
                 isvehicleassigned: true,
             },
         });
 
-        if (existingAssignment) {
+        if (existingDriverAssignment) {
             return res.status(400).json({ message: 'Driver is already assigned to another vehicle' });
         }
 
-        // Check if the vehicle is not already assigned to another driver
-        const vehicleAssignment = await prisma.assigntovechicles.findFirst({
+        // Check if the vehicle is already assigned to another driver
+        const existingVehicleAssignment = await prisma.assigntovechicles.findFirst({
             where: {
                 uid: vehicleUid,
                 isvehicleassigned: true,
             },
         });
 
-        if (vehicleAssignment) {
+        if (existingVehicleAssignment) {
             return res.status(400).json({ message: 'Vehicle is already assigned to another driver' });
         }
 
@@ -43,13 +43,13 @@ const assignVehicleToDriver = async (req, res) => {
         }
 
         // Check if the driver has a role of 'driver'
-        const driver = await prisma.assigntoDriver.findUnique({
+        const driver = await prisma.assigntovehicleowener.findUnique({
             where: {
                 uid: driverId,
             },
         });
 
-        if (!driver || driver.driverrole !== 'driver') {
+        if (!driver || driver.vehicleowenerrole !== 'vehicleowener') {
             return res.status(400).json({ message: 'Driver is not authorized for vehicle assignment' });
         }
 
@@ -59,7 +59,7 @@ const assignVehicleToDriver = async (req, res) => {
                 uid: vehicleUid,
             },
             data: {
-                driverId: driverId,
+                vehicleowenerId: driverId,
                 isvehicleassigned: true,
             },
         });
@@ -77,37 +77,37 @@ const assignDriverToVehicle = async (req, res) => {
 
     try {
         // Check if the vehicle is already assigned to another driver
-        const existingAssignment = await prisma.assigntovechicles.findFirst({
+        const existingVehicleAssignment = await prisma.assigntovechicles.findFirst({
             where: {
                 uid: vehicleUid,
                 isvehicleassigned: true,
             },
         });
 
-        if (existingAssignment) {
+        if (existingVehicleAssignment) {
             return res.status(400).json({ message: 'Vehicle is already assigned to another driver' });
         }
 
         // Check if the driver is already assigned to another vehicle
-        const driverAssignment = await prisma.assigntovechicles.findFirst({
+        const existingDriverAssignment = await prisma.assigntovechicles.findFirst({
             where: {
-                driverId: driverId,
+                vehicleowenerId: driverId,
                 isvehicleassigned: true,
             },
         });
 
-        if (driverAssignment) {
+        if (existingDriverAssignment) {
             return res.status(400).json({ message: 'Driver is already assigned to another vehicle' });
         }
 
         // Check if the driver has a role of 'driver'
-        const driver = await prisma.assigntoDriver.findUnique({
+        const driver = await prisma.assigntovehicleowener.findUnique({
             where: {
                 uid: driverId,
             },
         });
 
-        if (!driver || driver.driverrole !== 'driver') {
+        if (!driver || driver.vehicleowenerrole !== 'vehicleowener') {
             return res.status(400).json({ message: 'Driver is not authorized for vehicle assignment' });
         }
 
@@ -128,7 +128,7 @@ const assignDriverToVehicle = async (req, res) => {
                 uid: vehicleUid,
             },
             data: {
-                driverId: driverId,
+                vehicleowenerId: driverId,
                 isvehicleassigned: true,
             },
         });
