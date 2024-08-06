@@ -3,45 +3,49 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const createdriver = async(req,res)=>{
- 
-    const {uid,driverfirstname,driverlastename,driveremail,driverlicense,drivergovdocs,drivernationality,diverid,driveraddress,drirole} = req.body;
+    const apiauthkey = req.headers['apiauthkey'];
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
+    const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,vehicleowenerid,vehicleoweneraddress,vehicleowenerrole} = req.body;
     
     try {
-        const getdriveremail = await prisma.assigntoDriver.findFirst({
+        const getvehicleoweneremail = await prisma.assigntovehicleowener.findFirst({
             where:{
                 OR:[
                     {uid:uid},
-                    {driveremail:driveremail},
-                    {driverlicense:driverlicense}
+                    {vehicleoweneremail:vehicleoweneremail},
+                    {vehicleowenerlicense:vehicleowenerlicense}
                 ]
                 
             },select:{
-                driveremail:true,
-                driverlicense:true
+                vehicleoweneremail:true,
+                vehicleowenerlicense:true
             }
         })
     
-        if(getdriveremail){
-            return res.status(409).json("Driver is already register please use another email")
+        if(getvehicleoweneremail){
+            return res.status(409).json("Driver is already register please use another email and driving license")
         }
         const roleRegex = /^vehicleowener$/i; // Matches "driver" in a case-insensitive manner
-        console.log(drirole)
-        console.log(roleRegex.test(drirole))
-        if (!roleRegex.test(drirole)) {
+        console.log(vehicleowenerrole)
+        console.log(roleRegex.test(vehicleowenerrole))
+        if (!roleRegex.test(vehicleowenerrole)) {
             return res.status(403).json({ message: `Vehicle owener can have only 'vehicleowener' role assigned, nothing else` });
         }
-        const create_driver_data = await prisma.assigntoDriver.create({
+        const create_driver_data = await prisma.assigntovehicleowener.create({
             data:{
                 uid:crypto.randomUUID(),
-                driverfirstname:driverfirstname,
-                driverlastename:driverlastename,
-                driveremail:driveremail,
-                driverlicense:driverlicense,
-                drivergovdocs:drivergovdocs,
-                drivernationality:drivernationality,
-                driverid:diverid,
-                driveraddress:driveraddress,
-                driverrole:drirole
+                vehicleowenerfirstname:vehicleowenerfirstname,
+                vehicleowenerlastename:vehicleowenerlastename,
+                vehicleoweneremail:vehicleoweneremail,
+                vehicleowenerlicense:vehicleowenerlicense,
+                vehicleowenergovdocs:vehicleowenergovdocs,
+                vehicleowenernationality:vehicleowenernationality,
+                vehicleowenerid:vehicleowenerid,
+                vehicleoweneraddress:vehicleoweneraddress,
+                vehicleowenerrole:vehicleowenerrole
             }
         })
     
