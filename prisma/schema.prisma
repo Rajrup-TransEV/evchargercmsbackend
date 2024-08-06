@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
+//application user and super user user model
 model User {
   id        Int      @id @default(autoincrement())
   uid       String   @unique
@@ -28,6 +28,8 @@ model User {
   updatedAt DateTime @updatedAt
  
 }
+
+//super admin created admin details
 model UserProfile {
   id                Int              @id @default(autoincrement())
   uid               String?          @unique
@@ -47,6 +49,8 @@ model UserProfile {
   financialDetails  Financial_details? @relation("UserFinancialDetails") // Define relation name
   chargerUnits      Charger_Unit[]     // Define the relationship with Charger_Unit
 }
+
+//fiancial details for all of users 
 model Financial_details {
   id                Int              @id @default(autoincrement())
   uid               String?          @unique
@@ -63,6 +67,7 @@ model Financial_details {
   
 }
 
+//chargerunit buying model
 model Charger_Unit {
   id                          Int              @id @default(autoincrement())
   uid                         String?          @unique
@@ -89,7 +94,7 @@ model Charger_Unit {
   createdAt        DateTime         @default(now())
   // updatedAt        DateTime         @updatedAt
 }
-
+//all of the role will goes here
 model AssignRoles{
   id                          Int              @id @default(autoincrement())
   uid                         String?          @unique
@@ -100,7 +105,7 @@ model AssignRoles{
   updatedAt        DateTime         @updatedAt
 }
 
-
+//vehicle registration model
 model Assigntovechicles {
   id              Int              @id @default(autoincrement())
   uid             String?          @unique
@@ -117,6 +122,7 @@ model Assigntovechicles {
   updatedAt       DateTime         @updatedAt
 }
 
+//vehicle owener model
 model Assigntovehicleowener {
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
@@ -136,3 +142,29 @@ model Assigntovehicleowener {
   updatedAt           DateTime             @updatedAt
 }
 
+//to be implemented in future
+model RazorpayData{
+   id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+
+
+    createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+model Analytics{
+    id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+
+
+    createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model LogRetention{
+      id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+
+
+    createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
