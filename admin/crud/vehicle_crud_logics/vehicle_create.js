@@ -5,6 +5,12 @@ const prisma = new PrismaClient();
 
 
 const vehilcle_create = async(req,res)=>{
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
     const {uid,vehiclename,vehiclemodel,vehiclelicense,vehicleowner,vehicletype,vehiclecategory} = req.body;
 
    

@@ -4,8 +4,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const deleteavehicledata = async(req,res)=>{
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
     const {uid,license,vehicleowenerId}=req.body;
     try {
+        
         const matchdata = await prisma.assigntovechicles.deleteMany({
             where:{
                 OR:[

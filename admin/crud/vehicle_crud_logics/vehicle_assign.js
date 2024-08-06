@@ -4,6 +4,12 @@ const prisma = new PrismaClient();
 
 // Assign a vehicle to a driver
 const assignVehicleToDriver = async (req, res) => {
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
     const { driverId, vehicleUid } = req.body;
 
     try {
@@ -73,6 +79,12 @@ const assignVehicleToDriver = async (req, res) => {
 
 // Assign a driver to a vehicle
 const assignDriverToVehicle = async (req, res) => {
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
     const { driverId, vehicleUid } = req.body;
 
     try {
