@@ -108,6 +108,7 @@ model Assigntovechicles {
   vehiclemodel    String?
   vehiclelicense   String?
   vehicleowner     String?
+  vehiclecategory   String?
   vehicletype      String?
   vehicleowenerId        String?          @unique // Ensure one vehicle per driver
   vehicleowener          Assigntovehicleowener?  @relation(fields: [vehicleowenerId], references: [uid])
