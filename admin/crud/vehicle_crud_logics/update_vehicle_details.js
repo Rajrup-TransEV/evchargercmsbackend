@@ -1,5 +1,6 @@
 //update vehicle details
 import { PrismaClient } from "@prisma/client";
+import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,10 @@ const update_vehicle_details = async (req, res) => {
 
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "update_vehicle_assign.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
@@ -22,6 +27,10 @@ const update_vehicle_details = async (req, res) => {
 
         // If vehicle profile not found, return a 404 error
         if (!vehicleProfile) {
+            const messagetype = "error"
+            const message = "Vehicle profile not found"
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json({ error: 'Vehicle profile not found' });
         }
 
@@ -33,30 +42,58 @@ const update_vehicle_details = async (req, res) => {
         if (vehiclename) {
             updateData.vehiclename = vehiclename;
             updatedFields.push(`Vehicle Name: ${vehiclename}`);
+            const messagetype = "update"
+            const message = `Vehicle Name: ${vehiclename}`
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)
         }
         if (vehiclemodel) {
             updateData.vehiclemodel = vehiclemodel;
             updatedFields.push(`Vehicle Model: ${vehiclemodel}`);
+            const messagetype = "update"
+            const message = `Vehicle Model: ${vehiclemodel}`
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)
         }
         if (vehiclelicense) {
             updateData.vehiclelicense = vehiclelicense;
             updatedFields.push(`Vehicle License: ${vehiclelicense}`);
+            const messagetype = "update"
+            const message = `Vehicle License: ${vehiclelicense}`
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)
         }
         if (vehicleowner) {
             updateData.vehicleowner = vehicleowner;
             updatedFields.push(`Vehicle Owner: ${vehicleowner}`);
+            const messagetype = "update"
+            const message = `Vehicle Owner: ${vehicleowner}`
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)
         }
         if (vehiclecategory) {
             updateData.vehiclecategory = vehiclecategory;
             updatedFields.push(`Vehicle Category: ${vehiclecategory}`);
+            const messagetype = "update"
+            const message = `Vehicle Category: ${vehiclecategory}`
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)   
         }
         if (vehicletype) {
             updateData.vehicletype = vehicletype;
             updatedFields.push(`Vehicle Type: ${vehicletype}`);
+            const messagetype = "update"
+            const message = `Vehicle Type: ${vehicletype}`
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)   
         }
         if (isvehicleassigned !== undefined) { // Check for both true and false
             updateData.isvehicleassigned = isvehicleassigned;
             updatedFields.push(`Is Vehicle Assigned: ${isvehicleassigned}`);
+            const messagetype = "update"
+            const message = `Is Vehicle Assigned: ${isvehicleassigned}`
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation)  
         }
 
         // Update the vehicle profile
@@ -64,23 +101,27 @@ const update_vehicle_details = async (req, res) => {
             where: { uid },
             data: updateData // Use the object with only the updated fields
         });
-
-        // Prepare email content with updated information
-        const subject = `Vehicle Details Updated`;
-        const text = `The following vehicle details have been updated:\n\n${updatedFields.join('\n')}\n\nThank you!`;
-
-        // Log the update action (optional)
-        console.log('Vehicle details updated:', { uid, updatedFields });
-
+        const messagetype = "success"
+        const message = `data updated: ${JSON.stringify(updatedVehicleProfile, null, 2)}`
+        const filelocation = "update_vehicle_assign.js"
+        logging(messagetype,message,filelocation)  
         // Return the updated vehicle profile
-        return res.status(200).json(updatedVehicleProfile);
+        return res.status(200).json({ message:"data updated",data:updatedVehicleProfile});
     } catch (error) {
         // Handle errors
         if (error.code === 'P2025') {
+            const messagetype = "error"
+            const message = 'Vehicle profile not found'
+            const filelocation = "update_vehicle_assign.js"
+            logging(messagetype,message,filelocation) 
             // This error code indicates that the record was not found
             return res.status(404).json({ error: 'Vehicle profile not found' });
         }
         console.error('Error updating vehicle profile:', error);
+        const messagetype = "error"
+        const message = `An error occurred while updating the vehicle profile :: ${JSON.stringify(error)}`
+        const filelocation = "update_vehicle_assign.js"
+        logging(messagetype,message,filelocation) 
         return res.status(500).json({ error: 'An error occurred while updating the vehicle profile' });
     }
 };

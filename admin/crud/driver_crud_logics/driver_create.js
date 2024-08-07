@@ -1,11 +1,16 @@
 // register a new driver 
 import { PrismaClient } from "@prisma/client";
+import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 const createdriver = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "driver_create.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
     const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,phonenumber,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,vehicleowenerid,vehicleoweneraddress,vehicleowenerrole} = req.body;
@@ -28,12 +33,20 @@ const createdriver = async(req,res)=>{
         })
     
         if(getvehicleoweneremail){
+            const messagetype = "error"
+            const message = "Driver is already register please use another email and driving license"
+            const filelocation = "driver_create.js"
+            logging(messagetype,message,filelocation)
             return res.status(409).json("Driver is already register please use another email and driving license")
         }
         const roleRegex = /^vehicleowener$/i; // Matches "driver" in a case-insensitive manner
         console.log(vehicleowenerrole)
         console.log(roleRegex.test(vehicleowenerrole))
         if (!roleRegex.test(vehicleowenerrole)) {
+            const messagetype = "error"
+            const message = `Vehicle owener can have only 'vehicleowener' role assigned, nothing else`
+            const filelocation = "driver_create.js"
+            logging(messagetype,message,filelocation)
             return res.status(403).json({ message: `Vehicle owener can have only 'vehicleowener' role assigned, nothing else` });
         }
         const create_driver_data = await prisma.assigntovehicleowener.create({
@@ -53,12 +66,23 @@ const createdriver = async(req,res)=>{
         })
     
         if(!create_driver_data){
+            const messagetype = "error"
+            const message = `there is something wrong while create the driver`
+            const filelocation = "driver_create.js"
+            logging(messagetype,message,filelocation)
             return res.status(503).json("there is something wrong while create the driver ")
         }
-
+        const messagetype = "success"
+        const message = `Information hasbeen saved and driver has created successfully`
+        const filelocation = "driver_create.js"
+        logging(messagetype,message,filelocation)
         return res.status(200).json("Information hasbeen saved and driver has created successfully")
     } catch (error) {
         console.log(error)
+        const messagetype = "error"
+        const message = `Something went wrong please check error details ${error}`
+        const filelocation = "driver_create.js"
+        logging(messagetype,message,filelocation)
         return res.status(500).json({message:`Something went wrong please check error details ${error}`})
     }
    

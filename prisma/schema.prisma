@@ -71,6 +71,7 @@ model Financial_details {
 model Charger_Unit {
   id                          Int              @id @default(autoincrement())
   uid                         String?          @unique
+  Chargerserialnum             String?
   ChargerName                 String?
   Chargerhost                 String?
   Segment                     String?
@@ -111,7 +112,7 @@ model Assigntovechicles {
   uid             String?          @unique
   vehiclename     String?
   vehiclemodel    String?
-  vehiclelicense   String?
+  vehiclelicense   String? @unique
   vehicleowner     String?
   vehiclecategory   String?
   vehicletype      String?
@@ -128,12 +129,12 @@ model Assigntovehicleowener {
   uid                 String?              @unique
   vehicleowenerfirstname     String?
   vehicleowenerlastename     String?
- vehicleoweneremail         String?
+ vehicleoweneremail         String?  @unique
  phonenumber                  String?
-  vehicleowenerlicense       String?
+  vehicleowenerlicense       String?  @unique
  vehicleowenergovdocs       String?
   vehicleowenernationality   String?
- vehicleowenerid             String?
+ vehicleowenerid             String? @unique
  vehicleoweneraddress       String?
  vehicleowenerrole          String?
 
@@ -161,10 +162,12 @@ model Analytics{
 }
 
 model LogRetention{
-      id                  Int                  @id @default(autoincrement())
+  id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
+  messagetype        String?
+  messages   Json?
+  filelocation   String?
 
-
-    createdAt           DateTime             @default(now())
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }

@@ -1,9 +1,21 @@
 import { PrismaClient } from "@prisma/client";
+import logging from "../../../logging/logging_generate.js";
+
 
 const prisma = new PrismaClient();
 
 // Assign a vehicle to a driver
 const assignVehicleToDriver = async (req, res) => {
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "vehicle_assign.js"
+         logging(messagetype,message,filelocation)
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
     const { driverId, vehicleUid } = req.body;
 
     try {
@@ -16,6 +28,10 @@ const assignVehicleToDriver = async (req, res) => {
         });
 
         if (existingDriverAssignment) {
+            const messagetype = "error"
+            const message = "Driver is already assigned to another vehicle"
+            const filelocation = "vehicle_assign.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Driver is already assigned to another vehicle' });
         }
 
@@ -28,6 +44,10 @@ const assignVehicleToDriver = async (req, res) => {
         });
 
         if (existingVehicleAssignment) {
+            const messagetype = "error"
+            const message = "Vehicle is already assigned to another driver"
+            const filelocation = "vehicle_assign.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Vehicle is already assigned to another driver' });
         }
 
@@ -39,6 +59,10 @@ const assignVehicleToDriver = async (req, res) => {
         });
 
         if (!vehicle || vehicle.isvehicleassigned || vehicle.vehicletype === 'broken') {
+            const messagetype = "error"
+            const message = "Vehicle is not available for assignment"
+            const filelocation = "vehicle_assign.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Vehicle is not available for assignment' });
         }
 
@@ -50,6 +74,10 @@ const assignVehicleToDriver = async (req, res) => {
         });
 
         if (!driver || driver.vehicleowenerrole !== 'vehicleowener') {
+            const messagetype = "error"
+            const message = "Driver is not authorized for vehicle assignment"
+            const filelocation = "vehicle_assign.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Driver is not authorized for vehicle assignment' });
         }
 
@@ -63,16 +91,33 @@ const assignVehicleToDriver = async (req, res) => {
                 isvehicleassigned: true,
             },
         });
-
-        return res.status(200).json(updatedVehicle);
+        const messagetype = "success"
+        const message = `Vehcile hasbeen assigned ${updatedVehicle}`
+        const filelocation = "vehicle_assign.js"
+        logging(messagetype,message,filelocation)
+        return res.status(200).json({message:updatedVehicle});
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        const messagetype = "error"
+        const message = `${JSON.stringify(error)}`
+        const filelocation = "vehicle_assign.js"
+        logging(messagetype,message,filelocation)
+        return res.status(500).json({ message: `${error}` });
     }
 };
 
 // Assign a driver to a vehicle
 const assignDriverToVehicle = async (req, res) => {
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "vehicle_assign.js"
+        logging(messagetype,message,filelocation)
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
     const { driverId, vehicleUid } = req.body;
 
     try {
@@ -85,6 +130,10 @@ const assignDriverToVehicle = async (req, res) => {
         });
 
         if (existingVehicleAssignment) {
+            const messagetype = "error"
+            const message = "Vehicle is already assigned to another driver"
+            const filelocation = "vehicle_assign.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Vehicle is already assigned to another driver' });
         }
 
@@ -97,6 +146,10 @@ const assignDriverToVehicle = async (req, res) => {
         });
 
         if (existingDriverAssignment) {
+            const messagetype = "error"
+            const message = "Driver is already assigned to another vehicle"
+            const filelocation = "vehicle_assign.js"
+             logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Driver is already assigned to another vehicle' });
         }
 
@@ -108,6 +161,10 @@ const assignDriverToVehicle = async (req, res) => {
         });
 
         if (!driver || driver.vehicleowenerrole !== 'vehicleowener') {
+            const messagetype = "error"
+            const message = "Driver is not authorized for vehicle assignment"
+            const filelocation = "vehicle_assign.js"
+             logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Driver is not authorized for vehicle assignment' });
         }
 
@@ -119,6 +176,10 @@ const assignDriverToVehicle = async (req, res) => {
         });
 
         if (!vehicle || vehicle.isvehicleassigned || vehicle.vehicletype === 'broken') {
+            const messagetype = "error"
+            const message = "Vehicle is not available for assignment"
+            const filelocation = "vehicle_assign.js"
+             logging(messagetype,message,filelocation)
             return res.status(400).json({ message: 'Vehicle is not available for assignment' });
         }
 
@@ -132,11 +193,18 @@ const assignDriverToVehicle = async (req, res) => {
                 isvehicleassigned: true,
             },
         });
-
-        return res.status(200).json(updatedVehicle);
+        const messagetype = "success"
+        const message = `message: "Assignment success", data: ${updatedVehicle}`
+        const filelocation = "vehicle_assign.js"
+         logging(messagetype,message,filelocation)
+        return res.status(200).json({message:"Assignment success",data:updatedVehicle});
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        const messagetype = "error"
+        const message = `${JSON.stringify(error)}`
+        const filelocation = "vehicle_assign.js"
+         logging(messagetype,message,filelocation)
+        return res.status(500).json({ message: `${error}` });
     }
 };
 
