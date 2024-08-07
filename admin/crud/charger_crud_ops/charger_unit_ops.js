@@ -3,6 +3,7 @@
 import { PrismaClient } from "@prisma/client";
 import generateRandomUID from "../../../lib/generaterandomuid.js";
 import emailQueue from "../../../lib/emailqueue.js";
+import logging from "../../../logging/logging_generate.js";
 const prisma = new PrismaClient();
 
 
@@ -10,6 +11,10 @@ const asssign_buy_charger = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "charger_unit_ops.js"
+        logging(messagetype,message,filelocation)
       return res.status(403).json({ message: "API route access forbidden" });
   }
     //all of the chargers which are bought by the signle user  or multiple users together
@@ -48,6 +53,11 @@ const asssign_buy_charger = async(req,res)=>{
         })
         // const charger_unit_app = await fetch("/")
         if(!newChargerUnit){
+            
+            const messagetype = "error"
+            const message = "Charger operations not available at this moment"
+            const filelocation = "charger_unit_ops.js"
+            logging(messagetype,message,filelocation)
             return res.status(503).json("Charger operations not available at this moment")
         }
         const associateuserfetch = await prisma.userProfile.findFirstOrThrow({
@@ -60,6 +70,10 @@ const asssign_buy_charger = async(req,res)=>{
             }
         })
         if(!associateuserfetch){
+            const messagetype = "error"
+            const message = "User not found asked for charger"
+            const filelocation = "charger_unit_ops.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json("User not found asked for charger")
         }
         const to =  associateuserfetch.email
@@ -88,10 +102,17 @@ const asssign_buy_charger = async(req,res)=>{
               attempts: 5, // Number of retry attempts
               backoff: 10000 // Wait 10 seconds before retrying
           });
-          
+          const messagetype = "success"
+          const message = "Charger unit hasbeen created successfully"
+          const filelocation = "charger_unit_ops.js"
+          logging(messagetype,message,filelocation)
         return res.status(201).json("Charger unit hasbeen created successfully")
     } catch (error) {
         console.log(error)
+        const messagetype = "error"
+        const message = `${JSON.stringify(error)}`
+        const filelocation = "charger_unit_ops.js"
+        logging(messagetype,message,filelocation)
         res.status(500).json({error:`An error occurred while processing ${error}`})
     }
 }

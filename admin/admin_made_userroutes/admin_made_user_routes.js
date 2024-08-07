@@ -32,6 +32,7 @@ import vehilcle_create from "../crud/vehicle_crud_logics/vehicle_create.js"
 import get_all_vehicles from "../crud/vehicle_crud_logics/get_all_vehicledata.js"
 import update_vehicle_details from "../crud/vehicle_crud_logics/update_vehicle_details.js"
 import deleteavehicledata from "../crud/vehicle_crud_logics/delete_vehicle_data.js"
+import retrive_vehicle_owener_data_by_email from "../crud/driver_crud_logics/get_driver_by_emai_id.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -85,6 +86,8 @@ adminmadeuserroutes.post("/respassword",resetPasswordLogic)
 adminmadeuserroutes.post("/createdriver",createdriver)
 // get the list of vehicleoweners
 adminmadeuserroutes.get("/getallvehicleowener",getalldrivers)
+//get a specific user by email
+adminmadeuserroutes.post("/getvobye",retrive_vehicle_owener_data_by_email)
 //update all of driver specific data
 adminmadeuserroutes.post("/updatedriverdata",updateVehicleOwnerData)
 //vehicle create

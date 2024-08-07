@@ -112,7 +112,7 @@ model Assigntovechicles {
   uid             String?          @unique
   vehiclename     String?
   vehiclemodel    String?
-  vehiclelicense   String?
+  vehiclelicense   String? @unique
   vehicleowner     String?
   vehiclecategory   String?
   vehicletype      String?
@@ -129,12 +129,12 @@ model Assigntovehicleowener {
   uid                 String?              @unique
   vehicleowenerfirstname     String?
   vehicleowenerlastename     String?
- vehicleoweneremail         String?
+ vehicleoweneremail         String?  @unique
  phonenumber                  String?
-  vehicleowenerlicense       String?
+  vehicleowenerlicense       String?  @unique
  vehicleowenergovdocs       String?
   vehicleowenernationality   String?
- vehicleowenerid             String?
+ vehicleowenerid             String? @unique
  vehicleoweneraddress       String?
  vehicleowenerrole          String?
 
