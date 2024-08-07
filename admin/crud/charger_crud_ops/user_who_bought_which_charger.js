@@ -23,6 +23,7 @@ const user_who_bought_the_charger_details =  async(req, res) => {
             },
             select:{
                 uid:true,
+                Chargerserialnum:true,
                 ChargerName:true,
                 Chargerhost:true,
                 Segment:true,

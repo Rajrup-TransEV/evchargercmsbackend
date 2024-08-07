@@ -13,7 +13,7 @@ const asssign_buy_charger = async(req,res)=>{
       return res.status(403).json({ message: "API route access forbidden" });
   }
     //all of the chargers which are bought by the signle user  or multiple users together
-    const {ChargerName,Chargerhost,Segment,Subsegment,Total_Capacity,Chargertype,parking,number_of_connectors,Connector_type,connector_total_capacity,
+    const {Chargerserialnum,ChargerName,Chargerhost,Segment,Subsegment,Total_Capacity,Chargertype,parking,number_of_connectors,Connector_type,connector_total_capacity,
         lattitude,longitute,full_address,charger_use_type,twenty_four_seven_open_status,charger_image,chargerbuyer
     }=req.body;
        
@@ -25,6 +25,7 @@ const asssign_buy_charger = async(req,res)=>{
              }
         const newChargerUnit = await     prisma.charger_Unit.create({
             data:{
+                Chargerserialnum,
                 ChargerName,
                 uid:ranuid,
                 Chargerhost,

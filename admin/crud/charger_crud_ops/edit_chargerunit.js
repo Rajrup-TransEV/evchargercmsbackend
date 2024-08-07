@@ -25,6 +25,7 @@ const edit_charger_details = async (req, res) => {
 
         // Destructure the updated data from the request body
         const {
+            Chargerserialnum,
             ChargerName,
             Chargerhost,
             Segment,
@@ -44,6 +45,10 @@ const edit_charger_details = async (req, res) => {
         } = req.body;
 
         // Only add fields that are provided in the request body
+        if(Chargerserialnum){
+            updateData.Chargerserialnum = Chargerserialnum;
+            updatedFields.push(`Charger Name: ${Chargerserialnum}`);
+        }
         if (ChargerName) {
             updateData.ChargerName = ChargerName;
             updatedFields.push(`Charger Name: ${ChargerName}`);

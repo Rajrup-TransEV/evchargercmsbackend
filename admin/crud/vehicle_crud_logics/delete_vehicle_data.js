@@ -1,6 +1,6 @@
 //delete a vehilce data from database 
 import { PrismaClient } from "@prisma/client";
-
+import logging from "../../../logging/logging_generate.js";
 const prisma = new PrismaClient();
 
 const deleteavehicledata = async(req,res)=>{
@@ -24,11 +24,24 @@ const deleteavehicledata = async(req,res)=>{
         })
 
         if(!matchdata){
+            const listofvehilcles = await prisma.assigntovechicles.findMany()
+            const messagetype = "error"
+            const message = `All of the vehicles are  ${listofvehilcles}`
+            const filelocation = "get_all_vehicle_assign.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({message:"No associate vehile found or already deleted"})
         }
+        const messagetype = "success"
+        const message = `All of the vehicles are  ${JSON.parse(listofvehilcles)}`
+        const filelocation = "get_all_vehicle_assign.js"
+        logging(messagetype,message,filelocation)
         return res.status(200).json({message:"Data hasbeen deleted successfully"})
     } catch (error) {
         console.log(error)
+        const messagetype = "error"
+        const message = `message  ${JSON.stringify(error)}`
+        const filelocation = "get_all_vehicle_assign.js"
+        logging(messagetype,message,filelocation)
         return res.status(500).json({message:`${error}`})
     }
     
