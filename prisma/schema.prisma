@@ -35,10 +35,10 @@ model UserProfile {
   uid               String?          @unique
   firstname         String?
   lastname          String?
-  email             String?
+  email             String?     @unique
   password          String?
   address           String?
-  phonenumber       String?
+  phonenumber       String?      @unique
   role              String?
   designation       String?
   otp    String?

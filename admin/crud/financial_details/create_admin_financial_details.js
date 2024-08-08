@@ -1,5 +1,6 @@
 //create all financial details
 import { PrismaClient } from "@prisma/client";
+import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,10 @@ const add_user_financial_details = async (req, res) => {
     
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "create_admin_financial_details.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
@@ -15,6 +20,10 @@ const add_user_financial_details = async (req, res) => {
 
     // Validate input
     if (!userid || !bank_account_number || !isfc_code || !bank_name || !branch_name || !branch_address) {
+        const messagetype = "error"
+        const message = "All fields are required."
+        const filelocation = "create_admin_financial_details.js"
+        logging(messagetype,message,filelocation)
         return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -25,6 +34,10 @@ const add_user_financial_details = async (req, res) => {
         });
 
         if (!userProfile) {
+            const messagetype = "error"
+            const message = "User profile not found."
+            const filelocation = "create_admin_financial_details.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json({ message: "User profile not found." });
         }
 
@@ -40,10 +53,17 @@ const add_user_financial_details = async (req, res) => {
                 userProfileId: userid, // Associate with the user profile
             },
         });
-
+        const messagetype = "success"
+        const message = "Financial details added successfully"
+        const filelocation = "create_admin_financial_details.js"
+        logging(messagetype,message,filelocation)
         return res.status(201).json({ message: "Financial details added successfully.", financialDetails });
     } catch (error) {
         console.error("Error adding financial details:", error);
+        const messagetype = "error"
+        const message = `failed to save data${error}`
+        const filelocation = "create_admin_financial_details.js"
+        logging(messagetype,message,filelocation)
         return res.status(500).json({ message: "Internal server error." });
     }
 };
