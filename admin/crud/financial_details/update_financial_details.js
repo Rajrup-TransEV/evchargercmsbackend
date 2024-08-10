@@ -1,5 +1,6 @@
 //update a financialdetails of a user
 import { PrismaClient } from "@prisma/client";
+import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,10 @@ const updatefinancialdata = async (req,res)=>{
     
         // Check if the API key is valid
         if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+            const messagetype = "error"
+            const message = "API route access error"
+            const filelocation = "update_financial_details.js"
+            logging(messagetype,message,filelocation)
             return res.status(403).json({ message: "API route access forbidden" });
         }
     
@@ -21,6 +26,10 @@ const updatefinancialdata = async (req,res)=>{
             }
         }) 
         if(!getfindatafromdb){
+            const messagetype = "error"
+            const message = "no data found"
+            const filelocation = "update_financial_details.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json("no data found")
         }
         //capture the data into a json based array
@@ -39,9 +48,17 @@ const updatefinancialdata = async (req,res)=>{
             },
             data: capupdatefindata
         })
-        return res.status(200).json(updatedata);
+        const messagetype = "success"
+        const message = "findancial data hasbeemn updated successfully"
+        const filelocation = "update_financial_details.js"
+        logging(messagetype,message,filelocation)
+        return res.status(200).json({message:"findancial data hasbeemn updated successfully",data:updatedata});
     } catch (error) {
      console.log(error)   
+     const messagetype = "error"
+     const message =  `error updating data details :: ${error}`
+     const filelocation = "update_financial_details.js"
+     logging(messagetype,message,filelocation)
      return res.status(500).json({ error:`error updating data details :: ${error}` });
     }
    
