@@ -1,6 +1,6 @@
 //get all of the stored financial details 
 import { PrismaClient } from "@prisma/client";
-import logging from "../../../logging/logging_generate"
+import logging from "../../../logging/logging_generate.js"
 const prisma = new PrismaClient();
 
 const getallfinancialdetails  =  async(req,res)=>{
