@@ -8,6 +8,10 @@ const delete_user_profile = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "delete_admin_made_users.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
@@ -16,6 +20,10 @@ const delete_user_profile = async (req, res) => {
     try {
         // Validate that the UID is provided
         if (!uid) {
+            const messagetype = "error"
+            const message = "please provide the user id that you want to delete"
+            const filelocation = "delete_admin_made_users.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({ error: 'please provide the user id that you want to delete' });
         }
         const userprofile = await prisma.userProfile.findFirstOrThrow({
@@ -43,6 +51,10 @@ const delete_user_profile = async (req, res) => {
         });
 
         if (!deleteduser) {
+            const messagetype = "error"
+            const message = "User data not found or already deleted from the database"
+            const filelocation = "delete_admin_made_users.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json({ message: "User data not found or already deleted from the database" });
         }
         await prisma.assignRoles.deleteMany({
@@ -64,11 +76,18 @@ const delete_user_profile = async (req, res) => {
              attempts: 5, // Number of retry attempts
              backoff: 10000 // Wait 10 seconds before retrying
          });
-        
+         const messagetype = "success"
+         const message = "User associated all data hasbeen deleted"
+         const filelocation = "delete_admin_made_users.js"
+         logging(messagetype,message,filelocation)
         // Return a success message
         return res.status(200).json({ message: 'User associated all data hasbeen deleted' });
     } catch (error) {
         console.error('Error deleting user profile:', error);
+        const messagetype = "error"
+        const message = `An error occurred while deleting the user data :: ${error}`
+        const filelocation = "delete_admin_made_users.js"
+        logging(messagetype,message,filelocation)
         return res.status(500).json({ message: `An error occurred while deleting the user data :: ${error}` });
     }
 };

@@ -2,6 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
 import emailQueue from "../../../lib/emailqueue.js";
+import logging from "../../../logging/logging_generate.js";
 
 
 const prisma = new PrismaClient()
@@ -10,6 +11,10 @@ const prisma = new PrismaClient()
     const apiauthkey = req.headers['apiauthkey'];
       // Check if the API key is valid
       if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "admin_to_user_profile_create.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
@@ -29,10 +34,13 @@ const prisma = new PrismaClient()
             }
         });
         if (findExistingUser){
+            const messagetype = "error"
+            const message = "One of user's details already exists , email ,phone"
+            const filelocation = "admin_to_user_profile_create.js"
+            logging(messagetype,message,filelocation)
             return res.status(409).json({message:"One of user's details already exists , email ,phone"})
         }
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt); 
+        const hashedPassword = await bcrypt.hash(password, 10); 
         const createadminprofile = await prisma.userProfile.create({
             data:{
                 uid:crypto.randomUUID(),
@@ -47,6 +55,10 @@ const prisma = new PrismaClient()
             }
         })
         if(!createadminprofile){
+            const messagetype = "error"
+            const message = "user creation failed"
+            const filelocation = "admin_to_user_profile_create.js"
+            logging(messagetype,message,filelocation)
             return res.statu(503).json({message:"user creation failed"})
         }
         const to=email
@@ -69,17 +81,36 @@ const prisma = new PrismaClient()
         
         if (!response.ok) {
             const errorData = await response.json();
+            const messagetype = "error"
+            const message = "Error sending data to Flask API:"
+            const filelocation = "admin_to_user_profile_create.js"
+            logging(messagetype,message,filelocation)
             console.error('Error sending data to Flask API:', errorData.error);
         } else {
             const createdUser = await response.json();
+            const messagetype = "success"
+            const message = "User created in Flask:"
+            const filelocation = "admin_to_user_profile_create.js"
+            logging(messagetype,message,filelocation)
             console.log('User created in Flask:', createdUser);
         } 
     } catch (error) {
+        const messagetype = "success"
+        const message = `message:"api endpoint is down -> still userdata hasbeen generated ",error:${error}`
+        const filelocation = "admin_to_user_profile_create.js"
+        logging(messagetype,message,filelocation)
         return res.status(201).json({message:"api endpoint is down still userdata hasbeen generated ",error:error})
     }
-    
+    const messagetype = "success"
+    const message = `User hasbeen created successfully please check your email for the login details`
+    const filelocation = "admin_to_user_profile_create.js"
+    logging(messagetype,message,filelocation)
         return res.status(201).json({message:"User hasbeen created successfully please check your email for the login details"})
     } catch (err) {
+        const messagetype = "error"
+        const message = `something went wrong with the server:: ${err}`
+        const filelocation = "admin_to_user_profile_create.js"
+        logging(messagetype,message,filelocation)
      return res.status(500).json({message:`something went wrong with the server:: ${err} `})   
     }
 }
