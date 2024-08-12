@@ -27,7 +27,7 @@ const alladminuserdata=async (req,res)=>{
             return res.status(503).json("There is not much data to show")
         }
         const messagetype = "success"
-        const message = "There is not much data to show"
+        const message = "list of admin data"
         const filelocation = "fetch_all_admin_data.js"
         logging(messagetype,message,filelocation)
         return res.status(200).json({message:"Received all data",data:fetchalldata})
