@@ -33,7 +33,7 @@ const createlistofroles = async(req,res)=>{
         const message = "role hasbeen created successfully"
         const filelocation = "role_create_main.js"
         logging(messagetype,message,filelocation)
-        return res.status(200).json("role hasbeen created successfully")
+        return res.status(200).json({message:"role hasbeen created successfully"})
     } catch (error) {
         console.log(error)
         const messagetype = "error"

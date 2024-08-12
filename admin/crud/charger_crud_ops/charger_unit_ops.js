@@ -161,7 +161,7 @@ const asssign_buy_charger = async(req,res)=>{
           const message = "Charger unit hasbeen created successfully"
           const filelocation = "charger_unit_ops.js"
           logging(messagetype,message,filelocation)
-        return res.status(201).json("Charger unit hasbeen created successfully")
+        return res.status(201).json({message:"Charger unit hasbeen created successfully"})
     } catch (error) {
         console.log(error)
         const messagetype = "error"
