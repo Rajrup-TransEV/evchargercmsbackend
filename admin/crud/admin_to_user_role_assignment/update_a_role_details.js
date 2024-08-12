@@ -1,12 +1,17 @@
 //update a userole and details
 
 import { PrismaClient } from "@prisma/client";
+import logging from "../../../logging/logging_generate.js";
 const prisma = new PrismaClient();
 
 const update_user_role_details = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "update_a_role_details.js"
+        logging(messagetype,message,filelocation)
       return res.status(403).json({ message: "API route access forbidden" });
   }
     try {
@@ -21,6 +26,10 @@ const update_user_role_details = async (req, res) => {
 
         // Ensure that at least one field is provided for the update
         if (Object.keys(updateData).length === 0) {
+            const messagetype = "error"
+            const message = "No fields provided for update"
+            const filelocation = "update_a_role_details.js"
+            logging(messagetype,message,filelocation)
             return res.status(400).json({ error: 'No fields provided for update' });
         }
 

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import crypto from "crypto"; // Ensure to import crypto if not already imported
+import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +8,10 @@ const associateRoleToUser = async (req, res) => {
 
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error";
+        const message = "API route access error";
+        const filelocation = "role_assignment_create.js";
+        logging(messagetype, message, filelocation);
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
@@ -16,7 +20,11 @@ const associateRoleToUser = async (req, res) => {
 
         // Validate input
         if (!userid || !roleid) {
-            return res.status(400).json("User ID and Role ID are required to assign the role.");
+            const messagetype = "error";
+            const message = "User ID and Role ID are required to assign the role.";
+            const filelocation = "role_assignment_create.js";
+            logging(messagetype, message, filelocation);
+            return res.status(400).json({message:"User ID and Role ID are required to assign the role."});
         }
 
         // Fetch role details based on roleid
@@ -26,7 +34,11 @@ const associateRoleToUser = async (req, res) => {
         });
 
         if (!role) {
-            return res.status(404).json("Role not found.");
+            const messagetype = "error";
+            const message = "Role not found.";
+            const filelocation = "role_assignment_create.js";
+            logging(messagetype, message, filelocation);
+            return res.status(404).json({message:"Role not found."});
         }
 
         const { rolename: rolename, roledesc: roledesc } = role;
@@ -47,7 +59,11 @@ const associateRoleToUser = async (req, res) => {
                     updatedAt: new Date() // Update timestamp
                 }
             });
-            return res.status(200).json("Role for the user has been updated successfully.");
+            const messagetype = "update";
+            const message = "Role for the user has been updated successfully.";
+            const filelocation = "role_assignment_create.js";
+            logging(messagetype, message, filelocation);
+            return res.status(200).json({message:"Role for the user has been updated successfully."});
         } else {
             // Create a new role assignment
             await prisma.assignRoles.create({
@@ -57,10 +73,18 @@ const associateRoleToUser = async (req, res) => {
                     roledesc: roledesc
                 }
             });
-            return res.status(201).json("Role for the user has been created successfully.");
+            const messagetype = "success";
+            const message = "Role for the user has been created successfully.";
+            const filelocation = "role_assignment_create.js";
+            logging(messagetype, message, filelocation);
+            return res.status(201).json({message:"Role for the user has been created successfully."});
         }
     } catch (error) {
         console.error(error);
+        const messagetype = "success";
+        const message = `An error occurred while processing the request : ${error}`;
+        const filelocation = "role_assignment_create.js";
+        logging(messagetype, message, filelocation);
         return res.status(500).json({ message: `An error occurred while processing the request: ${error.message}` });
     }
 };

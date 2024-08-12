@@ -1,94 +1,74 @@
-//delete data of the users who hasbeen previously created by super admin 
-//also delete all of the user bind with users
 import { PrismaClient } from "@prisma/client";
-import emailQueue from "../../../lib/emailqueue.js";
+import logging from "../../../logging/logging_generate.js";
+
 const prisma = new PrismaClient();
 
 const delete_user_profile = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
+
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
-        const messagetype = "error"
-        const message = "API route access error"
-        const filelocation = "delete_admin_made_users.js"
-        logging(messagetype,message,filelocation)
+        const messagetype = "error";
+        const message = "API route access error";
+        const filelocation = "delete_admin_made_users.js";
+        logging(messagetype, message, filelocation);
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { uid } = req.body; // Assuming the UID is passed in the request body
+    const { uid, email, phonenumber } = req.body;
+
+    // Validate that at least one unique identifier is provided
+    if (!uid && !email && !phonenumber) {
+        const messagetype = "error";
+        const message = "Please provide the user id, email, or phone number that you want to delete";
+        const filelocation = "delete_admin_made_users.js";
+        logging(messagetype, message, filelocation);
+        return res.status(400).json({ error: 'Please provide the user id, email, or phone number that you want to delete' });
+    }
 
     try {
-        // Validate that the UID is provided
-        if (!uid) {
-            const messagetype = "error"
-            const message = "please provide the user id that you want to delete"
-            const filelocation = "delete_admin_made_users.js"
-            logging(messagetype,message,filelocation)
-            return res.status(400).json({ error: 'please provide the user id that you want to delete' });
-        }
-        const userprofile = await prisma.userProfile.findFirstOrThrow({
-            where:{
-                uid:uid
-            },
-            select:{
-                firstname:true,
-                email: true
-            }
-        })
-
-        // Delete the charger units associated with the user
-        await prisma.charger_Unit.deleteMany({
+        // Find the user profile using the unique identifier
+        const userProfile = await prisma.userProfile.findFirst({
             where: {
-                userId: uid
+                OR: [
+                    { uid: uid },
+                    { email: email },
+                    { phonenumber: phonenumber }
+                ]
             }
         });
 
-        // Delete the user profile
-        const deleteduser = await prisma.userProfile.delete({
+        // If user profile is not found
+        if (!userProfile) {
+            const messagetype = "error";
+            const message = "User data not found";
+            const filelocation = "delete_admin_made_users.js";
+            logging(messagetype, message, filelocation);
+            return res.status(404).json({ message: "User data not found" });
+        }
+
+        // Delete the user profile using a unique identifier
+        const deletedUser = await prisma.userProfile.delete({
             where: {
-                uid
+                uid: userProfile.uid // Use the unique `id` to delete the record
             }
         });
 
-        if (!deleteduser) {
-            const messagetype = "error"
-            const message = "User data not found or already deleted from the database"
-            const filelocation = "delete_admin_made_users.js"
-            logging(messagetype,message,filelocation)
-            return res.status(404).json({ message: "User data not found or already deleted from the database" });
-        }
-        await prisma.assignRoles.deleteMany({
-            where:{
-                userid:uid
-            }
-        })
-        await prisma.financial_details.deleteMany({
-            where:{
-                userProfileId:uid
-            }
-        })
-       const to =  userprofile.email
-       const subject  = `Hello ${userprofile.firstname} Your information hasbeen deleted`
-       const text = `Hello ${userprofile.email} All of your associated information hasbeen deleted from our database : Thanks for using our service`
-         // Add the email job to the queue
-         console.log('Adding email job to queue:', { to, subject, text });
-         await emailQueue.add({ to, subject, text }, {
-             attempts: 5, // Number of retry attempts
-             backoff: 10000 // Wait 10 seconds before retrying
-         });
-         const messagetype = "success"
-         const message = "User associated all data hasbeen deleted"
-         const filelocation = "delete_admin_made_users.js"
-         logging(messagetype,message,filelocation)
+        const messagetype = "success";
+        const message = "User associated data has been deleted";
+        const filelocation = "delete_admin_made_users.js";
+        logging(messagetype, message, filelocation);
+
         // Return a success message
-        return res.status(200).json({ message: 'User associated all data hasbeen deleted' });
+        return res.status(200).json({ message: 'User associated data has been deleted' });
+
     } catch (error) {
         console.error('Error deleting user profile:', error);
-        const messagetype = "error"
-        const message = `An error occurred while deleting the user data :: ${error}`
-        const filelocation = "delete_admin_made_users.js"
-        logging(messagetype,message,filelocation)
-        return res.status(500).json({ message: `An error occurred while deleting the user data :: ${error}` });
+        const messagetype = "error";
+        const message = `An error occurred while deleting the user data :: ${error.message}`;
+        const filelocation = "delete_admin_made_users.js";
+        logging(messagetype, message, filelocation);
+        return res.status(500).json({ message: `An error occurred while deleting the user data :: ${error.message}` });
     }
 };
 

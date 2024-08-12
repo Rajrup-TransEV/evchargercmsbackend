@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import emailQueue from "../../../lib/emailqueue.js";
+import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 

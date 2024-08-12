@@ -70,8 +70,20 @@ const prisma = new PrismaClient()
         attempts: 5, // Number of retry attempts
         backoff: 10000 // Wait 10 seconds before retrying
     });
+    const userData = {
+        uid: createadminprofile.uid,
+        firstname: createadminprofile.firstname,
+        lastname: createadminprofile.lastname,
+        email: createadminprofile.email,
+        phonenumber: createadminprofile.phonenumber,
+        role: createadminprofile.role,
+        designation: createadminprofile.designation,
+        address: createadminprofile.address
+    };
+    const externaluri = process.env.EXTERNAL_URI
+    const concaturi = externaluri + "/users"
     try {
-        const response = await fetch('http://localhost:5000/users', {
+        const response = await fetch(`${concaturi}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
