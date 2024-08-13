@@ -92,7 +92,7 @@ const assignVehicleToDriver = async (req, res) => {
             },
         });
         const messagetype = "success"
-        const message = `Vehcile hasbeen assigned ${updatedVehicle}`
+        const message = `Vehcile hasbeen assigned ${JSON.stringify(updatedVehicle)}`
         const filelocation = "vehicle_assign.js"
         logging(messagetype,message,filelocation)
         return res.status(200).json({message:updatedVehicle});
@@ -194,7 +194,7 @@ const assignDriverToVehicle = async (req, res) => {
             },
         });
         const messagetype = "success"
-        const message = `message: "Assignment success", data: ${updatedVehicle}`
+        const message = `message: "Assignment success", data: ${JSON.stringify(updatedVehicle)}`
         const filelocation = "vehicle_assign.js"
          logging(messagetype,message,filelocation)
         return res.status(200).json({message:"Assignment success",data:updatedVehicle});

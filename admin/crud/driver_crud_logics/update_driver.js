@@ -139,17 +139,17 @@ const updateVehicleOwnerData = async (req, res) => {
             data: updateData
         });
 
-        // Prepare email content with updated information
-        // const to = vehicleoweneremail || vehicleOwnerProfile.vehicleoweneremail; // Use the new email if provided, otherwise the old one
-        // const subject = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname}, Your Information Has Been Updated`;
-        // const text = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname},\n\nYour information has been updated. Here are the changes:\n\n${updatedFields.join('\n')}\n\nThank you!`;
+       // Prepare email content with updated information
+        const to = vehicleoweneremail || vehicleOwnerProfile.vehicleoweneremail; // Use the new email if provided, otherwise the old one
+        const subject = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname}, Your Information Has Been Updated`;
+        const text = `Hello ${vehicleowenerfirstname || vehicleOwnerProfile.vehicleowenerfirstname},\n\nYour information has been updated. Here are the changes:\n\n${updatedFields.join('\n')}\n\nThank you!`;
 
-        // // Add the email job to the queue
-        // console.log('Adding email job to queue:', { to, subject, text });
-        // await emailQueue.add({ to, subject, text }, {
-        //     attempts: 5, // Number of retry attempts
-        //     backoff: 10000 // Wait 10 seconds before retrying
-        // });
+        // Add the email job to the queue
+        console.log('Adding email job to queue:', { to, subject, text });
+        await emailQueue.add({ to, subject, text }, {
+            attempts: 5, // Number of retry attempts
+            backoff: 10000 // Wait 10 seconds before retrying
+        });
         const messagetype = "success"
         const message = `data updated: ${JSON.stringify(updatedVehicleOwnerProfile, null, 2)}`
         const filelocation = "update_driver.js"
