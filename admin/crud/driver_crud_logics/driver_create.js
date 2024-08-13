@@ -37,7 +37,7 @@ const createdriver = async(req,res)=>{
             const message = "Driver is already register please use another email and driving license"
             const filelocation = "driver_create.js"
             logging(messagetype,message,filelocation)
-            return res.status(409).json("Driver is already register please use another email and driving license")
+            return res.status(409).json({message:"Driver is already register please use another email and driving license"})
         }
         const roleRegex = /^vehicleowener$/i; // Matches "driver" in a case-insensitive manner
         console.log(vehicleowenerrole)
@@ -76,7 +76,7 @@ const createdriver = async(req,res)=>{
         const message = `Information hasbeen saved and driver has created successfully`
         const filelocation = "driver_create.js"
         logging(messagetype,message,filelocation)
-        return res.status(200).json("Information hasbeen saved and driver has created successfully")
+        return res.status(200).json({message:"Information hasbeen saved and driver has created successfully"})
     } catch (error) {
         console.log(error)
         const messagetype = "error"

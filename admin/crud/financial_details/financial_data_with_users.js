@@ -38,7 +38,7 @@ const getfindatawithuser = async (req, res) => {
         }
 
         // Check if the user ID matches
-        if (financialData.userProfile?.uid !== userid) {
+        if (!financialData.userProfile?.uid) {
             const messagetype = "error"
             const message = "User does not have access to these financial details."
             const filelocation = "financial_data_with_users.js"
@@ -51,7 +51,6 @@ const getfindatawithuser = async (req, res) => {
         logging(messagetype,message,filelocation)
         // Return the user and financial details
         return res.status(200).json({
-            user: financialData.userProfile,
             financialDetails: financialData,
         });
     } catch (error) {

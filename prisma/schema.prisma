@@ -116,7 +116,7 @@ model Assigntovechicles {
   vehicleowner     String?
   vehiclecategory   String?
   vehicletype      String?
-  vehicleowenerId        String?          @unique // Ensure one vehicle per driver
+  vehicleowenerId        String?  // Ensure one vehicle per driver
   vehicleowener          Assigntovehicleowener?  @relation(fields: [vehicleowenerId], references: [uid])
   isvehicleassigned Boolean?
   createdAt       DateTime         @default(now())
