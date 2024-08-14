@@ -15,19 +15,38 @@ datasource db {
 
 //application user and super user user model
 model User {
-  id        Int      @id @default(autoincrement())
-  uid       String   @unique
-  username  String   @unique
-  email     String   @unique
-  password  String?
-  userType  String?
-  otp    String?
-  otpExpiration DateTime?
-  emailVerified Boolean?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
- 
+  id              Int              @id @default(autoincrement())
+  uid             String           @unique
+  username        String           @unique
+  email           String           @unique
+  password        String?
+  userType        String?
+  otp             String?
+  otpExpiration   DateTime?
+  emailVerified   Boolean?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  appuserprofile   AppUserProfile[]
 }
+
+model AppUserProfile {
+  id              Int              @id @default(autoincrement())
+  uid             String           @unique // This will be the foreign key
+  firstname       String?
+  lastname        String?
+  bio             String?
+  address         String?
+  phonenumber     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  userId String?
+  user User?   @relation(fields: [userId],references: [uid])
+}
+
+
+
 
 //super admin created admin details
 model UserProfile {
@@ -171,3 +190,4 @@ model LogRetention{
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+

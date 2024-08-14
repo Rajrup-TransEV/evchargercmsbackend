@@ -5,6 +5,7 @@ import allnormaluserdata from "../userlogics/getuserdata.js"
 import normaluserupdate from "../userlogics/updateuserdata.js"
 import get_one_user_data from "../userlogics/get_one_user.js"
 import delete_user_data from "../userlogics/delete_a_user.js"
+import userprofilecreate from "../controller/crud/userprofilecrud/user_profile_create.js"
 const userRoutes = Router()
 
 //get all user
@@ -15,5 +16,7 @@ userRoutes.post("/updateuserdata",normaluserupdate)
 userRoutes.post("/getsingleuserinfo",get_one_user_data)
 //delet a user from data base
 userRoutes.post("/deletenormaluserdata",delete_user_data)
+//userprofilecreate
+userRoutes.post("/appuserprofilecreate",userprofilecreate)
 
 export default userRoutes;
