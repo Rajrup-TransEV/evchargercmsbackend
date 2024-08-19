@@ -28,7 +28,7 @@ model User {
   updatedAt       DateTime         @updatedAt
 
   appuserprofile   AppUserProfile[]
-
+ wallets    wallet[]
 }
 
 model AppUserProfile {
@@ -44,7 +44,7 @@ model AppUserProfile {
 
   userId String?
   user User?   @relation(fields: [userId],references: [uid])
-  wallets    wallet[]
+ 
 }
 
 
@@ -166,14 +166,20 @@ model Assigntovehicleowener {
 }
 
 //to be implemented in future
-model RazorpayData{
-   id                  Int                  @id @default(autoincrement())
+model RazorpayData {
+  id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
-
-
-    createdAt           DateTime             @default(now())
+  orderId             String?               @unique
+  paymentId           String?               @unique
+  amount              String?
+  currency            String?
+  status              String?
+  attempts            String?
+  method              String?
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
 model Analytics{
     id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
@@ -216,9 +222,11 @@ model wallet{
   uid                 String?              @unique
   userprofilerelatedwallet String?
   userprofile   UserProfile? @relation(fields: [userprofilerelatedwallet],references: [uid])
-  userrelatedwallet String?
-  user AppUserProfile? @relation(fields: [userrelatedwallet],references: [uid])
-
+  appuserrelatedwallet String?
+  user User? @relation(fields: [appuserrelatedwallet],references: [uid])
+  balance String?
+  iswalletrechargedone Boolean?
+  razorpayuri   String?
 
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
