@@ -28,6 +28,7 @@ model User {
   updatedAt       DateTime         @updatedAt
 
   appuserprofile   AppUserProfile[]
+ wallets    wallet[]
 }
 
 model AppUserProfile {
@@ -43,6 +44,7 @@ model AppUserProfile {
 
   userId String?
   user User?   @relation(fields: [userId],references: [uid])
+ 
 }
 
 
@@ -67,6 +69,7 @@ model UserProfile {
   
   financialDetails  Financial_details? @relation("UserFinancialDetails") // Define relation name
   chargerUnits      Charger_Unit[]     // Define the relationship with Charger_Unit
+  wallets    wallet[]
 }
 
 //fiancial details for all of users 
@@ -163,14 +166,20 @@ model Assigntovehicleowener {
 }
 
 //to be implemented in future
-model RazorpayData{
-   id                  Int                  @id @default(autoincrement())
+model RazorpayData {
+  id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
-
-
-    createdAt           DateTime             @default(now())
+  orderId             String?               @unique
+  paymentId           String?               @unique
+  amount              String?
+  currency            String?
+  status              String?
+  attempts            String?
+  method              String?
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
 model Analytics{
     id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
@@ -191,6 +200,9 @@ model LogRetention{
   updatedAt           DateTime             @updatedAt
 }
 
+
+//model for generating qr code
+
 model qrcode{
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
@@ -201,5 +213,21 @@ model qrcode{
   qrcodedata String?
   
     createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+//model for generating wallet
+model wallet{
+  id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  userprofilerelatedwallet String?
+  userprofile   UserProfile? @relation(fields: [userprofilerelatedwallet],references: [uid])
+  appuserrelatedwallet String?
+  user User? @relation(fields: [appuserrelatedwallet],references: [uid])
+  balance String?
+  iswalletrechargedone Boolean?
+  razorpayuri   String?
+
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
