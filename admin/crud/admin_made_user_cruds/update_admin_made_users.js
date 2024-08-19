@@ -126,7 +126,7 @@ const updateuserdata = async (req, res) => {
                const filelocation = "update_admin_made_users.js"
                logging(messagetype,message,filelocation)
         // Return the updated user profile
-        return res.status(200).json(updatedUserProfile);
+        return res.status(200).json({message:"updated user profile data",data:updatedUserProfile});
     } catch (error) {
         // Handle errors
         if (error.code === 'P2025') {

@@ -1,10 +1,12 @@
 import express from "express"
 import bodyParser from "body-parser";
 import cros from "cors"
-import authRoutes from "./routes/authroutes.js"
+
 import adminmadeuserroutes from "./admin/admin_made_userroutes/admin_made_user_routes.js";
-import userRoutes from "./routes/userrouts.js";
+
 import emailQueue from "./lib/emailqueue.js";
+import userRoutes from "./androidpac/routes/userrouts.js";
+import authRoutes from "./androidpac/routes/authroutes.js";
 // import emailQueue from './lib/emailQueue.js'; // Adjust the path as necessary
 
 // import adminmadeuserroutes from "./admin_made_userroutes/admin_made_user_routes.js"

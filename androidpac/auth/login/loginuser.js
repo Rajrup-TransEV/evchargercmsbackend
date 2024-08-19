@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import emailQueue from "../../../lib/emailqueue.js";
 
 const prisma = new PrismaClient();
 
