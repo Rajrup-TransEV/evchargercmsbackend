@@ -10,6 +10,7 @@ import getalluserprofile from "../controller/crud/userprofilecrud/userprofile_ge
 import userprofileupdate from "../controller/crud/userprofilecrud/user_profile_update.js"
 import delete_user_profile from "../controller/crud/userprofilecrud/delete_user_profile.js"
 import generateqrcode from "../controller/crud/qrcodeops/qrcode.js"
+import getqrcodedata from "../controller/crud/qrcodeops/get_qr_code_data.js"
 const userRoutes = Router()
 
 //get all user
@@ -28,5 +29,6 @@ userRoutes.get("/getallappuserdata",getalluserprofile)
 userRoutes.post("/updateappuserprofile",userprofileupdate)
 //delete user profile data
 userRoutes.post("/deleteauserdata",delete_user_profile)
-userRoutes.get("/qrcode",generateqrcode)
+userRoutes.post("/qrcode",generateqrcode)
+userRoutes.get("/getallqrcodes",getqrcodedata)
 export default userRoutes;

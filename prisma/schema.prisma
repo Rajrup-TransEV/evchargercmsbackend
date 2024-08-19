@@ -191,3 +191,15 @@ model LogRetention{
   updatedAt           DateTime             @updatedAt
 }
 
+model qrcode{
+  id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  chargerserialnumber String?
+  chargerid String?
+  chargercapacity String?
+  totalchargetime String?
+  qrcodedata String?
+  
+    createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
