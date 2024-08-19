@@ -28,6 +28,7 @@ model User {
   updatedAt       DateTime         @updatedAt
 
   appuserprofile   AppUserProfile[]
+
 }
 
 model AppUserProfile {
@@ -43,6 +44,7 @@ model AppUserProfile {
 
   userId String?
   user User?   @relation(fields: [userId],references: [uid])
+  wallets    wallet[]
 }
 
 
@@ -67,6 +69,7 @@ model UserProfile {
   
   financialDetails  Financial_details? @relation("UserFinancialDetails") // Define relation name
   chargerUnits      Charger_Unit[]     // Define the relationship with Charger_Unit
+  wallets    wallet[]
 }
 
 //fiancial details for all of users 
@@ -191,6 +194,9 @@ model LogRetention{
   updatedAt           DateTime             @updatedAt
 }
 
+
+//model for generating qr code
+
 model qrcode{
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
@@ -201,5 +207,19 @@ model qrcode{
   qrcodedata String?
   
     createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+//model for generating wallet
+model wallet{
+  id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  userprofilerelatedwallet String?
+  userprofile   UserProfile? @relation(fields: [userprofilerelatedwallet],references: [uid])
+  userrelatedwallet String?
+  user AppUserProfile? @relation(fields: [userrelatedwallet],references: [uid])
+
+
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
