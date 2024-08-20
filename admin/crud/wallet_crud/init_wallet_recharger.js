@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 const rechargewallet = async (req,res)=>{
     const  {userid,walletid,price}=req.body;
-    if(price<="100"){
+    if(price<=100){
         return res.status(400).json({message:"price cannot be less than 100 or in negetive"})
     }
     try {
