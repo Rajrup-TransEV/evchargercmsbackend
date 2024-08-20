@@ -36,6 +36,7 @@ import retrive_vehicle_owener_data_by_email from "../crud/driver_crud_logics/get
 import deletevehicleowener from "../crud/driver_crud_logics/delete_driver.js"
 import create_wallet_details from "../crud/wallet_crud/create_wallet_details.js"
 import get_all_wallet_data from "../crud/wallet_crud/get_wallet_data.js"
+import rechargewallet from "../crud/wallet_crud/init_wallet_recharger.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -112,4 +113,6 @@ adminmadeuserroutes.post("/deleteavehicle",deleteavehicledata)
 adminmadeuserroutes.post("/createuserwallet",create_wallet_details)
 //get all wallet
 adminmadeuserroutes.get("/allwalletdata",get_all_wallet_data)
+//init wallet recharge
+adminmadeuserroutes.post("/initwalletrecharge",rechargewallet)
 export default adminmadeuserroutes;

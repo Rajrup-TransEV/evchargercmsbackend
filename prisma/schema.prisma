@@ -226,7 +226,7 @@ model wallet{
   user User? @relation(fields: [appuserrelatedwallet],references: [uid])
   balance String?
   iswalletrechargedone Boolean?
-  razorpayuri   String?
+  recharger_made_by_which_user   String?
 
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
