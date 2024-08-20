@@ -15,8 +15,8 @@ const create_wallet_details = async (req, res) => {
           return res.status(403).json({ message: "API route access forbidden" });
       }
   
-        const { userid, price } = req.body;
-
+        const { userid } = req.body;
+        let price = "0";
         // Check if the user exists in appUserProfile
         const findAppUserProfile = await prisma.user.findUnique({
             where: { uid: userid },
@@ -34,6 +34,7 @@ const create_wallet_details = async (req, res) => {
             // Create wallet for appUserProfile
             const walletForAppUser = await prisma.wallet.create({
                 data: {
+                    uid:crypto.randomUUID(),
                     appuserrelatedwallet: userid, // Assuming this is the correct field in your wallet model
                     balance: price
                 }
@@ -50,6 +51,7 @@ const create_wallet_details = async (req, res) => {
             // Create wallet for userProfile
             const walletForAdminProfile = await prisma.wallet.create({
                 data: {
+                    uid:crypto.randomUUID(),
                     userprofilerelatedwallet: userid, // Assuming this is the correct field in your wallet model
                     balance: price
                 }

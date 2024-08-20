@@ -13,6 +13,7 @@ import generateqrcode from "../controller/crud/qrcodeops/qrcode.js"
 import getqrcodedata from "../controller/crud/qrcodeops/get_qr_code_data.js"
 const userRoutes = Router()
 
+
 //get all user
 userRoutes.get("/alluserroutes",allnormaluserdata)
 //update a single user
