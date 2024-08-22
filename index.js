@@ -6,11 +6,13 @@ import { Router } from "express"
 
 import adminmadeuserroutes from "./admin/admin_made_userroutes/admin_made_user_routes.js";
 
-import emailQueue from "./lib/emailqueue.js";
+// import emailQueue from "./lib/emailqueue.js";
 import userRoutes from "./androidpac/routes/userrouts.js";
 import authRoutes from "./androidpac/routes/authroutes.js";
 import { PrismaClient } from '@prisma/client';
 import cron from 'node-cron'
+import { setupSwagger } from './swagger.js';
+
 const prisma = new PrismaClient();
 // import emailQueue from './lib/emailQueue.js'; // Adjust the path as necessary
 
@@ -78,6 +80,9 @@ app.use("/", gateway); // Use the gateway router
 app.use("/userauth",authRoutes),
 app.use("/admin",adminmadeuserroutes)
 app.use("/users",userRoutes)
+
+setupSwagger(app)
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

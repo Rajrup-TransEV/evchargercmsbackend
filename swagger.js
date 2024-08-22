@@ -1,9 +1,6 @@
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
-// const swaggerJSDoc = require('swagger-jsdoc');
-// const swaggerUi = require('swagger-ui-express');
-
-import swaggerJSDoc from swaggerJSDoc
-import swaggerUi from swaggerUi
 // Swagger definition
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -29,8 +26,6 @@ const options = {
 // Initialize swagger-jsdoc
 const swaggerSpec = swaggerJSDoc(options);
 
-function setupSwagger(app) {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+export function setupSwagger(app) {
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 }
-
-module.exports = setupSwagger;
