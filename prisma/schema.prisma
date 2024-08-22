@@ -181,11 +181,12 @@ model RazorpayData {
 }
 
 model Analytics{
-    id                  Int                  @id @default(autoincrement())
+  id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
-
-
-    createdAt           DateTime             @default(now())
+  totalnumberofusers  String?
+  totalnumberofuserprofiles String?
+  numberofnewusers String?
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
 
