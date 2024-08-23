@@ -186,11 +186,11 @@ model Analytics{
   totalnumberofusers  String?
   totalnumberofuserprofiles String?
   perdaynewusercount   String?
-  numberofnewusers String?
-  apiaccessforbiddencound String?
+  countofroles  String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+//daily signup log retention model
 model DailySignup {
   id             Int      @id @default(autoincrement())
   uid String?

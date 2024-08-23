@@ -55,7 +55,6 @@ const prisma = new PrismaClient()
             }
         })
         //perday user creation count
-    
         const today = new Date().toISOString().split('T')[0];
         const todayDate = new Date(today);
         try {

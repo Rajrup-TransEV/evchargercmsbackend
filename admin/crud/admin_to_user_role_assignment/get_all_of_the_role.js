@@ -14,7 +14,26 @@ const get_all_roles = async(req,res)=>{
     return res.status(403).json({ message: "API route access forbidden" });
 }
   try {
-    const allroles = await prisma.assignRoles.findMany()
+    const countofroles = await prisma.assignRoles.count();
+    try {
+      const insertcountofroles = await prisma.analytics.create({
+        data:{
+          uid:crypto.randomUUID()
+        }
+      })
+      const messagetype = "success";
+      const message = `number of roles available in database ${countofroles}`;
+      const filelocation = "get_all_of_the_role.js";
+      logging(messagetype, message, filelocation);
+    } catch (error) {
+     console.log(error) 
+     const messagetype = "error";
+     const message = `error occurred :: ${error}`;
+     const filelocation = "get_all_of_the_role.js";
+     logging(messagetype, message, filelocation);
+    }
+   
+    const allroles = await prisma.assignRoles.findMany();
     if(!allroles){
       const messagetype = "error";
       const message = "no data found in database please assign one first";
