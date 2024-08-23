@@ -19,7 +19,7 @@ const prisma = new PrismaClient()
     }
 
     const {firstname,lastname,email,phonenumber,password,role,designation,address}= req.body;
-    console.log(req.body)
+    // console.log(req.body)
     try {
         const findExistingUser = await prisma.userProfile.findFirst({
             where: {
@@ -54,6 +54,49 @@ const prisma = new PrismaClient()
                 address:address
             }
         })
+        //perday user creation count
+        const today = new Date().toISOString().split('T')[0];
+        const todayDate = new Date(today);
+        try {
+             // Find or create daily signup record
+        const existingSignupRecord = await prisma.dailySignup.findFirst({
+            where: {
+            date: new Date(todayDate)
+            }
+        });
+        if (existingSignupRecord) {
+            // Update the existing record
+            await prisma.dailySignup.update({
+              where: {
+                id: existingSignupRecord.id
+              },
+              data: {
+                newSignupCount: {
+                  increment: 1
+                }
+              }
+            });
+          } else {
+            // Create a new record for today
+            await prisma.dailySignup.create({
+              data: {
+                uid:crypto.randomUUID(),
+                date: new Date(todayDate),
+                newSignupCount: 1
+              }
+            });
+          }
+            const messagetype = "success"
+            const message = `analaytics for daily user count has been added`
+            const filelocation = "admin_to_user_profile_create.js"
+            logging(messagetype,message,filelocation)
+        } catch (error) {
+            console.log(error)
+            const messagetype = "error"
+            const message = `something went wrong with the server:: ${error}`
+            const filelocation = "admin_to_user_profile_create.js"
+            logging(messagetype,message,filelocation)
+        }
         if(!createadminprofile){
             const messagetype = "error"
             const message = "user creation failed"

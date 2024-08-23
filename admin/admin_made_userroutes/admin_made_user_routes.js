@@ -38,6 +38,7 @@ import create_wallet_details from "../crud/wallet_crud/create_wallet_details.js"
 import get_all_wallet_data from "../crud/wallet_crud/get_wallet_data.js"
 import rechargewallet from "../crud/wallet_crud/init_wallet_recharger.js"
 import edit_wallet from "../crud/wallet_crud/edit_a_wallet_details.js"
+import deletewalletdata from "../crud/wallet_crud/delete_wallet.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -118,4 +119,6 @@ adminmadeuserroutes.get("/allwalletdata",get_all_wallet_data)
 adminmadeuserroutes.post("/initwalletrecharge",rechargewallet)
 //edit wallet 
 adminmadeuserroutes.post("/editwalletdata",edit_wallet)
+//delete wallet 
+adminmadeuserroutes.post("/deletewalletdata",deletewalletdata)
 export default adminmadeuserroutes;
