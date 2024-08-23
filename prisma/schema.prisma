@@ -179,13 +179,23 @@ model RazorpayData {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
-
+//group of models for analytics and retention
 model Analytics{
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
   totalnumberofusers  String?
   totalnumberofuserprofiles String?
+  perdaynewusercount   String?
   numberofnewusers String?
+  apiaccessforbiddencound String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+model DailySignup {
+  id             Int      @id @default(autoincrement())
+  uid String?
+  date           DateTime @default(now())
+  newSignupCount Int      @default(0)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }

@@ -16,11 +16,32 @@ const alladminuserdata=async (req,res)=>{
     }
 
     try {
-        console.log("try catch block running")
-        const fetchalldata = await prisma.userProfile.findMany()
-        console.log(fetchalldata)
-        if(!fetchalldata){
+        //analytics logic
+        try {
+            const userproflecount = await prisma.userProfile.count()
+            const analyticslog = await prisma.analytics.create({
+                data:{
+                    uid:crypto.randomUUID(),
+                    totalnumberofuserprofiles:userproflecount.toString()
+                }
+            })
             const messagetype = "success"
+            const message = `In db there is ${userproflecount} number of userprofile hasbeen present`
+            const filelocation = "fetch_all_admin_data.js"
+            logging(messagetype,message,filelocation)
+        } catch (error) {
+            console.log(error)
+            const messagetype = "error"
+            const message = `There is an error occurred while generating analytics error details is ${error}`
+            const filelocation = "fetch_all_admin_data.js"
+            logging(messagetype,message,filelocation)
+        }
+       
+
+        const fetchalldata = await prisma.userProfile.findMany()
+        
+        if(!fetchalldata){
+            const messagetype = "error"
             const message = "There is not much data to show"
             const filelocation = "fetch_all_admin_data.js"
             logging(messagetype,message,filelocation)
