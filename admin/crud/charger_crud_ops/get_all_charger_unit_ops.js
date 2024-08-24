@@ -17,6 +17,25 @@ const get_all_charger= async(req,res)=>{
       return res.status(403).json({ message: "API route access forbidden" });
   }
     try {
+        try {
+        const chargercount =  await prisma.charger_Unit.count();
+        const chargeranals = await prisma.analytics.create({
+            data:{
+                uid:crypto.randomUUID(),
+                countofchargerunits:chargercount
+            }
+        })
+        const messagetype = "success"
+        const message = `Count of chargers ${chargercount}`
+        const filelocation = "get_all_charger_unit_ops.js"
+        logging(messagetype,message,filelocation)
+        } catch (error) {
+                console.log(error)   
+                const messagetype = "error"
+                const message =`${error}`
+                const filelocation = "get_all_charger_unit_ops.js"
+                logging(messagetype,message,filelocation) 
+        }
         
         const get_all_charger_assigned=await prisma.charger_Unit.findMany()
         if(!get_all_charger_assigned){
