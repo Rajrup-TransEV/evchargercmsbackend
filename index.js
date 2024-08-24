@@ -31,23 +31,25 @@ app.use(cros({
 //lopgging clear
   
 //Cron job to delete logs older than 90 days
+//uodate the clear date to 1 year
 cron.schedule('0 0 * * *', async () => {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - 90); // 90 days ago
-  
-    try {
-      const deletedLogs = await prisma.logRetention.deleteMany({
-        where: {
-          createdAt: {
-            lt: cutoffDate,
-          },
+  const cutoffDate = new Date();
+  cutoffDate.setFullYear(cutoffDate.getFullYear() - 1); // 1 year ago
+
+  try {
+    const deletedLogs = await prisma.logRetention.deleteMany({
+      where: {
+        createdAt: {
+          lt: cutoffDate,
         },
-      });
-      console.log(`Deleted ${deletedLogs.count} logs older than 90 days.`);
-    } catch (error) {
-      console.error('Error deleting old logs:', error);
-    }
-  });
+      },
+    });
+    console.log(`Deleted ${deletedLogs.count} logs older than 1 year.`);
+  } catch (error) {
+    console.error('Error deleting old logs:', error);
+  }
+});
+
   
 //corn job code delete logs older than 1 day
 // cron.schedule('* * * * *', async () => { // Runs every minute for testing

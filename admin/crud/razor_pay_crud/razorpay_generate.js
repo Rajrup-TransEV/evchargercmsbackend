@@ -19,6 +19,7 @@ const updatePayment = async (paymentId, updateData) => {
       where: { paymentId },
       data: updateData,
     });
+    
     return payment;
   } catch (error) {
     throw new Error('Error updating payment record: ' + error.message);
