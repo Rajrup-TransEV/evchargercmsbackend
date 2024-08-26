@@ -247,7 +247,7 @@ model wallet{
 model walletreachargehistory{
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
-  userassociatedid            String? 
+  userassociatedid            String?
   previousbalance String?
   balanceleft String?
   addedbalance String?
