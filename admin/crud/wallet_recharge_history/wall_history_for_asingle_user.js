@@ -10,7 +10,7 @@ const find_wh_o_s_w = async(req,res)=>{
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
       const messagetype = "error"
       const message = "API route access error"
-      const filelocation = "get_all_wallet_recharge_history.js"
+      const filelocation = "wall_history_for_asingle_user.js"
       logging(messagetype,message,filelocation)
       return res.status(403).json({ message: "API route access forbidden" });
   }
@@ -25,13 +25,21 @@ const find_wh_o_s_w = async(req,res)=>{
                 ]
             }
         })
+        const messagetype = "success"
+        const message = "Success with following details"
+        const filelocation = "wall_history_for_asingle_user.js"
+        logging(messagetype,message,filelocation)
         res.status(200).json({
-            message:"Success with follwoing details",
+            message:"Success with following details",
             data:findwh
         })
 
     } catch (error) {
         console.log(error)
+        const messagetype = "success"
+        const message =`Error occurred :: ${error}`
+        const filelocation = "wall_history_for_asingle_user.js"
+        logging(messagetype,message,filelocation)
         res.status(500).json({
             message:"Error occurred",
             error:error

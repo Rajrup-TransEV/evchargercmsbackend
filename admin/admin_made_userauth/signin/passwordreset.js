@@ -1,8 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 import emailQueue from "../../../lib/emailqueue.js";
+import logging from "../../../logging/logging_generate.js";
 const prisma = new PrismaClient();
 
 const passwordresetlogic = async (req, res) => {
+  const apiauthkey = req.headers['apiauthkey'];
+  // Check if the API key is valid
+  if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+      const messagetype = "error"
+      const message = "API route access error"
+      const filelocation = "adminmadeuserauth/resetPasswordlogic.js"
+      logging(messagetype,message,filelocation)
+      return res.status(403).json({ message: "API route access forbidden" });
+  }
   try {
     const { getuseremail } = req.body;
     const user_password_reset = await prisma.userProfile.findFirstOrThrow({
@@ -17,6 +27,10 @@ const passwordresetlogic = async (req, res) => {
     });
 
     if (!user_password_reset) {
+      const messagetype = "error"
+      const message = "No user data found associated with the email"
+      const filelocation = "adminmadeuserauth/resetPasswordlogic.js"
+      logging(messagetype,message,filelocation)
       return res.status(404).json({ message: "No user data found associated with the email" });
     }
 

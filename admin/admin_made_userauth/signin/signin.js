@@ -2,12 +2,17 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import logging from "../../../logging/logging_generate.js";
 const prisma = new PrismaClient()
 
 const adminuserlogin = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "adminmadeuserauth/signin.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
@@ -31,12 +36,20 @@ const adminuserlogin = async (req, res) => {
         });
 
         if (!existingUser) {
+            const messagetype = "error"
+            const message = "Wrong credentials"
+            const filelocation = "adminmadeuserauth/signin.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json({ message: "Wrong credentials" });
         }
 
         const checkPassword = await bcrypt.compare(password, existingUser.password);
 
         if (!checkPassword) {
+            const messagetype = "error"
+            const message = "Password does not match. Failed to login"
+            const filelocation = "adminmadeuserauth/signin.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json({ message: "Password does not match. Failed to login" });
         }
 
@@ -49,11 +62,18 @@ const adminuserlogin = async (req, res) => {
             process.env.JWT_SECRET, // Make sure to set your JWT secret in environment variables
             { expiresIn: '1h' } // Token expiration time
         );
-
+        const messagetype = "success"
+        const message = "login success for admin profile user"
+        const filelocation = "adminmadeuserauth/signin.js"
+        logging(messagetype,message,filelocation)
         return res.status(201).json({ message: "Login success", authtoken: token });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        const messagetype = "error"
+        const message = `error occurred ${error}`
+        const filelocation = "adminmadeuserauth/signin.js"
+        logging(messagetype,message,filelocation)
+        return res.status(500).json({ message: "Internal server error",error:error });
     }
 };
 export  default adminuserlogin
