@@ -1,75 +1,110 @@
-//recharge and initialize wallet
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 
-const rechargewallet = async (req,res)=>{
-    const  {userid,walletid,price}=req.body;
-    if(price<=100){
-        return res.status(400).json({message:"price cannot be less than 100 or in negetive"})
-    }
-    try {
-        
+const rechargewallet = async (req, res) => {
+    const apiauthkey = req.headers['apiauthkey'];
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+      const messagetype = "error"
+      const message = "API route access error"
+      const filelocation = "init_wallet_recharge.js"
+      logging(messagetype,message,filelocation)
+      return res.status(403).json({ message: "API route access forbidden" });
+  }
+  const { userid, walletid, price } = req.body;
+
+  // Validate the recharge amount
+  if (price <= 100) {
+    return res.status(400).json({ message: "Price cannot be less than 100 or negative" });
+  }
+
+  try {
+    // Find the wallet by ID
     const walletfind = await prisma.wallet.findUnique({
-        where:{
-            uid:walletid
-        }
-    })
-    if(!walletfind){
-        return res.status(404).json({message:"error no wallet data found"})
-    }
-    const findAppUserProfile =await prisma.user.findUnique({
-        where:{uid:userid},
-        select:{uid:true}
-    })
-     // Check if the user exists in userProfile
-     const findAdminUserProfile = await prisma.userProfile.findUnique({
-        where: { uid: userid },
-        select: { uid: true }
+      where: {
+        uid: walletid,
+      },
     });
 
-    if(findAppUserProfile){
-        const wallettopupforappuser = await prisma.wallet.update({
-            where:{
-                uid:walletid
-            },
-            data:{   
-                    balance:price,
-                    iswalletrechargedone:true,
-                    recharger_made_by_which_user:userid
-            }
-        })
-        return res.status(201).json({
-            message:"wallet recharge done",
-            details:wallettopupforappuser
-        })
-    }else if (findAdminUserProfile){
-       const wallettopupforappprofile =await prisma.wallet.update({
-        where:{
-            uid:walletid
+    // Check if the wallet exists
+    if (!walletfind) {
+        const messagetype = "error"
+        const message = "Error: No wallet data found"
+        const filelocation = "init_wallet_recharge.js"
+        logging(messagetype,message,filelocation)
+      return res.status(404).json({ message: "Error: No wallet data found" });
+    }
+
+    // Check if the user exists in userProfile
+    const findAppUserProfile = await prisma.user.findUnique({
+      where: { uid: userid },
+      select: { uid: true },
+    });
+
+    const findAdminUserProfile = await prisma.userProfile.findUnique({
+      where: { uid: userid },
+      select: { uid: true },
+    });
+
+    if (findAppUserProfile || findAdminUserProfile) {
+      // Calculate the new balance
+      const newBalance = parseFloat(walletfind.balance) + parseFloat(price);
+
+      // Update the wallet balance
+      const wallettopup = await prisma.wallet.update({
+        where: {
+          uid: walletid,
         },
-        data:{
-            balance:price,
-            iswalletrechargedone:true,
-            recharger_made_by_which_user:userid
-        }
-       })
-       return res.status(201).json({
-        message:"wallet recharge done",
-        details:wallettopupforappprofile
-       })
-    }else{
-        return res.status(404).json({
-            message:"No data found"
-        })
+        data: {
+          balance: newBalance.toString(), // Update the wallet balance
+          iswalletrechargedone: true,
+          recharger_made_by_which_user: userid,
+        },
+      });
+
+      // Create a new record in the walletreachargehistory table
+      const walletRechargeHistory = await prisma.walletreachargehistory.create({
+        data: {
+          uid: crypto.randomUUID(),
+          userassociatedid: userid,
+          previousbalance: walletfind.balance.toString(), // Store the previous balance
+          balanceleft: newBalance.toString(), // Store the new balance
+          addedbalance: price.toString(), // Store the added balance
+          numberofrecharge: "1", // This can be incremented based on your logic
+        },
+      });
+
+      // Return the response with the updated wallet and recharge history
+      const messagetype = "success"
+      const message = "Wallet reacharge done"
+      const filelocation = "init_wallet_recharge.js"
+      logging(messagetype,message,filelocation)
+      return res.status(201).json({
+        message: "Wallet recharge done",
+        details: wallettopup,
+        walletRechargeHistory: walletRechargeHistory,
+      });
+    } else {
+      const messagetype = "error"
+      const message = "No data found"
+      const filelocation = "init_wallet_recharge.js"
+      logging(messagetype,message,filelocation)
+      return res.status(404).json({
+        message: "No data found",
+      });
     }
-    } catch (error) {
-     console.log(error)   
-     return res.status(500).json({
-        message:"An error while creating the wallet",
-        error:error
-     })
-    }
-}
-export default rechargewallet
+  } catch (error) {
+    const messagetype = "error"
+    const message = `An error occurred while recharging the wallet - ${error}`
+    const filelocation = "init_wallet_recharge.js"
+    logging(messagetype,message,filelocation)
+    return res.status(500).json({
+      message: `An error occurred while recharging the wallet - ${error}`,
+      error: error,
+    });
+  }
+};
+
+export default rechargewallet;
