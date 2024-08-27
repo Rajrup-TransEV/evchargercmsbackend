@@ -16,7 +16,9 @@ const update_user_role_details = async (req, res) => {
 
     try {
         const { id, userid, uid, rolename, roledesc } = req.body;
-
+        if(!id || !userid || !uid|| !rolename||!roledesc){
+            return res.status(400).json("no data hasbeen found")
+        }
         // Create an object to hold the updated data
         const updateData = {};
 
