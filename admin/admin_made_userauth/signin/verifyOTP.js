@@ -14,6 +14,9 @@ const verifyOtpLogic = async (req, res) => {
   }
   try {
     const { email, otp } = req.body;
+    if(email.length === 0 || otp.length===0){
+      return res.status(400).json({ error: 'No value provided for one or more fields.' });
+    }
     // Retrieve the user profile based on the email
     const user = await prisma.userProfile.findFirstOrThrow({
       where: {

@@ -4,10 +4,12 @@ import { PrismaClient } from '@prisma/client';
 import Razorpay from 'razorpay';
 
 const prisma = new PrismaClient();
-
+// const customerName = "rajrup das"
+// const customerEmail="transmogrify17@outlook.com"
+// const customerContact = "9836471882"
 const  createPayment = (customerName, customerEmail, customerContact)=> {
   const options = {
-      key: '', // Replace with your Razorpay live key
+      key: 'rzp_test_Oxv2YtjPuwWXJL', // Replace with your Razorpay live key
       amount: this.totalRevenue * 100, // Amount in paise (multiply by 100 to convert to paise)
       currency: 'INR',
       name: 'Transmogrify Global Pvt. Ltd',

@@ -17,6 +17,10 @@ const get_single_admin_data = async (req,res)=>{
     }
 
     const {useremail} = req.body;
+    if(!useremail){
+
+        return res.status(400).json({ error: 'No value provided for one or more fields.' });
+      }
     try {
         const get_from_db = await prisma.userProfile.findFirstOrThrow({
             where:{

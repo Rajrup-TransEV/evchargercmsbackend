@@ -16,7 +16,10 @@ const delete_user_profile = async (req, res) => {
     }
 
     const { uid, email, phonenumber } = req.body;
+    if(!uid|| !email||!phonenumber){
 
+        return res.status(400).json({ error: 'No value provided for one or more fields.' });
+      }
     // Validate that at least one unique identifier is provided
     if (!uid && !email && !phonenumber) {
         const messagetype = "error";

@@ -20,6 +20,10 @@ const prisma = new PrismaClient()
 
     const {firstname,lastname,email,phonenumber,password,role,designation,address}= req.body;
     // console.log(req.body)
+    if(!firstname|| !lastname||!phonenumber ||! email || !password||!role||!designation||!address){
+
+        return res.status(400).json({ error: 'No value provided for one or more fields.' });
+      }
     try {
         const findExistingUser = await prisma.userProfile.findFirst({
             where: {

@@ -17,7 +17,9 @@ const adminuserlogin = async (req, res) => {
     }
 
     const { phone, email, password } = req.body;
-
+    if (phone.length === 0 || email.length === 0 || password.length === 0){
+        return res.status(400).json({ error: 'No value provided for one or more fields.' });
+    }
     try {
         const existingUser = await prisma.userProfile.findFirst({
             where: {
