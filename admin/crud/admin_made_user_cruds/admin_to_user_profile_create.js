@@ -20,6 +20,13 @@ const prisma = new PrismaClient()
 
     const {firstname,lastname,email,phonenumber,password,role,designation,address}= req.body;
     // console.log(req.body)
+    if(!firstname|| !lastname||!phonenumber ||! email || !password||!role||!designation||!address){
+      const messagetype = "error"
+      const message = "No value provided for one or more fields."
+      const filelocation = "admin_to_user_profile_create.js"
+      logging(messagetype,message,filelocation)
+        return res.status(400).json({ error: 'No value provided for one or more fields.' });
+      }
     try {
         const findExistingUser = await prisma.userProfile.findFirst({
             where: {
@@ -123,39 +130,39 @@ const prisma = new PrismaClient()
         designation: createadminprofile.designation,
         address: createadminprofile.address
     };
-    const externaluri = process.env.EXTERNAL_URI
-    const concaturi = externaluri + "/users"
-    try {
-        const response = await fetch(`${concaturi}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        });
+    // const externaluri = process.env.EXTERNAL_URI
+    // const concaturi = externaluri + "/users"
+    // try {
+    //     const response = await fetch(`${concaturi}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(userData)
+    //     });
         
-        if (!response.ok) {
-            const errorData = await response.json();
-            const messagetype = "error"
-            const message = "Error sending data to Flask API:"
-            const filelocation = "admin_to_user_profile_create.js"
-            logging(messagetype,message,filelocation)
-            console.error('Error sending data to Flask API:', errorData.error);
-        } else {
-            const createdUser = await response.json();
-            const messagetype = "success"
-            const message = "User created in Flask:"
-            const filelocation = "admin_to_user_profile_create.js"
-            logging(messagetype,message,filelocation)
-            console.log('User created in Flask:', createdUser);
-        } 
-    } catch (error) {
-        const messagetype = "success"
-        const message = `message:"api endpoint is down -> still userdata hasbeen generated ",error:${error}`
-        const filelocation = "admin_to_user_profile_create.js"
-        logging(messagetype,message,filelocation)
-        return res.status(201).json({message:"api endpoint is down still userdata hasbeen generated ",error:error})
-    }
+    //     if (!response.ok) {
+    //         const errorData = await response.json();
+    //         const messagetype = "error"
+    //         const message = "Error sending data to Flask API:"
+    //         const filelocation = "admin_to_user_profile_create.js"
+    //         logging(messagetype,message,filelocation)
+    //         console.error('Error sending data to Flask API:', errorData.error);
+    //     } else {
+    //         const createdUser = await response.json();
+    //         const messagetype = "success"
+    //         const message = "User created in Flask:"
+    //         const filelocation = "admin_to_user_profile_create.js"
+    //         logging(messagetype,message,filelocation)
+    //         console.log('User created in Flask:', createdUser);
+    //     } 
+    // } catch (error) {
+    //     const messagetype = "success"
+    //     const message = `message:"api endpoint is down -> still userdata hasbeen generated ",error:${error}`
+    //     const filelocation = "admin_to_user_profile_create.js"
+    //     logging(messagetype,message,filelocation)
+    //     return res.status(201).json({message:"api endpoint is down still userdata hasbeen generated ",error:error})
+    // }
     const messagetype = "success"
     const message = `User hasbeen created successfully please check your email for the login details`
     const filelocation = "admin_to_user_profile_create.js"

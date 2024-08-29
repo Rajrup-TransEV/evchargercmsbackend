@@ -15,6 +15,13 @@ const passwordresetlogic = async (req, res) => {
   }
   try {
     const { getuseremail } = req.body;
+    if(!getuseremail){
+      const messagetype = "error"
+      const message = "No value provided for one or more fields."
+      const filelocation = "adminmadeuserauth/resetPasswordlogic.js"
+      logging(messagetype,message,filelocation)
+      return res.status(400).json({ error: 'No value provided for one or more fields.' });
+    }
     const user_password_reset = await prisma.userProfile.findFirstOrThrow({
       where: {
         email: getuseremail,

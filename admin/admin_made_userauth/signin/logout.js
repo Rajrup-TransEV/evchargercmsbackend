@@ -7,7 +7,7 @@ const adminUserLogout = async (req, res) => {
     }
 
     try {
-        return res.status(200).json({ message: "Logout successful. Please remove the token from client storage." });
+        return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Internal server error" });

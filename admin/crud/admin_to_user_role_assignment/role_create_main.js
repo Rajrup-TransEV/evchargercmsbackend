@@ -15,6 +15,13 @@ const createlistofroles = async(req,res)=>{
 }
     try {
         const {rolename,roledesc}=req.body;
+        if(!rolename || !roledesc){
+            const messagetype = "error"
+            const message = "role name and role desc cannot be empty."
+            const filelocation = "role_create_main.js"
+            logging(messagetype,message,filelocation)
+            return res.status(400).json({message:"role name and role desc cannot be empty."});
+        }
         const createroles  = await prisma.assignRoles.create({
             data:{
                 uid:crypto.randomUUID(),

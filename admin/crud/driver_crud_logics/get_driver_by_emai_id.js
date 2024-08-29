@@ -17,6 +17,13 @@ const retrive_vehicle_owener_data_by_email = async(req,res)=>{
     }
     const {get_vehicleoweneremail,uid} = req.body;
     try {
+        if(!get_vehicleoweneremail||!uid){
+            const messagetype = "error"
+            const message = "No values hasbeen provided"
+            const filelocation = "get_driver_by_email.js"
+            logging(messagetype,message,filelocation)
+            return res.status(400).json({message:"No values hasbeen provided"})
+        }
         const get_vo_db = await prisma.assigntovehicleowener.findFirstOrThrow({
             where:{
                 OR:[

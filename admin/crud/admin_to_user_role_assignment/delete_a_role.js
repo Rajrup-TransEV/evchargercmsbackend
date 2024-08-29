@@ -16,6 +16,13 @@ const delete_a_role =  async (req,res)=>{
         const {get_role_id} = req.body;
         if(!get_role_id){
             const messagetype = "error";
+            const message = "give the unique id of the associated role";
+            const filelocation = "delete_a_role.js";
+            logging(messagetype, message, filelocation);
+            return res.status(404).json({message:"give the unique id of the associated role"})
+        }
+        if(!get_role_id){
+            const messagetype = "error";
             const message = "please enter the role id";
             const filelocation = "delete_a_role.js";
             logging(messagetype, message, filelocation);

@@ -18,6 +18,13 @@ const getfindatawithuser = async (req, res) => {
     const { userid, finid } = req.body;
 
     try {
+        if(!userid||!finid){
+            const messagetype = "error"
+            const message = "Fields are required"
+            const filelocation = "financial_data_with_users.js"
+            logging(messagetype,message,filelocation)
+            return res.status(400).json({message:"Fields are required"})
+        }
         // Fetch the financial details along with the associated user profile
         const financialData = await prisma.financial_details.findUnique({
             where: {
