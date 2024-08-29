@@ -16,7 +16,13 @@ const deleteavehicledata = async(req,res)=>{
     }
     const {uid,license,vehicleowenerId}=req.body;
     try {
-        
+        if(!uid||!license||!vehicleowenerId){
+            const messagetype = "error"
+            const message = "Required fields needs to given"
+            const filelocation = "delete_vehicle_data.js"
+            logging(messagetype,message,filelocation)
+            return res.status(400).json({messgae:"Required fields needs to given"})
+        }
         const matchdata = await prisma.assigntovechicles.deleteMany({
             where:{
                 OR:[

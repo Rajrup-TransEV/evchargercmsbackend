@@ -16,13 +16,13 @@ const update_user_role_details = async (req, res) => {
 
     try {
         const { id, userid, uid, rolename, roledesc } = req.body;
-        if(!id || !userid || !uid|| !rolename||!roledesc){
-            const messagetype = "error";
-            const message = "fields cannot be empty";
-            const filelocation = "update_a_role_details.js";
-            logging(messagetype, message, filelocation);
-            return res.status(400).json("fields cannot be empty")
-        }
+        // if(!id || !userid || !uid|| !rolename||!roledesc){
+        //     const messagetype = "error";
+        //     const message = "fields cannot be empty";
+        //     const filelocation = "update_a_role_details.js";
+        //     logging(messagetype, message, filelocation);
+        //     return res.status(400).json("fields cannot be empty")
+        // }
         // Create an object to hold the updated data
         const updateData = {};
 
