@@ -17,7 +17,11 @@ const update_user_role_details = async (req, res) => {
     try {
         const { id, userid, uid, rolename, roledesc } = req.body;
         if(!id || !userid || !uid|| !rolename||!roledesc){
-            return res.status(400).json("no data hasbeen found")
+            const messagetype = "error";
+            const message = "fields cannot be empty";
+            const filelocation = "update_a_role_details.js";
+            logging(messagetype, message, filelocation);
+            return res.status(400).json("fields cannot be empty")
         }
         // Create an object to hold the updated data
         const updateData = {};
@@ -63,6 +67,10 @@ const update_user_role_details = async (req, res) => {
         return res.status(200).json({ message: updatedRole });
     } catch (error) {
         console.error('Error updating user role details:', error);
+        const messagetype = "error";
+        const message = "An error occurred while updating user role details";
+        const filelocation = "update_a_role_details.js";
+        logging(messagetype, message, filelocation);
         return res.status(500).json({ error: 'An error occurred while updating user role details' });
     }
 };

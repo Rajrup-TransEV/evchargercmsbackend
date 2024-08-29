@@ -16,7 +16,7 @@ const createlistofroles = async(req,res)=>{
     try {
         const {rolename,roledesc}=req.body;
         if(!rolename || !roledesc){
-            return res.status(400).json({message:"role name and role desc needs given."});
+            return res.status(400).json({message:"role name and role desc cannot be empty."});
         }
         const createroles  = await prisma.assignRoles.create({
             data:{

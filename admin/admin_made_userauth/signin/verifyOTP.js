@@ -14,7 +14,11 @@ const verifyOtpLogic = async (req, res) => {
   }
   try {
     const { email, otp } = req.body;
-    if(email.length === 0 || otp.length===0){
+    if(!email || !otp){
+      const messagetype = "error"
+      const message = "No value provided for one or more fields."
+      const filelocation = "adminmadeuserauth/verifyOTP.js"
+      logging(messagetype,message,filelocation)
       return res.status(400).json({ error: 'No value provided for one or more fields.' });
     }
     // Retrieve the user profile based on the email

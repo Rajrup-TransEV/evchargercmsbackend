@@ -16,6 +16,10 @@ const resetPasswordLogic = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
     if(!email || !newPassword){
+      const messagetype = "error"
+      const message = "No value provided for one or more fields."
+      const filelocation = "adminmadeuserauth/resetPasswordlogic.js"
+      logging(messagetype,message,filelocation)
       return res.status(400).json({ error: 'No value provided for one or more fields.' });
     }
     // Retrieve the user profile based on the email

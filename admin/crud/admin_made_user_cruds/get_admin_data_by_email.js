@@ -18,7 +18,10 @@ const get_single_admin_data = async (req,res)=>{
 
     const {useremail} = req.body;
     if(!useremail){
-
+        const messagetype = "error"
+        const message = "No value provided for one or more fields."
+        const filelocation = "get_admin_data_by_email.js"
+        logging(messagetype,message,filelocation)
         return res.status(400).json({ error: 'No value provided for one or more fields.' });
       }
     try {
