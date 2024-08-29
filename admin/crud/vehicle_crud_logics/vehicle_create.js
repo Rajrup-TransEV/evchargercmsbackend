@@ -20,6 +20,13 @@ const vehilcle_create = async(req,res)=>{
 
    
     try {
+        if (!vehiclename||!vehiclemodel||!vehiclelicense||!vehicleowner||!vehicletype||!vehiclecategory){
+            const messagetype = "error"
+            const message = "no value provided for required fields"
+            const filelocation = "vehicle_create.js"
+             logging(messagetype,message,filelocation)
+             return res.status(403).json({ message: "no value provided for required fields" });
+        }
         const vehicledatamatch = await prisma.assigntovechicles.findFirst({
             where:{
                     vehiclelicense:vehiclelicense

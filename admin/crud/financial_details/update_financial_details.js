@@ -18,8 +18,11 @@ const updatefinancialdata = async (req,res)=>{
             return res.status(403).json({ message: "API route access forbidden" });
         }
     
-        const {finuid,bank_account_number,isfc_code,bank_name,branch_name,branch_address}=req.body
-    
+        const {finuid,bank_account_number,isfc_code,bank_name,branch_name,branch_address}=req.body;
+        
+        // if(!finuid||!bank_account_number||!isfc_code||!bank_name||!branch_name||!branch_address){
+        //     return res.status(400).json({message:"Required fields value needs to given"})
+        // }
         const getfindatafromdb = await prisma.financial_details.findFirstOrThrow({
             where:{
                 uid:finuid
