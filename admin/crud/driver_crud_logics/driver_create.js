@@ -16,6 +16,13 @@ const createdriver = async(req,res)=>{
     const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,phonenumber,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,vehicleowenerid,vehicleoweneraddress,vehicleowenerrole} = req.body;
     
     try {
+        if(!uid||!vehicleowenerfirstname||!vehicleowenerlastename||!vehicleoweneremail||!phonenumber||!vehicleowenerlicense||!vehicleowenergovdocs||!vehicleowenernationality||!vehicleowenerid||!vehicleoweneraddress||!vehicleowenerrole){
+            const messagetype = "error"
+            const message = "Fields has to given in order to create vehicle owener details"
+            const filelocation = "driver_create.js"
+            logging(messagetype,message,filelocation)
+            return res.status(403).json({ message: "Fields has to given in order to create vehicle owener details" })
+        }
         const getvehicleoweneremail = await prisma.assigntovehicleowener.findFirst({
             where:{
                 OR:[

@@ -17,6 +17,14 @@ const deletevehicleowener = async(req,res)=>{
     const {uid,vehicleoweneremail} =  req.body;
 
     try {
+        if(!vehicleoweneremail){
+            const messagetype = "error"
+            const message = "Required fields needs to given"
+            const filelocation = "delete_driver.js"
+            logging(messagetype,message,filelocation)
+            return res.status(400).json({message:"Required fields needs to given"})
+        }
+
         const deletedata = await prisma.assigntovehicleowener.findUniqueOrThrow({
             where:{
                 vehicleoweneremail:vehicleoweneremail,

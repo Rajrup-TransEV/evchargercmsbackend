@@ -17,8 +17,16 @@ const edit_charger_details = async (req, res) => {
     }
 
     const { uid } = req.body; // Assuming the UID is passed in the request body
-
+   
     try {
+        //null handeling
+        if(!uid){
+            const messagetype = "error"
+            const message = "Charger id is required to update fields"
+            const filelocation = "edit_chargerunit_ops.js"
+            logging(messagetype,message,filelocation)
+            return res.status(400).json({ message: "Charger id is required to update fields" });
+        }
         // Find the charger by UID
         const charger = await prisma.charger_Unit.findFirstOrThrow({
             where: { uid }
