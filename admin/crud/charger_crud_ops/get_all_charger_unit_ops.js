@@ -22,7 +22,7 @@ const get_all_charger= async(req,res)=>{
         const chargeranals = await prisma.analytics.create({
             data:{
                 uid:crypto.randomUUID(),
-                countofchargerunits:chargercount
+                countofchargerunits:chargercount.toString()
             }
         })
         const messagetype = "success"
