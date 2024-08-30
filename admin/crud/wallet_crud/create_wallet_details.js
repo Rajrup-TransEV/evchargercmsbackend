@@ -17,6 +17,14 @@ const create_wallet_details = async (req, res) => {
         }
 
         const { userid } = req.body;
+        //add null exception handeling
+        if(!userid){
+            const messagetype = "error";
+            const message = "User id not needs to give in order to perform operation";
+            const filelocation = "create_wallet_details.js";
+            logging(messagetype, message, filelocation);
+            return res.status(400),json({message:"User id not needs to give in order to perform operation"})
+        }
         let price = "0";
         
         // Check if the user exists in appUserProfile

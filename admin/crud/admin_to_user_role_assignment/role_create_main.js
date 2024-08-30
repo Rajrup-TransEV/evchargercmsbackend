@@ -15,7 +15,7 @@ const createlistofroles = async(req,res)=>{
 }
     try {
         const {rolename,roledesc}=req.body;
-        if(!rolename || !roledesc){
+        if(rolename==="" || roledesc===""){
             const messagetype = "error"
             const message = "role name and role desc cannot be empty."
             const filelocation = "role_create_main.js"

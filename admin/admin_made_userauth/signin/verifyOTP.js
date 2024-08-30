@@ -14,7 +14,7 @@ const verifyOtpLogic = async (req, res) => {
   }
   try {
     const { email, otp } = req.body;
-    if(!email || !otp){
+    if(email==="" || otp===""){
       const messagetype = "error"
       const message = "No value provided for one or more fields."
       const filelocation = "adminmadeuserauth/verifyOTP.js"

@@ -15,7 +15,7 @@ const resetPasswordLogic = async (req, res) => {
   }
   try {
     const { email, newPassword } = req.body;
-    if(!email || !newPassword){
+    if(email==="" || newPassword===""){
       const messagetype = "error"
       const message = "No value provided for one or more fields."
       const filelocation = "adminmadeuserauth/resetPasswordlogic.js"

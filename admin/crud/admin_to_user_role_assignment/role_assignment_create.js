@@ -19,7 +19,7 @@ const associateRoleToUser = async (req, res) => {
         const { userid, roleid } = req.body;
        
         // Validate input
-        if (!userid || !roleid) {
+        if (userid==="" || roleid==="") {
             const messagetype = "error";
             const message = "User ID and Role ID are required to assign the role.";
             const filelocation = "role_assignment_create.js";

@@ -14,9 +14,20 @@ const rechargewallet = async (req, res) => {
       return res.status(403).json({ message: "API route access forbidden" });
   }
   const { userid, walletid, price } = req.body;
-
+  //null exception handeling
+  if(!userid||!walletid||!price){
+    const messagetype = "error"
+    const message = "Fields cannot be empty"
+    const filelocation = "init_wallet_recharge.js"
+    logging(messagetype,message,filelocation)
+    return res.status(400).json({message:"Fields cannot be empty"})
+  }
   // Validate the recharge amount
   if (price <= 100) {
+    const messagetype = "error"
+    const message = "Price cannot be less than 100 or negative"
+    const filelocation = "init_wallet_recharge.js"
+    logging(messagetype,message,filelocation)
     return res.status(400).json({ message: "Price cannot be less than 100 or negative" });
   }
 
