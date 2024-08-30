@@ -15,7 +15,7 @@ const rechargewallet = async (req, res) => {
   }
   const { userid, walletid, price } = req.body;
   //null exception handeling
-  if(!userid||!walletid||!price){
+  if(userid===""||walletid===""||price===""){
     const messagetype = "error"
     const message = "Fields cannot be empty"
     const filelocation = "init_wallet_recharge.js"
