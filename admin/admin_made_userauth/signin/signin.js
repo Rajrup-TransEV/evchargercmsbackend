@@ -17,7 +17,7 @@ const adminuserlogin = async (req, res) => {
     }
 
     const { phone, email, password } = req.body;
-    if (!phone || !email || !password){
+    if (phone==="" || email==="" || password===""){
         const messagetype = "error"
         const message = "No value provided for one or more fields."
         const filelocation = "adminmadeuserauth/signin.js"

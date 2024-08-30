@@ -14,19 +14,12 @@ const delete_a_role =  async (req,res)=>{
   }
     try {
         const {get_role_id} = req.body;
-        if(!get_role_id){
+        if(get_role_id===""){
             const messagetype = "error";
             const message = "give the unique id of the associated role";
             const filelocation = "delete_a_role.js";
             logging(messagetype, message, filelocation);
             return res.status(404).json({message:"give the unique id of the associated role"})
-        }
-        if(!get_role_id){
-            const messagetype = "error";
-            const message = "please enter the role id";
-            const filelocation = "delete_a_role.js";
-            logging(messagetype, message, filelocation);
-            return res.status(400).json({message:"please enter the role id"})
         }
     const delete_role = await prisma.assignRoles.delete({
         where:{

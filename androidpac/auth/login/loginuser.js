@@ -12,7 +12,9 @@ export const loginUser = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
     const { username, email, password } = req.body;
+    // if(!username||!email||!password){
 
+    // }
     try {
         const existingUser = await prisma.user.findUnique({
             where: {

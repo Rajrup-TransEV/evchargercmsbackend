@@ -15,7 +15,7 @@ const get_user_by_role = async(req,res)=>{
 }
     try {
         const {get_the_unique_id} = req.body;
-        if(!get_the_unique_id){
+        if(get_the_unique_id===""){
             const messagetype = "error";
             const message = "give the unique id of user profile to get the associated role";
             const filelocation = "get_user_details_by_role.js";

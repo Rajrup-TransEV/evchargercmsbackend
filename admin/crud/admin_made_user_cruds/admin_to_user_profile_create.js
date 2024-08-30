@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
 import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
+import validateEmailrecep from "../../../lib/emailrecepverify.js";
 
 
 const prisma = new PrismaClient()
@@ -19,14 +20,22 @@ const prisma = new PrismaClient()
     }
 
     const {firstname,lastname,email,phonenumber,password,role,designation,address}= req.body;
-    // console.log(req.body)
-    if(!firstname|| !lastname||!phonenumber ||! email || !password||!role||!designation||!address){
+   
+    if(validateEmailrecep(email)){
+      const messagetype = "error"
+      const message = "You're using a bot email - supported email ext - gmail , outlook , protonmail"
+      const filelocation = "admin_to_user_profile_create.js"
+      logging(messagetype,message,filelocation)
+      return res.status(400).json({message:"You're using a bot email - supported email ext - gmail , outlook , protonmail"})
+    }
+    if(firstname === ""|| lastname===""||phonenumber==="" ||email==="" || password===""|| role===""|| designation===""|| address===""){
       const messagetype = "error"
       const message = "No value provided for one or more fields."
       const filelocation = "admin_to_user_profile_create.js"
       logging(messagetype,message,filelocation)
         return res.status(400).json({ error: 'No value provided for one or more fields.' });
       }
+    
     try {
         const findExistingUser = await prisma.userProfile.findFirst({
             where: {
@@ -113,7 +122,7 @@ const prisma = new PrismaClient()
         }
         const to=email
         const subject  = "Your email and password for login in service"
-        const text = `Hello - ${firstname} Your email is - ${email} and password is -> ${password} for login to the dashboard,</br> your role is - ${role} . Thanks for choosing our service`
+        const text = `Hello - ${firstname} Your email is - ${email} and password is -> ${password} for login to the dashboard, your role is - ${role} . Thanks for choosing our service`
     // Add the email job to the queue
     console.log('Adding email job to queue:', { to, subject, text });
     await emailQueue.add({ to, subject, text }, {
