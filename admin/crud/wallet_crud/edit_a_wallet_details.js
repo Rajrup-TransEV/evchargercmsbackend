@@ -17,7 +17,14 @@ const edit_wallet = async (req, res) => {
         }
 
         const { walletid, balance, iswalletrechargedone, recharger_made_by_which_user } = req.body;
-
+        //     // null exception handeling
+        // if(walletid===""||balance===""||iswalletrechargedone===""||recharger_made_by_which_user===""){
+        //     const messagetype = "error";
+        //     const message = "API route access error";
+        //     const filelocation = "edit_wallet_details.js";
+        //     logging(messagetype, message, filelocation);
+        //     return res.status(400).json({ message: "Required fields " });
+        // }
         // Find the wallet by ID
         const findWallet = await prisma.wallet.findUnique({
             where: { uid: walletid },

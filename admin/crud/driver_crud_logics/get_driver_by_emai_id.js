@@ -17,7 +17,7 @@ const retrive_vehicle_owener_data_by_email = async(req,res)=>{
     }
     const {get_vehicleoweneremail,uid} = req.body;
     try {
-        if(!get_vehicleoweneremail||!uid){
+        if(get_vehicleoweneremail===""||uid===""){
             const messagetype = "error"
             const message = "No values hasbeen provided"
             const filelocation = "get_driver_by_email.js"

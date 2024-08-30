@@ -17,7 +17,7 @@ const deletevehicleowener = async(req,res)=>{
     const {uid,vehicleoweneremail} =  req.body;
 
     try {
-        if(!vehicleoweneremail){
+        if(vehicleoweneremail===""){
             const messagetype = "error"
             const message = "Required fields needs to given"
             const filelocation = "delete_driver.js"

@@ -20,13 +20,13 @@ const updateuserdata = async (req, res) => {
 
     const { uid } = req.body; // Assuming the UID is passed in the request body
     const { firstname, lastname, email, password, address, phonenumber, role, designation } = req.body;
-    if(uid ==="" ||firstname===""|| lastname===""||phonenumber==="" || email==="" || password===""||role===""||designation===""||address===""){
-        const messagetype = "error"
-        const message = "No value provided for one or more fields."
-        const filelocation = "update_admin_made_users.js"
-        logging(messagetype,message,filelocation)
-        return res.status(400).json({ error: 'No value provided for one or more fields.' });
-    }
+    // if(uid ==="" ||firstname===""|| lastname===""||phonenumber==="" || email==="" || password===""||role===""||designation===""||address===""){
+    //     const messagetype = "error"
+    //     const message = "No value provided for one or more fields."
+    //     const filelocation = "update_admin_made_users.js"
+    //     logging(messagetype,message,filelocation)
+    //     return res.status(400).json({ error: 'No value provided for one or more fields.' });
+    // }
     try {
         // Find the user profile by UID
         const userProfile = await prisma.userProfile.findFirstOrThrow({

@@ -31,8 +31,8 @@ const updateVehicleOwnerData = async (req, res) => {
     } = req.body;
 
     try {
-        // if(!uid||!vehicleoweneremail||!phonenumber||!vehicleowenerfirstname||!vehicleowenerlastename||!vehicleowenerlicense||!vehicleowenergovdocs||!vehicleowenernationality||!vehicleowenerid||!vehicleoweneraddress||!vehicleowenerrole){
-        //     const messagetype = "error"
+        // if(uid===""||vehicleoweneremail===""||phonenumber===""||vehicleowenerfirstname===""||vehicleowenerlastename===""||vehicleowenerlicense===""||vehicleowenergovdocs===""||vehicleowenernationality===""||vehicleowenerid===""||vehicleoweneraddress===""||vehicleowenerrole===""){
+        // const messagetype = "error"
         // const message = "required fields needs to given"
         // const filelocation = "update_driver.js"
         // logging(messagetype,message,filelocation)

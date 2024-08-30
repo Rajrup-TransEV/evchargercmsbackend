@@ -18,7 +18,7 @@ const getfindatawithuser = async (req, res) => {
     const { userid, finid } = req.body;
 
     try {
-        if(!userid||!finid){
+        if(userid===""||finid===""){
             const messagetype = "error"
             const message = "Fields are required"
             const filelocation = "financial_data_with_users.js"

@@ -16,7 +16,7 @@ const createdriver = async(req,res)=>{
     const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,phonenumber,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,vehicleowenerid,vehicleoweneraddress,vehicleowenerrole} = req.body;
     
     try {
-        if(!uid||!vehicleowenerfirstname||!vehicleowenerlastename||!vehicleoweneremail||!phonenumber||!vehicleowenerlicense||!vehicleowenergovdocs||!vehicleowenernationality||!vehicleowenerid||!vehicleoweneraddress||!vehicleowenerrole){
+        if(uid===""||vehicleowenerfirstname===""||vehicleowenerlastename===""||vehicleoweneremail===""||phonenumber===""||vehicleowenerlicense===""||vehicleowenergovdocs===""||vehicleowenernationality===""||vehicleowenerid===""||vehicleoweneraddress===""||vehicleowenerrole===""){
             const messagetype = "error"
             const message = "Fields has to given in order to create vehicle owener details"
             const filelocation = "driver_create.js"

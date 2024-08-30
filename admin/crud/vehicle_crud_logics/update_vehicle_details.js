@@ -20,6 +20,13 @@ const update_vehicle_details = async (req, res) => {
     const { vehiclename, vehiclemodel, vehiclelicense, vehicleowner, vehiclecategory, vehicletype, isvehicleassigned } = req.body;
 
     try {
+        // if(vehiclename===""||vehiclemodel===""||vehiclelicense===""||vehicleowner===""||vehiclecategory===""||vehicletype===""||isvehicleassigned===""){
+        //     const messagetype = "error"
+        //     const message = "vehicle data needs to give in oder to create a vehicle"
+        //     const filelocation = "update_vehicle_assign.js"
+        //     logging(messagetype,message,filelocation)
+        //     return res.status(400).json({message:"vehicle data needs to give in oder to create a vehicle"})
+        // }
         // Find the vehicle profile by UID
         const vehicleProfile = await prisma.assigntovechicles.findUnique({
             where: { uid }

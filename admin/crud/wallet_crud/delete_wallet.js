@@ -13,7 +13,7 @@ const deletewalletdata = async(req,res)=>{
     }
     const {walletid} = req.body;
     try {
-        if(!walletid){
+        if(walletid===""){
             const messagetype = "error";
             const message = "wallet id is required to delete the wallet";
             const filelocation = "delete_wallet.js";

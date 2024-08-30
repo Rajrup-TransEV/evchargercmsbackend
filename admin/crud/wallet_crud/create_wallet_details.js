@@ -18,7 +18,7 @@ const create_wallet_details = async (req, res) => {
 
         const { userid } = req.body;
         //add null exception handeling
-        if(!userid){
+        if(userid===""){
             const messagetype = "error";
             const message = "User id not needs to give in order to perform operation";
             const filelocation = "create_wallet_details.js";

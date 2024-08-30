@@ -16,7 +16,7 @@ const deleteavehicledata = async(req,res)=>{
     }
     const {uid,license,vehicleowenerId}=req.body;
     try {
-        if(!uid||!license||!vehicleowenerId){
+        if(uid===""||license===""||vehicleowenerId===""){
             const messagetype = "error"
             const message = "Required fields needs to given"
             const filelocation = "delete_vehicle_data.js"

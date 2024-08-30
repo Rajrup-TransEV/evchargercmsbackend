@@ -18,7 +18,7 @@ const delete_charger_units = async (req, res) => {
 
     try {
         // Validate that the UID is provided
-        if (!uid) {
+        if (uid==="") {
             const messagetype = "error"
             const message = "Charger UID is required"
             const filelocation = "delete_charger_units.js"
