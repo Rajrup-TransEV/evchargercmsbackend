@@ -20,7 +20,7 @@ const edit_charger_details = async (req, res) => {
    
     try {
         //null handeling
-        if(!uid){
+        if(uid===""){
             const messagetype = "error"
             const message = "Charger id is required to update fields"
             const filelocation = "edit_chargerunit_ops.js"

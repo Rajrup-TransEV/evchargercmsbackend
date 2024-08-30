@@ -19,7 +19,7 @@ const add_user_financial_details = async (req, res) => {
     const { userid, bank_account_number, isfc_code, bank_name, branch_name, branch_address } = req.body;
 
     // Validate input
-    if (!userid || !bank_account_number || !isfc_code || !bank_name || !branch_name || !branch_address) {
+    if (userid==="" || bank_account_number==="" || isfc_code==="" || bank_name==="" || branch_name==="" || branch_address==="") {
         const messagetype = "error"
         const message = "All fields are required."
         const filelocation = "create_admin_financial_details.js"

@@ -26,7 +26,7 @@ const assignVehicleToDriver = async (req, res) => {
             },
         });
 
-        if (!vehicle || vehicle.vehicletype === 'broken') {
+        if (!vehicle) {
             const messagetype = "error";
             const message = "Vehicle is not available for assignment";
             const filelocation = "vehicle_assign.js";
@@ -98,7 +98,7 @@ const assignDriverToVehicle = async (req, res) => {
             },
         });
 
-        if (!vehicle || vehicle.vehicletype === 'broken') {
+        if (!vehicle) {
             const messagetype = "error";
             const message = "Vehicle is not available for assignment";
             const filelocation = "vehicle_assign.js";

@@ -18,7 +18,7 @@ const user_who_bought_the_charger_details =  async(req, res) => {
     const {get_charger_id,get_user_id}  =  req.body;
 
     try {
-        if(!get_charger_id||!get_user_id){
+        if(get_charger_id===""||get_user_id===""){
             const messagetype = "error"
             const message = "charger id and user id required"
             const filelocation = "user_who_bought_which_charger.js"

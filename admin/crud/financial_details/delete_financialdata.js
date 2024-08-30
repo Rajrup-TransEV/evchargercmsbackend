@@ -16,6 +16,15 @@ const deletefinancialdata = async (req,res)=>{
             return res.status(403).json({ message: "API route access forbidden" });
         }
         const {finuid}  = req.body;
+
+        if(finuid===""){
+            const messagetype = "error"
+            const message = "Financial id needs to give to delete the data"
+            const filelocation = "delete_financialdata.js"
+            logging(messagetype,message,filelocation)
+            return res.sttaus(400).json({message:"Financial id needs to give to delete the data"})
+        }
+
         const deltedata = await prisma.financial_details.delete({
             where:{
                 uid:finuid,
