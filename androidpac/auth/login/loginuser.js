@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import emailQueue from "../../../lib/emailqueue.js";
+import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 
@@ -9,12 +10,20 @@ export const loginUser = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "androidpac/loginuser.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
     const { username, email, password } = req.body;
-    // if(!username||!email||!password){
-
-    // }
+    if(username===""||email===""||password===""){
+        const messagetype = "error"
+        const message = "Required fields needs to given"
+        const filelocation = "androidpac/loginuser.js"
+        logging(messagetype,message,filelocation)
+        return res.status(400).json({message:"Required fields needs to given"})
+    }
     try {
         const existingUser = await prisma.user.findUnique({
             where: {
@@ -31,6 +40,10 @@ export const loginUser = async (req, res) => {
             }
         });
         if (!existingUser) {
+            const messagetype = "error"
+            const message = "Wrong credentials"
+            const filelocation = "androidpac/loginuser.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json({ message: "Wrong credentials" });
         }
 
@@ -39,6 +52,10 @@ export const loginUser = async (req, res) => {
             existingUser.password
         );
         if (!checkPassword) {
+            const messagetype = "error"
+            const message = "Password does not match. Failed to login."
+            const filelocation = "androidpac/loginuser.js"
+            logging(messagetype,message,filelocation)
             return res.status(404).json({ message: "Password does not match. Failed to login." });
         }
 
@@ -65,10 +82,17 @@ export const loginUser = async (req, res) => {
                   attempts: 5, // Number of retry attempts
                   backoff: 10000 // Wait 10 seconds before retrying
               });
-
+              const messagetype = "success"
+              const message = "OTP sent to your email for two-step authentication."
+              const filelocation = "androidpac/loginuser.js"
+              logging(messagetype,message,filelocation)
         return res.status(201).json({ message: "OTP sent to your email for two-step authentication." });
     } catch (err) {
         console.log(err);
+        const messagetype = "error"
+        const message = `Error ${err}`
+        const filelocation = "androidpac/loginuser.js"
+        logging(messagetype,message,filelocation)
         return res.status(500).json({ message: "Internal server error." });
     }
 };

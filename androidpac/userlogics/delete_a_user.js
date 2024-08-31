@@ -5,9 +5,24 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const delete_user_data  =  async(req,res)=>{
-   
+    const apiauthkey = req.headers['apiauthkey'];
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "delete_a_user.js"
+        logging(messagetype,message,filelocation)
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
+    const {userid,email}=req.body
     try {
-        const {userid,email}=req.body
+        if(userid===""||email===""){
+            const messagetype = "error"
+            const message = "Necessary fields cannot be empty"
+            const filelocation = "delete_a_user.js"
+            logging(messagetype,message,filelocation)
+            return res.status(400).json({message:"Necessary fields cannot be empty"})
+        }
         const get_user_data = await prisma.user.deleteMany({
             where:{
                 OR:[
