@@ -1,5 +1,6 @@
 //normal user update data
 import { Prisma, PrismaClient } from "@prisma/client";
+import logging from "../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,10 @@ const normaluserupdate = async (req, res) => {
     
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error"
+        const message = "API route access error"
+        const filelocation = "updateuserdata.js"
+        logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
@@ -49,11 +54,11 @@ const normaluserupdate = async (req, res) => {
         return res.status(200).json({ message: "User updated successfully", user: updatedUser });
 
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            // Handle known Prisma errors
-            return res.status(400).json({ message: error.message });
-        }
-        return res.status(500).json({ message: "An error occurred while updating the user", error: error.message });
+        const messagetype = "error"
+        const message = `An error occurred while updating the user -- ${error}`
+        const filelocation = "updateuserdata.js"
+        logging(messagetype,message,filelocation)
+        return res.status(500).json({ message: "An error occurred while updating the user", error: error });
     }
 };
 
