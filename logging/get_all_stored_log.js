@@ -26,7 +26,7 @@ const get_all_logs = async(req,res)=>{
             return res.status(200).json({ message: "All of the listed roles", data: getcacheddata });
         }
         const alllogdata = await prisma.logRetention.findMany()
-        await setCache("allcachedlogs",alllogdata,520)
+        await setCache("allcachedlogs",alllogdata,4600)
         const messagetype = "success";
         const message = "All of the logs data";
         const filelocation = "get_all_of_the_role.js";
