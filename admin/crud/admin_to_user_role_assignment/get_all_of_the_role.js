@@ -1,6 +1,7 @@
 // get all of the roles assigned to all of the users
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import { getCache, setCache } from "../../../utils/cacheops.js";
 const prisma = new PrismaClient();
 
 const get_all_roles = async(req,res)=>{
@@ -14,6 +15,14 @@ const get_all_roles = async(req,res)=>{
     return res.status(403).json({ message: "API route access forbidden" });
 }
   try {
+    const getcaheddata = await getCache("allcachedroles")
+    if(getcaheddata){
+      const messagetype = "success";
+      const message = "Data retrieved from cache";
+      const filelocation = "get_all_of_the_role.js";
+      logging(messagetype, message, filelocation);
+      return res.status(200).json({ message: "All of the listed roles", data: getcaheddata });
+    }
     const countofroles = await prisma.assignRoles.count();
     try {
       const insertcountofroles = await prisma.analytics.create({
@@ -41,6 +50,7 @@ const get_all_roles = async(req,res)=>{
       logging(messagetype, message, filelocation);
         return res.status(404).json({message:"no data found in database please assign one first"})
     }
+    await setCache("allcachedroles",allroles,3600)
     const messagetype = "success";
     const message = "Get all of the data hasbeen added";
     const filelocation = "get_all_of_the_role.js";
