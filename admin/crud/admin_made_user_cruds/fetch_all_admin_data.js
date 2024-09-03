@@ -1,6 +1,7 @@
 //fetch all admin user data created by superuser
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import { getCache, setCache } from "../../../utils/cacheops.js";
 const prisma = new PrismaClient();
 
 const alladminuserdata=async (req,res)=>{
@@ -16,6 +17,17 @@ const alladminuserdata=async (req,res)=>{
     }
 
     try {
+        //check from redis cache first
+        const cacheddata=await getCache("all_admin_user_data");
+        if(cacheddata){
+            const messagetype = "success"
+            const message = "data retrive from cache"
+            const filelocation = "fetch_all_admin_data.js";
+            logging(messagetype,message,filelocation)
+            return res.status(200).json({
+                message:"Received data", data: cacheddata
+            })
+        }
         //analytics logic
         try {
             const userproflecount = await prisma.userProfile.count()
@@ -47,6 +59,7 @@ const alladminuserdata=async (req,res)=>{
             logging(messagetype,message,filelocation)
             return res.status(503).json("There is not much data to show")
         }
+        await setCache("all_admin_user_data",fetchalldata,3600)
         const messagetype = "success"
         const message = "list of admin data"
         const filelocation = "fetch_all_admin_data.js"
