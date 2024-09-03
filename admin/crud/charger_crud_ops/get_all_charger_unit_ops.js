@@ -2,7 +2,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
-
+import { getCache, setCache } from "../../../utils/cacheops.js";
 const prisma = new PrismaClient();
 
 
@@ -17,26 +17,14 @@ const get_all_charger= async(req,res)=>{
       return res.status(403).json({ message: "API route access forbidden" });
   }
     try {
-        // try {
-        // const chargercount =  await prisma.charger_Unit.count();
-        // const chargeranals = await prisma.analytics.create({
-        //     data:{
-        //         uid:crypto.randomUUID(),
-        //         countofchargerunits:chargercount.toString()
-        //     }
-        // })
-        // const messagetype = "success"
-        // const message = `Count of chargers ${chargercount}`
-        // const filelocation = "get_all_charger_unit_ops.js"
-        // logging(messagetype,message,filelocation)
-        // } catch (error) {
-        //         console.log(error)   
-        //         const messagetype = "error"
-        //         const message =`${error}`
-        //         const filelocation = "get_all_charger_unit_ops.js"
-        //         logging(messagetype,message,filelocation) 
-        // }
-        
+        const cacheddata = await getCache("all_charger_units");
+        if(cacheddata){
+            const messagetype = "success";
+            const message = "Data retrieved from cache";
+            const filelocation = "get_all_charger_unit_ops.js";
+            logging(messagetype, message, filelocation);
+            return res.status(200).json({ message: "List of charger data is coming", data: cacheddata });
+        }
         const get_all_charger_assigned=await prisma.charger_Unit.findMany()
         if(!get_all_charger_assigned){
             const messagetype = "error"
@@ -45,6 +33,7 @@ const get_all_charger= async(req,res)=>{
             logging(messagetype,message,filelocation)
             return res.status(503).json("something went worng please try again soon")
         }
+        await setCache("all_charger_units", get_all_charger_assigned, 3600); // Cache for 1 hour
         const messagetype = "success"
         const message = "List of charger data is coming"
         const filelocation = "get_all_charger_unit_ops.js"
