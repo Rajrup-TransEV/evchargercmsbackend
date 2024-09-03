@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
 import validateEmailrecep from "../../../lib/emailrecepverify.js";
+import { getCache, setCache } from "../../../utils/cacheops.js";
 
 
 const prisma = new PrismaClient()
@@ -21,13 +22,13 @@ const prisma = new PrismaClient()
 
     const {firstname,lastname,email,phonenumber,password,role,designation,address}= req.body;
    
-    if(validateEmailrecep(email)){
-      const messagetype = "error"
-      const message = "You're using a bot email - supported email ext - gmail , outlook , protonmail"
-      const filelocation = "admin_to_user_profile_create.js"
-      logging(messagetype,message,filelocation)
-      return res.status(400).json({message:"You're using a bot email - supported email ext - gmail , outlook , protonmail"})
-    }
+    // if(validateEmailrecep(email)){
+    //   const messagetype = "error"
+    //   const message = "You're using a bot email - supported email ext - gmail , outlook , protonmail"
+    //   const filelocation = "admin_to_user_profile_create.js"
+    //   logging(messagetype,message,filelocation)
+    //   return res.status(400).json({message:"You're using a bot email - supported email ext - gmail , outlook , protonmail"})
+    // }
     if(firstname === ""|| lastname===""||phonenumber==="" ||email==="" || password===""|| role===""|| designation===""|| address===""){
       const messagetype = "error"
       const message = "No value provided for one or more fields."
@@ -37,6 +38,18 @@ const prisma = new PrismaClient()
       }
     
     try {
+      //check the data from redis cache first then look somewhere else
+      const cacheddata =  await getCache("userprofileemail");
+      if(cacheddata){
+        const messagetype = "success";
+        const message = "Data retrieved from cache";
+        const filelocation = "get_admin_data_by_email.js";
+        logging(messagetype, message, filelocation);
+        return res.status(200).json({
+          message:"Requested data is", data:cacheddata
+        })
+      }
+    //if not cache then query the data from database
         const findExistingUser = await prisma.userProfile.findFirst({
             where: {
                 OR: [
@@ -49,6 +62,7 @@ const prisma = new PrismaClient()
                 phonenumber: true
             }
         });
+        await setCache("userprofileemail",findExistingUser,3600)
         if (findExistingUser){
             const messagetype = "error"
             const message = "One of user's details already exists , email ,phone"
@@ -129,49 +143,6 @@ const prisma = new PrismaClient()
         attempts: 5, // Number of retry attempts
         backoff: 10000 // Wait 10 seconds before retrying
     });
-    const userData = {
-        uid: createadminprofile.uid,
-        firstname: createadminprofile.firstname,
-        lastname: createadminprofile.lastname,
-        email: createadminprofile.email,
-        phonenumber: createadminprofile.phonenumber,
-        role: createadminprofile.role,
-        designation: createadminprofile.designation,
-        address: createadminprofile.address
-    };
-    // const externaluri = process.env.EXTERNAL_URI
-    // const concaturi = externaluri + "/users"
-    // try {
-    //     const response = await fetch(`${concaturi}`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(userData)
-    //     });
-        
-    //     if (!response.ok) {
-    //         const errorData = await response.json();
-    //         const messagetype = "error"
-    //         const message = "Error sending data to Flask API:"
-    //         const filelocation = "admin_to_user_profile_create.js"
-    //         logging(messagetype,message,filelocation)
-    //         console.error('Error sending data to Flask API:', errorData.error);
-    //     } else {
-    //         const createdUser = await response.json();
-    //         const messagetype = "success"
-    //         const message = "User created in Flask:"
-    //         const filelocation = "admin_to_user_profile_create.js"
-    //         logging(messagetype,message,filelocation)
-    //         console.log('User created in Flask:', createdUser);
-    //     } 
-    // } catch (error) {
-    //     const messagetype = "success"
-    //     const message = `message:"api endpoint is down -> still userdata hasbeen generated ",error:${error}`
-    //     const filelocation = "admin_to_user_profile_create.js"
-    //     logging(messagetype,message,filelocation)
-    //     return res.status(201).json({message:"api endpoint is down still userdata hasbeen generated ",error:error})
-    // }
     const messagetype = "success"
     const message = `User hasbeen created successfully please check your email for the login details`
     const filelocation = "admin_to_user_profile_create.js"

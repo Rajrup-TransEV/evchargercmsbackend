@@ -1,6 +1,7 @@
 //  get user profile data by email
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import { getCache, setCache } from "../../../utils/cacheops.js";
 const prisma = new PrismaClient();
 
 
@@ -25,6 +26,16 @@ const get_single_admin_data = async (req,res)=>{
         return res.status(400).json({ error: 'No value provided for one or more fields.' });
       }
     try {
+        //check redis cache first then do other things
+        const cacheddata = await getCache("userprofileemail")
+        if(cacheddata){
+            const messagetype = "success";
+            const message = "Data retrieved from cache";
+            const filelocation = "get_admin_data_by_email.js";
+            logging(messagetype, message, filelocation);
+            return res.status(200).json({ message: "Requested data is ", data: cacheddata });
+        }
+        // Fetch data from the database
         const get_from_db = await prisma.userProfile.findFirstOrThrow({
             where:{
                 email:useremail
@@ -43,6 +54,8 @@ const get_single_admin_data = async (req,res)=>{
                 updatedAt:true,
             }
         })
+          // Store the result in Redis cache
+          await setCache(useremail, get_from_db, 3600); // Cache for 1 hour
         if(!get_from_db){
             const messagetype = "error"
             const message = "data not found"
