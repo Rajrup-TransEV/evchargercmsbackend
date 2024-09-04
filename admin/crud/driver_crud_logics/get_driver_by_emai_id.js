@@ -1,6 +1,7 @@
 //retrive vehicle owener data by their email address
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import { getCache, setCache } from "../../../utils/cacheops.js";
 
 const prisma = new PrismaClient();
 
@@ -49,6 +50,7 @@ const retrive_vehicle_owener_data_by_email = async(req,res)=>{
         const message = `Vehicle owener data by email ${JSON.stringify(get_vo_db)}`
         const filelocation = "get_driver_by_email.js"
         logging(messagetype,message,filelocation)
+        await setCache
         return res.status(200).json({message:"All of the data",data:get_vo_db})
     } catch (error) {
         console.log(error)
