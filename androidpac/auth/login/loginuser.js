@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 
 export const loginUser = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
+    console.log("apikey is for login user",apiauthkey)
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
         const messagetype = "error"
@@ -93,6 +94,6 @@ export const loginUser = async (req, res) => {
         const message = `Error ${err}`
         const filelocation = "androidpac/loginuser.js"
         logging(messagetype,message,filelocation)
-        return res.status(500).json({ message: "Internal server error." });
+        return res.status(500).json({ message: "Internal server error." ,error:err});
     }
 };

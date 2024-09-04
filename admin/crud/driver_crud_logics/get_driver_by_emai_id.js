@@ -47,7 +47,7 @@ const retrive_vehicle_owener_data_by_email = async(req,res)=>{
             }
         })
         const messagetype = "success"
-        const message = `Vehicle owener data by email ${JSON.stringify(get_vo_db)}`
+        const message = `Vehicle owener data by email ${get_vo_db}`
         const filelocation = "get_driver_by_email.js"
         logging(messagetype,message,filelocation)
         await setCache
