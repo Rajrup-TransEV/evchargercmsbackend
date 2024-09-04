@@ -27,6 +27,13 @@ const verifyloginOTP = async (req, res) => {
         const user = await prisma.user.findUnique({
             where: {
                 email: email
+            },select:{
+                uid:true,
+                userType:true,
+                email:true,
+                emailVerified:true,
+                otpExpiration:true,
+                otp:true
             }
         });
 
@@ -68,18 +75,18 @@ const verifyloginOTP = async (req, res) => {
                 otpExpiration: null
             }
         });
-        const messagetype = "error"
-        const message = "Invalid or expired OTP."
+        const messagetype = "success"
+        const message = "Login successful"
         const filelocation = "androidpac/verifylogin.js"
         logging(messagetype,message,filelocation)
-        return res.status(200).json({ message: "Login successful", authtoken: token });
+        return res.status(200).json({ message: "Login successful", authtoken: token, usertype:user.userType });
     } catch (err) {
         console.log("Error verifying OTP:", err);
         const messagetype = "error"
         const message = `Internal server error occurred - details - ${err}`
         const filelocation = "androidpac/verifylogin.js"
         logging(messagetype,message,filelocation)
-        return res.status(500).json({ message: "Internal server error." });
+        return res.status(500).json({ message: "Internal server error." ,error:err});
     }
 };
 
