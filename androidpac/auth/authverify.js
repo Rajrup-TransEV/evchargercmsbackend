@@ -7,10 +7,9 @@ export const verifyuser=async(req,res)=>{
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
       return res.status(403).json({ message: "API route access forbidden" });
   }
-    const cookies = cookie.parse(req.headers.cookie || '');
-
+    const cookies = req.body //cookie.parse(req.headers.cookie || '');
     // Check if cookies are present
-    if (!cookies || !cookies.token || !cookies.refresh_token) {
+    if (!cookies) {
         return res.status(401).json({ message: 'Unauthorized user' });
     }
 
@@ -19,7 +18,7 @@ export const verifyuser=async(req,res)=>{
     try {
         // Verify the JWT token
         if (token) {
-            const user = jwt.verify(token, SECRET_KEY);
+            const user = jwt.verify(token, process.env.JWT_SECRET);
             return res.status(200).json({
                 message: 'Token verified successfully',
                 user: user // Send user information back
