@@ -36,8 +36,15 @@ const asssign_buy_charger = async(req,res)=>{
     try {
              // Validate the input data
              if (!chargerbuyer) {
-                return res.status(400).json({ error: 'Charger buyer UID is required' });
+                return res.status(400).json({ error: 'Charger buyer email is required' });
              }
+        const usersearch= await prisma.userProfile.findFirst({
+            where:{
+                email:chargerbuyer
+            },select:{
+                uid:true
+            }
+        })
         const newChargerUnit = await     prisma.charger_Unit.create({
             data:{
                 Chargerserialnum,
@@ -58,7 +65,7 @@ const asssign_buy_charger = async(req,res)=>{
                 charger_use_type,
                 twenty_four_seven_open_status,
                 charger_image,
-                userId:chargerbuyer
+                userId:usersearch.uid
             }
         })
         // const charger_unit_app = await fetch("/")
@@ -72,7 +79,7 @@ const asssign_buy_charger = async(req,res)=>{
         }
         const associateuserfetch = await prisma.userProfile.findFirstOrThrow({
             where:{
-                uid:chargerbuyer
+                email:chargerbuyer
             },
             select:{
                 email:true,
@@ -178,7 +185,7 @@ const asssign_buy_charger = async(req,res)=>{
         const message = `${JSON.stringify(error)}`
         const filelocation = "charger_unit_ops.js"
         logging(messagetype,message,filelocation)
-        res.status(500).json({error:`An error occurred while processing ${error}`})
+        res.status(500).json({message:'An error occurred while processing',error:`${error}`})
     }
 }
 
