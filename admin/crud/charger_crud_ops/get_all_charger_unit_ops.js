@@ -25,7 +25,16 @@ const get_all_charger= async(req,res)=>{
             logging(messagetype, message, filelocation);
             return res.status(200).json({ message: "List of charger data is coming", data: cacheddata });
         }
-        const get_all_charger_assigned=await prisma.charger_Unit.findMany()
+        const get_all_charger_assigned=await prisma.charger_Unit.findMany({
+            include:{
+                QRCode:true
+            }
+        })
+        const get_all_assqrcode= await prisma.qrcode.findMany({
+            where:{
+                chargerid:get_all_charger_assigned
+            }
+        })
         if(!get_all_charger_assigned){
             const messagetype = "error"
             const message = "something went worng please try again soon"

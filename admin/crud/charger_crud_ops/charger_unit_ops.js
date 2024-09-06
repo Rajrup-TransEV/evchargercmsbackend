@@ -130,8 +130,8 @@ const asssign_buy_charger = async(req,res)=>{
         const qrcodedata = `${ranuid}`
         const qrcodeBuffer = await saveqrcode(qrcodedata)
         console.log(qrcodeBuffer)
-        const normalizedQrcodePath = qrcodeBuffer.replace(/\\/g, '/');
-            const saveqrcodedata = await prisma.qrcode.create({
+        const normalizedQrcodePath = qrcodeBuffer.qrCodePath.replace(/\\/g, '/');
+            const saveqrcodedata = await prisma.qRCode.create({
                 data:{
                     uid:crypto.randomUUID(),
                     chargerid:qrcodedata,
@@ -141,10 +141,9 @@ const asssign_buy_charger = async(req,res)=>{
                     qrcodedata:true
                 }
             })
-    
-   
         
-        return res.status(201).json({message:"Charger unit hasbeen created successfully",qrcode:saveqrcodedata.qrcodedata})
+        const chargerocppur="ws://srv586896.hstgr.cloud"+"/"+`${ranuid}`    
+        return res.status(201).json({message:"Charger unit hasbeen created successfully",ocppurl:chargerocppur})
     } catch (error) {
         console.log(error)
         const messagetype = "error"

@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `User` ADD COLUMN `otp` VARCHAR(191) NULL,
-    ADD COLUMN `otpExpiration` VARCHAR(191) NULL,
-    MODIFY `password` VARCHAR(191) NULL,
-    MODIFY `userType` VARCHAR(191) NULL;

@@ -116,6 +116,9 @@ model Charger_Unit {
   
   createdAt        DateTime         @default(now())
   // updatedAt        DateTime         @updatedAt
+
+
+  QRCode QRCode[]
 }
 //all of the role will goes here
 model AssignRoles{
@@ -215,14 +218,17 @@ model LogRetention{
 
 //model for generating qr code
 
-model qrcode{
-  id                  Int                  @id @default(autoincrement())
-  uid                 String?              @unique
-  chargerid String?
-  qrcodedata String?
+model QRCode {
+  id          Int          @id @default(autoincrement())
+  uid         String?      @unique
+  chargerid   String?      // This will reference Charger_Unit.uid
+  qrcodedata  String?
   
-    createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Establishing the relationship
+  charger     Charger_Unit? @relation(fields: [chargerid], references: [uid])
 }
 
 //model for generating wallet
