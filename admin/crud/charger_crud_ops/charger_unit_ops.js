@@ -182,7 +182,7 @@ const asssign_buy_charger = async(req,res)=>{
     } catch (error) {
         console.log(error)
         const messagetype = "error"
-        const message = `${JSON.stringify(error)}`
+        const message = `${error}`
         const filelocation = "charger_unit_ops.js"
         logging(messagetype,message,filelocation)
         res.status(500).json({message:'An error occurred while processing',error:`${error}`})
@@ -190,4 +190,3 @@ const asssign_buy_charger = async(req,res)=>{
 }
 
 export default asssign_buy_charger
-
