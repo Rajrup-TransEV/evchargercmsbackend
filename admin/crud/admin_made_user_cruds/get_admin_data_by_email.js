@@ -17,8 +17,8 @@ const get_single_admin_data = async (req,res)=>{
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const {useremail} = req.body;
-    if(useremail===""){
+    const {userid,useremail} = req.body;
+    if(userid ===""|| useremail===""){
         const messagetype = "error"
         const message = "No value provided for one or more fields."
         const filelocation = "get_admin_data_by_email.js"
@@ -38,7 +38,11 @@ const get_single_admin_data = async (req,res)=>{
         // Fetch data from the database
         const get_from_db = await prisma.userProfile.findFirstOrThrow({
             where:{
-                email:useremail
+                OR:[
+                    {email:useremail},
+                    {uid:userid}
+                
+                ]
             },select:{
                 uid:true,
                 email:true,

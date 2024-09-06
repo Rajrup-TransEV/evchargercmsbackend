@@ -42,6 +42,7 @@ import deletewalletdata from "../crud/wallet_crud/delete_wallet.js"
 import get_all_wallet_recharge_history from "../crud/wallet_recharge_history/get_all_wallet_recharge_history.js"
 import find_wh_o_s_w from "../crud/wallet_recharge_history/wall_history_for_asingle_user.js"
 import get_all_logs from "../../logging/get_all_stored_log.js"
+import get_single_admin_data from "../crud/admin_made_user_cruds/get_admin_data_by_email.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -51,6 +52,8 @@ adminmadeuserroutes.post("/login/userlogin",adminuserlogin)
 adminmadeuserroutes.post("/createchargerunit",asssign_buy_charger)
 //get all of the super admin made admin data through route
 adminmadeuserroutes.get("/getalladmindata",alladminuserdata)
+//get admin by email
+adminmadeuserroutes.get("/getadminbyemail",get_single_admin_data)
 //all of the charger list data
 adminmadeuserroutes.get("/listofcharges",get_all_charger)
 //edit charger details one by one
