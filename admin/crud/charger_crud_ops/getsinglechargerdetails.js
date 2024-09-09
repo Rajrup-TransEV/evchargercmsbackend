@@ -6,6 +6,8 @@ const prisma = new PrismaClient();
 
 const getsingledetails = async (req, res) => {
     const { chargeruid } = req.body;
+    console.log(
+        "chargeruid",chargeruid)
     try {
         const chargerdataforch = await prisma.charger_Unit.findFirst({
             where: {
