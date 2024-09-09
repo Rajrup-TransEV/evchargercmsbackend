@@ -64,7 +64,7 @@ adminmadeuserroutes.post("/deletechargerunits",delete_charger_units)
 // which user bought which charger that details
 adminmadeuserroutes.post("/getchargerbyuserid",user_who_bought_the_charger_details)
 //get single charger details
-adminmadeuserroutes.get("/getsinglechargerdetails",getsingledetails)
+adminmadeuserroutes.post("/getsinglechargerdetails",getsingledetails)
 //update superuser made user data
 adminmadeuserroutes.post("/updateadmindata",updateuserdata)
 //delete admin data made by super admin
