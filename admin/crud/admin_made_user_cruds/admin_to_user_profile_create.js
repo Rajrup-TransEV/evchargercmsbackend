@@ -21,14 +21,7 @@ const prisma = new PrismaClient()
     }
 
     const {firstname,lastname,email,phonenumber,password,role,designation,address}= req.body;
-   
-    // if(validateEmailrecep(email)){
-    //   const messagetype = "error"
-    //   const message = "You're using a bot email - supported email ext - gmail , outlook , protonmail"
-    //   const filelocation = "admin_to_user_profile_create.js"
-    //   logging(messagetype,message,filelocation)
-    //   return res.status(400).json({message:"You're using a bot email - supported email ext - gmail , outlook , protonmail"})
-    // }
+
     if(firstname === ""|| lastname===""||phonenumber==="" ||email==="" || password===""|| role===""|| designation===""|| address===""){
       const messagetype = "error"
       const message = "No value provided for one or more fields."
@@ -39,16 +32,16 @@ const prisma = new PrismaClient()
     
     try {
       //check the data from redis cache first then look somewhere else
-      const cacheddata =  await getCache("userprofileemail");
-      if(cacheddata){
-        const messagetype = "success";
-        const message = "Data retrieved from cache";
-        const filelocation = "get_admin_data_by_email.js";
-        logging(messagetype, message, filelocation);
-        return res.status(200).json({
-          message:"Requested data is", data:cacheddata
-        })
-      }
+      // const cacheddata =  await getCache("userprofileemail");
+      // if(cacheddata){
+      //   const messagetype = "success";
+      //   const message = "Data retrieved from cache";
+      //   const filelocation = "get_admin_data_by_email.js";
+      //   logging(messagetype, message, filelocation);
+      //   return res.status(200).json({
+      //     message:"Requested data is", data:cacheddata
+      //   })
+      // }
     //if not cache then query the data from database
         const findExistingUser = await prisma.userProfile.findFirst({
             where: {
@@ -62,7 +55,7 @@ const prisma = new PrismaClient()
                 phonenumber: true
             }
         });
-        await setCache("userprofileemail",findExistingUser,3600)
+        // await setCache("userprofileemail",findExistingUser,3600)
         if (findExistingUser){
             const messagetype = "error"
             const message = "One of user's details already exists , email ,phone"
