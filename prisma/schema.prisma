@@ -93,6 +93,7 @@ model Financial_details {
 model Charger_Unit {
   id                          Int              @id @default(autoincrement())
   uid                         String?          @unique
+  chargeridentity             String?  @db.VarChar(655)
   Chargerserialnum             String?
   ChargerName                 String?
   Chargerhost                 String?
@@ -110,12 +111,16 @@ model Charger_Unit {
   charger_use_type            String? // if the charger will be used for private or commercial
   twenty_four_seven_open_status String?
   charger_image               String?
+
   
   userId                      String?             // Foreign key to UserProfile
   chargerbuyer                        UserProfile?     @relation(fields: [userId], references: [uid])
   
   createdAt        DateTime         @default(now())
   // updatedAt        DateTime         @updatedAt
+
+
+  QRCode QRCode[]
 }
 //all of the role will goes here
 model AssignRoles{
@@ -215,17 +220,17 @@ model LogRetention{
 
 //model for generating qr code
 
-model qrcode{
-  id                  Int                  @id @default(autoincrement())
-  uid                 String?              @unique
-  chargerserialnumber String?
-  chargerid String?
-  chargercapacity String?
-  totalchargetime String?
-  qrcodedata String?
+model QRCode {
+  id          Int          @id @default(autoincrement())
+  uid         String?      @unique
+  chargerid   String?      // This will reference Charger_Unit.uid
+  qrcodedata  String?
   
-    createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Establishing the relationship
+  charger     Charger_Unit? @relation(fields: [chargerid], references: [uid])
 }
 
 //model for generating wallet
@@ -264,4 +269,9 @@ model reateofpayment{
   tax  String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+}
+
+model Counter {
+  id    Int    @id @default(autoincrement())
+  value Int    @default(100)
 }
