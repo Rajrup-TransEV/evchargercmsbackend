@@ -54,7 +54,7 @@ adminmadeuserroutes.post("/createchargerunit",asssign_buy_charger)
 //get all of the super admin made admin data through route
 adminmadeuserroutes.get("/getalladmindata",alladminuserdata)
 //get admin by email
-adminmadeuserroutes.get("/getadminbyemail",get_single_admin_data)
+adminmadeuserroutes.post("/getadminbyemail",get_single_admin_data)
 //all of the charger list data
 adminmadeuserroutes.get("/listofcharges",get_all_charger)
 //edit charger details one by one
