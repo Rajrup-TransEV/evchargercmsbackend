@@ -33,6 +33,8 @@ const adminuserlogin = async (req, res) => {
                 ]
             },
             select: {
+                firstname:true,
+                lastname:true,
                 email: true,
                 phonenumber: true,
                 uid: true,
@@ -61,6 +63,8 @@ const adminuserlogin = async (req, res) => {
 
         const token = jwt.sign(
             {
+                firstname:existingUser.firstname,
+                lastname:existingUser.lastname,
                 email: existingUser.email,
                 userid: existingUser.uid,
                 userType: existingUser.role,
