@@ -1,0 +1,1 @@
+//get single vehicle details by id 
