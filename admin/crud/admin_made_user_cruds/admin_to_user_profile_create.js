@@ -146,7 +146,7 @@ const prisma = new PrismaClient()
         const message = `something went wrong with the server:: ${err}`
         const filelocation = "admin_to_user_profile_create.js"
         logging(messagetype,message,filelocation)
-     return res.status(500).json({message:`something went wrong with the server:: ${err} `})   
+     return res.status(500).json({message:`something went wrong with the server`,error:err})   
     }
 }
 
