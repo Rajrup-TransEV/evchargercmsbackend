@@ -62,7 +62,7 @@ const verifyloginOTP = async (req, res) => {
                 userType: user.userType,
             },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '5h' }
         );
 
         // Clear the OTP and expiration from the database

@@ -70,7 +70,7 @@ const adminuserlogin = async (req, res) => {
                 userType: existingUser.role,
             },
             process.env.JWT_SECRET, // Make sure to set your JWT secret in environment variables
-            { expiresIn: '1h' } // Token expiration time
+            { expiresIn: '5h' } // Token expiration time
         );
         const messagetype = "success"
         const message = "login success for admin profile user"
