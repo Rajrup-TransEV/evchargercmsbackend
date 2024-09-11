@@ -44,6 +44,7 @@ import find_wh_o_s_w from "../crud/wallet_recharge_history/wall_history_for_asin
 import get_all_logs from "../../logging/get_all_stored_log.js"
 import get_single_admin_data from "../crud/admin_made_user_cruds/get_admin_data_by_email.js"
 import getsingledetails from "../crud/charger_crud_ops/getsinglechargerdetails.js"
+import upload from "../../lib/uploadMiddleware.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)

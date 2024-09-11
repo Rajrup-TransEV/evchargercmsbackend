@@ -8,6 +8,7 @@ import saveqrcode from "../../../lib/saveqrcode.js";
 import serialnumbergenerator from "../../../lib/serialnumbergen.js";
 import SerialNumberGenerator from "../../../lib/serialnumbergen.js";
 import getNextCounterValue from "../../../lib/serialnumbergen.js";
+import { json } from "express";
 const prisma = new PrismaClient();
 
 
@@ -21,27 +22,26 @@ const asssign_buy_charger = async(req,res)=>{
         logging(messagetype,message,filelocation)
       return res.status(403).json({ message: "API route access forbidden" });
   }
+
     //all of the chargers which are bought by the signle user  or multiple users together
     const {Chargerserialnum,ChargerName,Chargerhost,Segment,Subsegment,Total_Capacity,Chargertype,parking,number_of_connectors,Connector_type,connector_total_capacity,
-        lattitude,longitute,full_address,charger_use_type,twenty_four_seven_open_status,charger_image,chargerbuyer,chargeridentity
+        lattitude,longitute,full_address,charger_use_type,twenty_four_seven_open_status,chargerbuyer,chargeridentity
     }=req.body;
     //null exception handeling 
-    if(Chargerserialnum===""||ChargerName===""||Chargerhost===""||Segment===""||Subsegment===""||Total_Capacity===""||Chargertype===""||parking===""||number_of_connectors===""||Connector_type===""||connector_total_capacity===""||
-        lattitude===""||longitute===""||full_address===""||charger_use_type===""||twenty_four_seven_open_status===""||chargerbuyer==="" || chargeridentity==""
-    ){
-        const messagetype = "error"
-        const message = "Required fields are not given please fillup all the fields"
-        const filelocation = "charger_unit_ops.js"
-        logging(messagetype,message,filelocation)
-        return res.status(400).json({message:"Required fields are not given please fillup all the fields"})
-    }
-       
+   
     const ranuid  = generateRandomUID()
     try {
              // Validate the input data
-             if (!chargerbuyer) {
-                return res.status(400).json({ error: 'Charger buyer email is required' });
-             }
+             if(Chargerserialnum===""||ChargerName===""||Chargerhost===""||Segment===""||Subsegment===""||Total_Capacity===""||Chargertype===""||parking===""||number_of_connectors===""||Connector_type===""||connector_total_capacity===""||
+                lattitude===""||longitute===""||full_address===""||charger_use_type===""||twenty_four_seven_open_status===""||chargerbuyer==="" || chargeridentity==""
+            ){
+                const messagetype = "error"
+                const message = "Required fields are not given please fillup all the fields"
+                const filelocation = "charger_unit_ops.js"
+                logging(messagetype,message,filelocation)
+                return res.status(400).json({message:"Required fields are not given please fillup all the fields"})
+            }
+               
         const usersearch= await prisma.userProfile.findFirst({
             where:{
                 email:chargerbuyer
@@ -72,7 +72,7 @@ const asssign_buy_charger = async(req,res)=>{
                 full_address,
                 charger_use_type,
                 twenty_four_seven_open_status,
-                charger_image,
+                
                 chargeridentity:appenddata,
                 userId:usersearch.uid
             }
