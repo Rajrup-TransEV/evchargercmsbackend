@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import cors from "cors"; // Correct import
+import cors from "cors";
 
 import { Router } from "express";
 
@@ -22,10 +22,14 @@ app.use(bodyParser.json({ limit: '1000mb' })); // Set limit for JSON payloads
 app.use(bodyParser.urlencoded({ limit: '1000mb', extended: true })); // Handle URL-encoded data
 
 // CORS configuration
-app.use(cors({
+const corsOptions = {
     origin: "*",
     methods: "*",
-}));
+    allowedHeaders: ['Content-Type', 'Authorization'], // Add the headers you want to allow
+    credentials: true, // Enable sending cookies across domains
+};
+
+app.use(cors(corsOptions));
 
 // Cron job to delete logs older than 1 year
 cron.schedule('0 0 * * *', async () => {
