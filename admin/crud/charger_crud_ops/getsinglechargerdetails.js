@@ -35,7 +35,14 @@ const getsingledetails = async (req, res) => {
                 chargerbuyer: true,
             }
         });
-
+        const chargerimagedata = chargerdataforch.charger_image
+        let chimagedataurl = null
+        if(chargerdataforch){
+            const chfilepath = path.resolve(chargerdataforch.charger_image)
+            const filebuffer = fs.readFileSync(chfilepath)
+            const base64chImage = filebuffer.toString('base64')
+            chimagedataurl = `data:image/png;base64,${base64chImage}`;
+        }
         const qrcodedata = await prisma.qRCode.findFirst({
             where: {
                 chargerid: chargeruid
@@ -57,7 +64,8 @@ const getsingledetails = async (req, res) => {
             return res.status(200).json({
                 message: "requested data",
                 chargerdata: chargerdataforch,
-                qrdata: dataUrl
+                qrdata: dataUrl,
+                chargerimageurl:chimagedataurl
             });
         } else {
             return res.status(404).json({

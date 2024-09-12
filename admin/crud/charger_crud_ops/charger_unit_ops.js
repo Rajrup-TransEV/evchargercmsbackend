@@ -5,10 +5,10 @@ import generateRandomUID from "../../../lib/generaterandomuid.js";
 import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
 import saveqrcode from "../../../lib/saveqrcode.js";
-import serialnumbergenerator from "../../../lib/serialnumbergen.js";
-import SerialNumberGenerator from "../../../lib/serialnumbergen.js";
 import getNextCounterValue from "../../../lib/serialnumbergen.js";
 import { json } from "express";
+import fs from 'fs';
+import path from 'path';
 const prisma = new PrismaClient();
 
 
@@ -25,7 +25,7 @@ const asssign_buy_charger = async(req,res)=>{
 
     //all of the chargers which are bought by the signle user  or multiple users together
     const {Chargerserialnum,ChargerName,Chargerhost,Segment,Subsegment,Total_Capacity,Chargertype,parking,number_of_connectors,Connector_type,connector_total_capacity,
-        lattitude,longitute,full_address,charger_use_type,twenty_four_seven_open_status,chargerbuyer,chargeridentity
+        lattitude,longitute,full_address,charger_use_type,twenty_four_seven_open_status,charger_image,chargerbuyer,chargeridentity
     }=req.body;
     //null exception handeling 
    
@@ -53,6 +53,20 @@ const asssign_buy_charger = async(req,res)=>{
         const appen =await getNextCounterValue()
          // Combine with charger identity
          const appenddata = `${chargeridentity}-${appen}`;
+     // Handle base64 image data
+     let imageFilePath = null;
+     let normalizepathch = null
+     if (charger_image) {
+         const base64Data = charger_image.replace(/^data:image\/\w+;base64,/, "");
+         const buffer = Buffer.from(base64Data, 'base64');
+         console.log("buffer",buffer)
+         const imageName = `${ranuid}-${crypto.randomUUID()}.png`;
+         console.log("imagenames",imageName)
+         imageFilePath = path.join('chargerimages', imageName); // Modify path as needed
+         normalizepathch = imageFilePath.replace(/\\/g, '/');
+         console.log("normalazie path",normalizepathch)
+         fs.writeFileSync(imageFilePath, buffer);
+     }
         const newChargerUnit = await     prisma.charger_Unit.create({
             data:{
                 Chargerserialnum,
@@ -72,7 +86,7 @@ const asssign_buy_charger = async(req,res)=>{
                 full_address,
                 charger_use_type,
                 twenty_four_seven_open_status,
-                
+                charger_image:normalizepathch,
                 chargeridentity:appenddata,
                 userId:usersearch.uid
             }
