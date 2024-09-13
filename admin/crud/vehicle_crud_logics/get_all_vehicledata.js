@@ -24,7 +24,7 @@ const get_all_vehicles = async(req,res)=>{
             const message = "All vehicle data hasbeen listed"
             const filelocation = "get_all_vehicledata.js"
             logging(messagetype,message,filelocation)
-            return res.status(200),json({message:message,data:cacheddata})
+            return res.status(200).json({message:message,data:cacheddata})
         }
         const listofvehilcles = await prisma.assigntovechicles.findMany()
         const messagetype = "success"
