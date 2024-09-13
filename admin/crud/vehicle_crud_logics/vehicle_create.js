@@ -27,9 +27,9 @@ const vehilcle_create = async(req,res)=>{
              logging(messagetype,message,filelocation)
              return res.status(403).json({ message: "no value provided for required fields" });
         }
-        const vhowener = await prisma.userProfile.findFirst({
+        const vhowener = await prisma.assigntovehicleowener.findFirst({
             where:{
-                email:vehicleowner
+                vehicleoweneremail:vehicleowner
             },select:{
                 uid:true
             }
