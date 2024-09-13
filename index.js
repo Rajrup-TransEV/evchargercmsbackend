@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({ limit: '1000mb', extended: true })); // Handle U
 const corsOptions = {
     origin: "*",
     methods: "*",
-    allowedHeaders: ['Content-Type', 'Authorization'], // Add the headers you want to allow
+    allowedHeaders: ['Content-Type', 'Authorization','apiauthkey'], // Add the headers you want to allow
     credentials: true, // Enable sending cookies across domains
 };
 
