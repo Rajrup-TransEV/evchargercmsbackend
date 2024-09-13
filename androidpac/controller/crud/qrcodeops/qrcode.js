@@ -2,7 +2,7 @@ import qrcode from "qrcode";
 import fs from 'fs';
 import path from 'path';
 import { PrismaClient } from "@prisma/client";
-import generateCustomRandomUID from "../../../../lib/customuids";
+import generateCustomRandomUID from "../../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 
