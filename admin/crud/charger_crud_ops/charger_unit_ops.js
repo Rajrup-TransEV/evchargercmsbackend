@@ -6,7 +6,6 @@ import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
 import saveqrcode from "../../../lib/saveqrcode.js";
 import getNextCounterValue from "../../../lib/serialnumbergen.js";
-import { json } from "express";
 import fs from 'fs';
 import path from 'path';
 const prisma = new PrismaClient();

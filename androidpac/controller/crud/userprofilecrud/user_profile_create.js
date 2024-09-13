@@ -1,6 +1,7 @@
 //andorid app user profile create 
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 
@@ -25,7 +26,7 @@ const userprofilecreate = async (req,res)=>{
         }
     const userprofilecreate = await prisma.appUserProfile.create({
         data:{
-            uid:crypto.randomUUID(),
+            uid:generateCustomRandomUID(),
         firstname:firstname,
         lastname:lastname,
         bio:bio,

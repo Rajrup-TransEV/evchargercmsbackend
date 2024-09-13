@@ -5,6 +5,7 @@ import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
 import validateEmailrecep from "../../../lib/emailrecepverify.js";
 import { getCache, setCache } from "../../../utils/cacheops.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 
 
 const prisma = new PrismaClient()
@@ -66,7 +67,7 @@ const prisma = new PrismaClient()
         const hashedPassword = await bcrypt.hash(password, 10); 
         const createadminprofile = await prisma.userProfile.create({
             data:{
-                uid:crypto.randomUUID(),
+                uid:generateCustomRandomUID(),
                 firstname:firstname,
                 lastname:lastname,
                 email:email,

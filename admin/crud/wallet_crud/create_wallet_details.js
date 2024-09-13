@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 
 
 const prisma = new PrismaClient();
@@ -64,7 +65,7 @@ const create_wallet_details = async (req, res) => {
             // Create wallet for appUserProfile
             const walletForAppUser = await prisma.wallet.create({
                 data: {
-                    uid: crypto.randomUUID(),
+                    uid:generateCustomRandomUID(),
                     appuserrelatedwallet: userid,
                     balance: price
                 }

@@ -1,6 +1,7 @@
 // register a new driver 
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 const createdriver = async(req,res)=>{
@@ -58,7 +59,7 @@ const createdriver = async(req,res)=>{
         }
         const create_driver_data = await prisma.assigntovehicleowener.create({
             data:{
-                uid:crypto.randomUUID(),
+                uid:generateCustomRandomUID(),
                 vehicleowenerfirstname:vehicleowenerfirstname,
                 vehicleowenerlastename:vehicleowenerlastename,
                 vehicleoweneremail:vehicleoweneremail,
