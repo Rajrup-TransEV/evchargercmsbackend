@@ -2,6 +2,7 @@ import qrcode from "qrcode";
 import fs from 'fs';
 import path from 'path';
 import { PrismaClient } from "@prisma/client";
+import generateCustomRandomUID from "../../../../lib/customuids";
 
 const prisma = new PrismaClient();
 
@@ -41,7 +42,7 @@ const generateqrcode = async (req, res) => {
         // Save the QR code data in the database
         const qrcodedatasave = await prisma.qrcode.create({
             data: {
-                uid:crypto.randomUUID(),
+                uid:generateCustomRandomUID(),
                 chargerserialnumber,
                 chargerid,
                 chargercapacity,

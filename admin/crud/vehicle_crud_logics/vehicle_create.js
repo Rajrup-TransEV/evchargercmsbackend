@@ -1,6 +1,7 @@
 // vehicle creation logic .
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 
@@ -27,13 +28,17 @@ const vehilcle_create = async(req,res)=>{
              logging(messagetype,message,filelocation)
              return res.status(403).json({ message: "no value provided for required fields" });
         }
-        const vhowener = await prisma.assigntovehicleowener.findFirst({
+        const vhowener = await prisma.assigntovehicleowener.findFirstOrThrow({
             where:{
                 vehicleoweneremail:vehicleowner
             },select:{
                 uid:true
             }
         })
+        if(vehicleowner==null && !vehicleowner){
+            return res.status(404).json({message:'No user hasbeen found asshociated with the email'})
+        }
+     
         const vehicledatamatch = await prisma.assigntovechicles.findFirst({
             where:{
                     vehiclelicense:vehiclelicense
@@ -48,13 +53,15 @@ const vehilcle_create = async(req,res)=>{
              logging(messagetype,message,filelocation)
             return res.status(409).json({message:`A vehicle with the same license already exists`})
         }
+        const vhown=vhowener.uid
+        console.log(vhown)
         const vehicledatacreate  = await prisma.assigntovechicles.create({
                data:{
-                uid:crypto.randomUUID(),
+                uid:generateCustomRandomUID(),
                 vehiclename:vehiclename,
                 vehiclemodel:vehiclemodel,
                 vehiclelicense:vehiclelicense,
-                vehicleowner:vhowener.uid,
+                vehicleowenerId:vhown,
                 vehicletype:vehicletype,
                 vehiclecategory:vehiclecategory,
                }

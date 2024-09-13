@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
 import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient()
 
@@ -38,7 +39,7 @@ export const signupUser = async (req, res) => {
         }
         const salt = await bcrypt.genSalt(10); // Await the salt generation
         const hashedPassword = await bcrypt.hash(password, salt); // Await the hashing
-        const uuid = crypto.randomUUID()
+        const uuid = generateCustomRandomUID()
         //opt verification process has start here 
         const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
         const to = email

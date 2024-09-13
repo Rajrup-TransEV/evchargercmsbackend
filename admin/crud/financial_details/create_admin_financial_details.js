@@ -1,6 +1,7 @@
 //create all financial details
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 
@@ -44,7 +45,7 @@ const add_user_financial_details = async (req, res) => {
         // Create financial details associated with the user profile
         const financialDetails = await prisma.financial_details.create({
             data: {
-                uid: crypto.randomUUID(),
+                uid: generateCustomRandomUID(),
                 bank_account_number: bank_account_number,
                 isfc_code: isfc_code,
                 bank_name: bank_name,

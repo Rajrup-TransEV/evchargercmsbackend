@@ -1,6 +1,7 @@
 //main role create || list of role create
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 const prisma = new PrismaClient();
 
 const createlistofroles = async(req,res)=>{
@@ -24,7 +25,7 @@ const createlistofroles = async(req,res)=>{
         }
         const createroles  = await prisma.assignRoles.create({
             data:{
-                uid:crypto.randomUUID(),
+                uid:generateCustomRandomUID(),
                 rolename:rolename,
                 roledesc:roledesc
             }
