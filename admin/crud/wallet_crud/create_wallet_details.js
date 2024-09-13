@@ -24,7 +24,7 @@ const create_wallet_details = async (req, res) => {
             const message = "User id not needs to give in order to perform operation";
             const filelocation = "create_wallet_details.js";
             logging(messagetype, message, filelocation);
-            return res.status(400),json({message:"User id not needs to give in order to perform operation"})
+            return res.status(400).json({message:"User id not needs to give in order to perform operation"})
         }
         let price = "0";
         
