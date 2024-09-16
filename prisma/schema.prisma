@@ -70,6 +70,7 @@ model UserProfile {
   financialDetails  Financial_details? @relation("UserFinancialDetails") // Define relation name
   chargerUnits      Charger_Unit[]     // Define the relationship with Charger_Unit
   wallets    wallet[]
+  vehicleowener Assigntovehicleowener[]
 }
 
 //fiancial details for all of users 
@@ -159,7 +160,8 @@ model Assigntovehicleowener {
   vehicleowenerlicense       String?  @unique
  vehicleowenergovdocs       String?
   vehicleowenernationality   String?
- vehicleowenerid             String? @unique
+ adminid             String? @unique
+ adminuserprofile UserProfile? @relation(fields: [adminid],references: [uid])
  vehicleoweneraddress       String?
  vehicleowenerrole          String?
 

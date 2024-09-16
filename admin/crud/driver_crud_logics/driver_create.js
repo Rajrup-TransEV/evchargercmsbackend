@@ -14,10 +14,10 @@ const createdriver = async(req,res)=>{
         logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
-    const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,phonenumber,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,vehicleowenerid,vehicleoweneraddress,vehicleowenerrole} = req.body;
+    const {uid,vehicleowenerfirstname,vehicleowenerlastename,vehicleoweneremail,phonenumber,vehicleowenerlicense,vehicleowenergovdocs,vehicleowenernationality,adminid,vehicleoweneraddress,vehicleowenerrole} = req.body;
     
     try {
-        if(uid===""||vehicleowenerfirstname===""||vehicleowenerlastename===""||vehicleoweneremail===""||phonenumber===""||vehicleowenerlicense===""||vehicleowenergovdocs===""||vehicleowenernationality===""||vehicleowenerid===""||vehicleoweneraddress===""||vehicleowenerrole===""){
+        if(uid===""||vehicleowenerfirstname===""||vehicleowenerlastename===""||vehicleoweneremail===""||phonenumber===""||vehicleowenerlicense===""||vehicleowenergovdocs===""||vehicleowenernationality===""||adminid===""||vehicleoweneraddress===""||vehicleowenerrole===""){
             const messagetype = "error"
             const message = "Fields has to given in order to create vehicle owener details"
             const filelocation = "driver_create.js"
@@ -67,7 +67,7 @@ const createdriver = async(req,res)=>{
                 vehicleowenerlicense:vehicleowenerlicense,
                 vehicleowenergovdocs:vehicleowenergovdocs,
                 vehicleowenernationality:vehicleowenernationality,
-                vehicleowenerid:vehicleowenerid,
+                adminid:adminid,
                 vehicleoweneraddress:vehicleoweneraddress,
                 vehicleowenerrole:vehicleowenerrole
             }

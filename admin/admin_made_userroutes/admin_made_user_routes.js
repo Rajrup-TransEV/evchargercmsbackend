@@ -45,6 +45,7 @@ import get_all_logs from "../../logging/get_all_stored_log.js"
 import get_single_admin_data from "../crud/admin_made_user_cruds/get_admin_data_by_email.js"
 import getsingledetails from "../crud/charger_crud_ops/getsinglechargerdetails.js"
 import upload from "../../lib/uploadMiddleware.js"
+import getdriverbyadminid from "../crud/driver_crud_logics/get_driver_list_by_adminid.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -108,6 +109,8 @@ adminmadeuserroutes.post("/getvobye",retrive_vehicle_owener_data_by_email)
 adminmadeuserroutes.post("/updatedriverdata",updateVehicleOwnerData)
 //delete vehicle owener
 adminmadeuserroutes.post("/deletevo",deletevehicleowener)
+//get vehicle owener by admin id
+adminmadeuserroutes.post("/getvobyaid",getdriverbyadminid)
 //vehicle create
 adminmadeuserroutes.post("/createav",vehilcle_create)
 //vehcile assign to user logics
