@@ -39,7 +39,7 @@ const retrive_vehicle_owener_data_by_email = async(req,res)=>{
                 vehicleoweneremail:true,
                 vehicleoweneraddress:true,
                 vehicleowenergovdocs:true,
-                vehicleowenerid:true,
+                adminid:true,
                 vehicleowenerlicense:true,
                 vehicleowenernationality:true,
                 vehicleowenerrole:true,
