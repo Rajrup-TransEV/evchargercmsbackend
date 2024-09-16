@@ -29,28 +29,52 @@ const getdriverbyadminid = async(req,res)=>{
         const getdriverdata = await prisma.assigntovehicleowener.findMany({
             where:{
                 adminid:adminid
-            },select:{
-                id:true,
-                uid:true,
-                vehicleowenerfirstname:true,
-                vehicleowenerlastename:true,
-                vehicleoweneremail:true,
-                phonenumber:true,
-                vehicleowenerlicense:true,
-                vehicleowenergovdocs:true,
-                vehicleowenernationality:true,
-                vehicleoweneraddress:true,
-                vehicleowenerrole:true,
-                vehicles:true
+            }, select: {
+                id: true,
+                uid: true,
+                vehicleowenerfirstname: true,
+                vehicleowenerlastename: true,
+                vehicleoweneremail: true,
+                phonenumber: true,
+                vehicleowenerlicense: true,
+                vehicleowenergovdocs: true,
+                vehicleowenernationality: true,
+                vehicleoweneraddress: true,
+                vehicleowenerrole: true,
+                vehicles: {
+                    select: {
+                        id: true,
+                        uid: true,
+                        vehiclename: true,
+                        vehiclemodel: true,
+                        vehiclelicense: true,
+                        vehiclecategory: true,
+                        vehicletype: true,
+                        vehicleowenerId: true,
+                        isvehicleassigned: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    }
+                }
             }
-            
-        })
+        });
+        const fusedData = getdriverdata.map(driver => {
+            return {
+                ...driver,
+                vehicles: driver.vehicles.map(vehicle => ({
+                    ...vehicle,
+                    ownerFirstName: driver.vehicleowenerfirstname,
+                    ownerLastName: driver.vehicleowenerlastename
+                }))
+            };
+        });
+
         const messagetype = "success"
         const message = `All of the data`
         const filelocation = "get_driver_list_by_adminid.js"
         logging(messagetype,message,filelocation)
         await setCache("getdlba",getdriverdata,3600)
-        return res.status(200).json({message:"All of the data",data:getdriverdata})
+        return res.status(200).json({ message: "All of the data", data: fusedData });
     } catch (error) {
         console.log(error)
         const messagetype = "error"
