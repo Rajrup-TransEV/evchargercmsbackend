@@ -43,15 +43,31 @@ const retrive_vehicle_owener_data_by_email = async(req,res)=>{
                 vehicleowenerlicense:true,
                 vehicleowenernationality:true,
                 vehicleowenerrole:true,
-                vehicles:true
+               
+            }
+        })
+        const getvehicledata = await prisma.assigntovechicles.findMany({
+            where:{
+                vehicleowenerId:get_vo_db.uid
+            },select:{
+                id: true,
+                uid: true,
+                vehiclename: true,
+                vehiclemodel: true,
+                vehiclelicense: true,
+                vehiclecategory: true,
+                vehicletype: true,
+                vehicleowenerId: true,
+                isvehicleassigned: true,
+                createdAt: true,
+                updatedAt: true,
             }
         })
         const messagetype = "success"
-        const message = `Vehicle owener data by email ${get_vo_db}`
+        const message = `Vehicle owener data by email ${JSON.stringify(get_vo_db)}`
         const filelocation = "get_driver_by_email.js"
         logging(messagetype,message,filelocation)
-        await setCache
-        return res.status(200).json({message:"All of the data",data:get_vo_db})
+        return res.status(200).json({message:"All of the data",vodata:get_vo_db,vedata:getvehicledata})
     } catch (error) {
         console.log(error)
         const messagetype = "error"
