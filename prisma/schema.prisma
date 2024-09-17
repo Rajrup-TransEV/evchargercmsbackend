@@ -281,7 +281,7 @@ model Addhub{
     id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
   hubname String?
-  hubchargers String?
+  hubchargers Json?    
   hubtariff  String?
   hublocation String?
  adminid             String? @unique
