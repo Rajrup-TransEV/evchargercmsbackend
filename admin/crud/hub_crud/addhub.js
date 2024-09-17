@@ -1,7 +1,6 @@
 // add hub
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
-import { getCache, setCache } from "../../../utils/cacheops.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
@@ -30,10 +29,18 @@ const addhub =  async(req,res)=>{
                 adminid:adminid
             }
         })
+        const messagetype = "success";
+        const message = "hub add details added";
+        const filelocation = "addhub.js";
+        logging(messagetype, message, filelocation);
       
        return res.status(201).json({message:"data hasbeen created"})
     } catch (error) {
         console.log(error)
+        const messagetype = "error";
+        const message = `${error}`;
+        const filelocation = "addhub.js";
+        logging(messagetype, message, filelocation);
         return res.status(500).json({error:error})
     }
 
