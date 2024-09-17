@@ -47,6 +47,7 @@ import getsingledetails from "../crud/charger_crud_ops/getsinglechargerdetails.j
 import upload from "../../lib/uploadMiddleware.js"
 import getdriverbyadminid from "../crud/driver_crud_logics/get_driver_list_by_adminid.js"
 import addhub from "../crud/hub_crud/addhub.js"
+import GetAllHubdata from "../crud/hub_crud/getallhubdata.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -143,4 +144,6 @@ adminmadeuserroutes.post("/find_wh_o_s_w",find_wh_o_s_w)
 adminmadeuserroutes.get("/getalllogs",get_all_logs)
 //add hub
 adminmadeuserroutes.post("/addhubs",addhub)
+//get all hub data
+adminmadeuserroutes.get("/allhubs",GetAllHubdata)
 export default adminmadeuserroutes;
