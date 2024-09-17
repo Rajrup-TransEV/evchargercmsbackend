@@ -6,6 +6,17 @@ import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 const addhub =  async(req,res)=>{
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error";
+        const message = "API route access error";
+        const filelocation = "addhub.js";
+        logging(messagetype, message, filelocation);
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
+
     const {hubname,hubchargers,hubtariff,hublocation,adminid}=req.body
     try {
  
@@ -23,6 +34,7 @@ const addhub =  async(req,res)=>{
        return res.status(201).json({message:"data hasbeen created"})
     } catch (error) {
         console.log(error)
+        return res.status(500).json({error:error})
     }
 
 
