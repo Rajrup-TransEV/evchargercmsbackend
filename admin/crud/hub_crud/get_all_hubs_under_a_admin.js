@@ -13,21 +13,31 @@ const gahuaa = async (req,res)=>{
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
         const messagetype = "error";
         const message = "API route access error";
-        const filelocation = "get_single_hub_details.js";
+        const filelocation = "get_all_hubs_under_a_admin.js";
         logging(messagetype, message, filelocation);
         return res.status(403).json({ message: "API route access forbidden" });
     }
     const {adminuid} = req.body
     try {
+        const cachedata = await getCache("allahubsdata")
+        if(cachedata){
+            const messagetype = "success";
+            const message = "All hub details hasbeen fetched successfully from cache";
+            const filelocation = "get_all_hubs_under_a_admin.js";
+            logging(messagetype, message, filelocation);
+            return res.status(200).json({message:"All of the available data",data:cachedata})
+        }
         const alldata = await prisma.addhub.findMany({
             where:{
                 adminuid: adminuid
             }
         })
+
         const messagetype = "success";
         const message = "getting all hub data under a admin";
-        const filelocation = "get_single_hub_details.js";
+        const filelocation = "get_all_hubs_under_a_admin.js";
         logging(messagetype, message, filelocation);
+        await setCache("allahubsdata",alldata,3600)
         return res.status(200).json({message:"requested data",data:alldata})
     } catch (error) {
         console.log(error)
