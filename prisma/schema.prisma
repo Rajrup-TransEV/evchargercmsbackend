@@ -284,8 +284,8 @@ model Addhub{
   hubchargers Json?    
   hubtariff  String?
   hublocation String?
- adminid             String? @unique
- adminuserprofile UserProfile? @relation(fields: [adminid],references: [uid])
+  adminuid String?
+ adminuserprofile UserProfile? @relation(fields: [adminuid],references: [uid])
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 

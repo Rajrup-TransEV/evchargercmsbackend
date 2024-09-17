@@ -35,7 +35,7 @@ const addhub = async (req, res) => {
                 hubchargers: hubchargers, // Directly assign the array
                 hubtariff: hubtariff,
                 hublocation: hublocation,
-                adminid: adminid
+                adminuid: adminid
             }
         });
 
