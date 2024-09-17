@@ -48,6 +48,7 @@ import upload from "../../lib/uploadMiddleware.js"
 import getdriverbyadminid from "../crud/driver_crud_logics/get_driver_list_by_adminid.js"
 import addhub from "../crud/hub_crud/addhub.js"
 import GetAllHubdata from "../crud/hub_crud/getallhubdata.js"
+import gahuaa from "../crud/hub_crud/get_all_hubs_under_a_admin.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -146,4 +147,6 @@ adminmadeuserroutes.get("/getalllogs",get_all_logs)
 adminmadeuserroutes.post("/addhubs",addhub)
 //get all hub data
 adminmadeuserroutes.get("/allhubs",GetAllHubdata)
+//get hub under a admin
+adminmadeuserroutes.post("/gahuaa",gahuaa)
 export default adminmadeuserroutes;

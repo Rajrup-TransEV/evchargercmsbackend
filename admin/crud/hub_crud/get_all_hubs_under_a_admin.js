@@ -1,11 +1,12 @@
+//get all hubs under a admin
 //get a single charger hub details by admin id or the 
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
 import { getCache, setCache } from "../../../utils/cacheops.js";
 const prisma = new PrismaClient();
 
-const GetSingleHubDetails = async (req,res)=>{
-    
+
+const gahuaa = async (req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
 
     // Check if the API key is valid
@@ -16,28 +17,28 @@ const GetSingleHubDetails = async (req,res)=>{
         logging(messagetype, message, filelocation);
         return res.status(403).json({ message: "API route access forbidden" });
     }
-    const {uid}=req.body
+    const {adminuid} = req.body
     try {
-        const getdetails = await prisma.addhub.findFirst({
+        const alldata = await prisma.addhub.findMany({
             where:{
-                OR:[
-                    {uid:uid}
-                ]
+                adminuid: adminuid
             }
         })
         const messagetype = "success";
-        const message = "Single hub details is coming perticular for admin";
+        const message = "getting all hub data under a admin";
         const filelocation = "get_single_hub_details.js";
         logging(messagetype, message, filelocation);
-        return res.status(200).json({message:"requested data",data:getdetails})
+        return res.status(200).json({message:"requested data",data:alldata})
     } catch (error) {
         console.log(error)
         const messagetype = "error";
         const message = `${error}`;
         const filelocation = "get_single_hub_details.js";
         logging(messagetype, message, filelocation);
+        return res.status(500).json({error:error})
     }
+  
+
 }
 
-
-export default GetSingleHubDetails
+export default gahuaa
