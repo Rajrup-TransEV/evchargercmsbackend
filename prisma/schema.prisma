@@ -71,6 +71,7 @@ model UserProfile {
   chargerUnits      Charger_Unit[]     // Define the relationship with Charger_Unit
   wallets    wallet[]
   vehicleowener Assigntovehicleowener[]
+  hubs  Addhub[]
 }
 
 //fiancial details for all of users 
@@ -274,4 +275,18 @@ model reateofpayment{
 model Counter {
   id    Int    @id @default(autoincrement())
   value Int    @default(100)
+}
+
+model Addhub{
+    id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  hubname String?
+  hubchargers String?
+  hubtariff  String?
+  hublocation String?
+ adminid             String? @unique
+ adminuserprofile UserProfile? @relation(fields: [adminid],references: [uid])
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
 }
