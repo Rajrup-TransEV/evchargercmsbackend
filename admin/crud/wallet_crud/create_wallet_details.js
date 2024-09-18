@@ -37,7 +37,7 @@ const create_wallet_details = async (req, res) => {
         // Check if the user exists in userProfile
         const findAdminUserProfile = await prisma.userProfile.findUnique({
             where: { uid: userid },
-            select: { uid: true }
+            select: { uid: true,firstname:true,email:true,address:true }
         });
 
         // Check if a wallet already exists for the user

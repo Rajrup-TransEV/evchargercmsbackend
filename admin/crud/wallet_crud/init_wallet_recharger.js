@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
+import createPayment from "../razor_pay_crud/razorpay_generate.js";
 
 const prisma = new PrismaClient();
 
@@ -23,17 +24,17 @@ const rechargewallet = async (req, res) => {
     return res.status(400).json({message:"Fields cannot be empty"})
   }
   // Validate the recharge amount
-  if (price <= 100) {
-    const messagetype = "error"
-    const message = "Price cannot be less than 100 or negative"
-    const filelocation = "init_wallet_recharge.js"
-    logging(messagetype,message,filelocation)
-    return res.status(400).json({ message: "Price cannot be less than 100 or negative" });
-  }
+  // if (price <= 100) {
+  //   const messagetype = "error"
+  //   const message = "Price cannot be less than 100 or negative"
+  //   const filelocation = "init_wallet_recharge.js"
+  //   logging(messagetype,message,filelocation)
+  //   return res.status(400).json({ message: "Price cannot be less than 100 or negative" });
+  // }
 
   try {
     // Find the wallet by ID
-    const walletfind = await prisma.wallet.findUnique({
+    const walletfind = await prisma.wallet.findFirst({
       where: {
         uid: walletid,
       },
@@ -49,18 +50,28 @@ const rechargewallet = async (req, res) => {
     }
 
     // Check if the user exists in userProfile
-    const findAppUserProfile = await prisma.user.findUnique({
+    const findAppUserProfile = await prisma.user.findFirst({
       where: { uid: userid },
-      select: { uid: true },
+      select: { uid: true, username:true,email:true},
     });
 
-    const findAdminUserProfile = await prisma.userProfile.findUnique({
-      where: { uid: userid },
-      select: { uid: true },
+    const findAdminUserProfile = await prisma.userProfile.findFirst({
+      where: { 
+        uid: userid 
+      },select: { 
+        uid: true, 
+        firstname:true,
+        email:true,
+        address:true,
+      },
     });
 
+    
     if (findAppUserProfile || findAdminUserProfile) {
       // Calculate the new balance
+
+      createPayment(findAdminUserProfile.firstname,findAdminUserProfile.email,findAdminUserProfile.address,price)
+
       const newBalance = parseFloat(walletfind.balance) + parseFloat(price);
 
       // Update the wallet balance
@@ -94,8 +105,8 @@ const rechargewallet = async (req, res) => {
       logging(messagetype,message,filelocation)
       return res.status(201).json({
         message: "Wallet recharge done",
-        details: wallettopup,
-        walletRechargeHistory: walletRechargeHistory,
+   actualprice:price,
+   
       });
     } else {
       const messagetype = "error"
