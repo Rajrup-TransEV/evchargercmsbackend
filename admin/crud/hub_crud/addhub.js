@@ -44,7 +44,7 @@ const addhub = async (req, res) => {
         const filelocation = "addhub.js";
         logging(messagetype, message, filelocation);
 
-        return res.status(201).json({ message: "Data has been created", hub: createhub });
+        return res.status(201).json({ message: "Data has been created"});
     } catch (error) {
         console.error(error);
         const messagetype = "error";
