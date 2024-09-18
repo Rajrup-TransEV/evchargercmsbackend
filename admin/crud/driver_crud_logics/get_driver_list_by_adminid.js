@@ -21,14 +21,14 @@ const getdriverbyadminid = async (req, res) => {
 
     try {
         // Check cache for existing data
-        const cacheddata = await getCache("getdlba");
-        if (cacheddata) {
-            const messagetype = "success";
-            const message = "All of the data retrieved from cache";
-            const filelocation = "get_driver_list_by_adminid.js";
-            logging(messagetype, message, filelocation);
-            return res.status(200).json({ message: message, data: cacheddata });
-        }
+        // const cacheddata = await getCache("getdlba");
+        // if (cacheddata) {
+        //     const messagetype = "success";
+        //     const message = "All of the data retrieved from cache";
+        //     const filelocation = "get_driver_list_by_adminid.js";
+        //     logging(messagetype, message, filelocation);
+        //     return res.status(200).json({ message: message, data: cacheddata });
+        // }
 
         // Fetch driver data from the database
         const getdriverdata = await prisma.assigntovehicleowener.findMany({
@@ -81,7 +81,7 @@ const getdriverbyadminid = async (req, res) => {
         logging(messagetype, message, filelocation);
 
         // Cache the fused data for future requests
-        await setCache("getdlba", fusedData, 3600);
+        // await setCache("getdlba", fusedData, 3600);
         
         return res.status(200).json({ message: "All of the data", data: fusedData });
     } catch (error) {
