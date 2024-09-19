@@ -1,27 +1,49 @@
 // verifyPayment.mjs
 import { PrismaClient } from '@prisma/client';
-import crypto from 'crypto';
+
+import generateCustomRandomUID from '../../../lib/customuids.js';
+import logging from '../../../logging/logging_generate.js';
 
 const prisma = new PrismaClient();
 
 const verifyPayment = async (req, res) => {
-  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
-
-  const generated_signature = crypto.createHmac('sha256', 'YOUR_KEY_SECRET')
-    .update(razorpay_order_id + '|' + razorpay_payment_id)
-    .digest('hex');
-
-  if (generated_signature === razorpay_signature) {
-    // Payment is successful
-    await prisma.razorpayData.update({
-      where: { orderId: razorpay_order_id },
-      data: { status: 'captured', paymentId: razorpay_payment_id },
-    });
-    res.status(200).json({ status: 'success' });
-  } else {
-    // Payment verification failed
-    res.status(400).json({ status: 'failure' });
-  }
+  
+  const apiauthkey = req.headers['apiauthkey'];
+  // Check if the API key is valid
+  if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+    const messagetype = "error"
+    const message = "API route access error"
+    const filelocation = "verifypayment.js"
+    logging(messagetype,message,filelocation)
+    return res.status(403).json({ message: "API route access forbidden" });
+}
+  const { razorpay_payment_id,  userid,
+    walletid,
+    price, } = req.body;
+    try {
+      const trans = await prisma.transactionsdetails.create({
+        data:{
+          uid:generateCustomRandomUID(),
+          paymentid:razorpay_payment_id,
+          userid:userid,
+          price:price,
+          walletid:walletid
+        }
+  
+      })
+      const messagetype = "success"
+      const message = `${JSON.stringify(trans)}`
+      const filelocation = "verifypayment.js"
+      logging(messagetype,message,filelocation)
+      return 200;
+    } catch (error) {
+      console.log(error)
+      const messagetype = "error"
+      const message = `${error}`
+      const filelocation = "verifypayment.js"
+      logging(messagetype,message,filelocation)
+    }
+   
 };
 
 export default verifyPayment;

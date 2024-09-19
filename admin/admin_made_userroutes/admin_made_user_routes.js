@@ -50,6 +50,8 @@ import addhub from "../crud/hub_crud/addhub.js"
 import GetAllHubdata from "../crud/hub_crud/getallhubdata.js"
 import gahuaa from "../crud/hub_crud/get_all_hubs_under_a_admin.js"
 import GetSingleHubDetails from "../crud/hub_crud/get_single_hub_details.js"
+import verifyPayment from "../crud/razor_pay_crud/verifypayment.js"
+import totalrevenue from "../crud/wallet_crud/totalrevenue.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -140,6 +142,8 @@ adminmadeuserroutes.post("/editwalletdata",edit_wallet)
 adminmadeuserroutes.post("/deletewalletdata",deletewalletdata)
 //get all wallet recharge history
 adminmadeuserroutes.get("/getallwalletrechargehistory",get_all_wallet_recharge_history)
+//verifypayment
+adminmadeuserroutes.post("/verifypayment",verifyPayment)
 //get wallet history for a perticular user
 adminmadeuserroutes.post("/find_wh_o_s_w",find_wh_o_s_w)
 //get all log data
@@ -152,4 +156,7 @@ adminmadeuserroutes.get("/allhubs",GetAllHubdata)
 adminmadeuserroutes.post("/gahuaa",gahuaa)
 //get a hub details by id
 adminmadeuserroutes.post("/singlehub",GetSingleHubDetails)
+//transactions get the total revenue
+adminmadeuserroutes.post("/totalrevenue",totalrevenue)
+
 export default adminmadeuserroutes;
