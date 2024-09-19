@@ -52,6 +52,7 @@ import gahuaa from "../crud/hub_crud/get_all_hubs_under_a_admin.js"
 import GetSingleHubDetails from "../crud/hub_crud/get_single_hub_details.js"
 import verifyPayment from "../crud/razor_pay_crud/verifypayment.js"
 import totalrevenue from "../crud/wallet_crud/totalrevenue.js"
+import gettransactions from "../crud/razor_pay_crud/payment_data.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -158,5 +159,7 @@ adminmadeuserroutes.post("/gahuaa",gahuaa)
 adminmadeuserroutes.post("/singlehub",GetSingleHubDetails)
 //transactions get the total revenue
 adminmadeuserroutes.post("/totalrevenue",totalrevenue)
+//get all transactions details
 
+adminmadeuserroutes.get("/alltsdetails",gettransactions)
 export default adminmadeuserroutes;
