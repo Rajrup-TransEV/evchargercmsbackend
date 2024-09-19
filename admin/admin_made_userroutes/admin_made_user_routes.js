@@ -161,5 +161,5 @@ adminmadeuserroutes.post("/singlehub",GetSingleHubDetails)
 adminmadeuserroutes.post("/totalrevenue",totalrevenue)
 //get all transactions details
 
-adminmadeuserroutes.get("/alltsdetails",gettransactions)
+adminmadeuserroutes.post("/alltsdetails",gettransactions)
 export default adminmadeuserroutes;

@@ -5,9 +5,14 @@ import generateCustomRandomUID from "../../../lib/customuids.js";
 const prisma = new PrismaClient();
 
 const gettransactions = async (req, res) => {
+    const {masteradminid}=req.body;
     try {
         // Step 1: Fetch transactions
-        const transtable = await prisma.transactionsdetails.findMany();
+        const transtable = await prisma.transactionsdetails.findMany({
+         where:{
+            userid:masteradminid
+         }
+        });
 
         // Step 2: Extract unique user IDs and charger IDs
         const userIds = new Set();
