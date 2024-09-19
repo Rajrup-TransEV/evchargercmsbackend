@@ -298,6 +298,7 @@ model Transactionsdetails{
   walletid String?
   userid String?
   price String?
+  chargeruid String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }

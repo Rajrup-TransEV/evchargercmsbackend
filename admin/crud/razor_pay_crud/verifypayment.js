@@ -19,6 +19,7 @@ const verifyPayment = async (req, res) => {
 }
   const { razorpay_payment_id,  userid,
     walletid,
+    chargeruid,
     price, } = req.body;
     try {
       const trans = await prisma.transactionsdetails.create({
@@ -27,6 +28,7 @@ const verifyPayment = async (req, res) => {
           paymentid:razorpay_payment_id,
           userid:userid,
           price:price,
+          chargeruid:chargeruid,
           walletid:walletid
         }
   
