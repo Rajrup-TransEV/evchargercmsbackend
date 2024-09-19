@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
 import createPayment from "../razor_pay_crud/razorpay_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 
@@ -73,7 +74,6 @@ const rechargewallet = async (req, res) => {
       createPayment(findAdminUserProfile.firstname,findAdminUserProfile.email,findAdminUserProfile.address,price)
 
       const newBalance = parseFloat(walletfind.balance) + parseFloat(price);
-
       // Update the wallet balance
       const wallettopup = await prisma.wallet.update({
         where: {
@@ -89,7 +89,7 @@ const rechargewallet = async (req, res) => {
       // Create a new record in the walletreachargehistory table
       const walletRechargeHistory = await prisma.walletreachargehistory.create({
         data: {
-          uid: crypto.randomUUID(),
+          uid: generateCustomRandomUID(),
           userassociatedid: userid,
           previousbalance: walletfind.balance.toString(), // Store the previous balance
           balanceleft: newBalance.toString(), // Store the new balance
