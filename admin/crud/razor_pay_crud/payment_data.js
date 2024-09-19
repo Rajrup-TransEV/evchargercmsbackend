@@ -5,12 +5,12 @@ import generateCustomRandomUID from "../../../lib/customuids.js";
 const prisma = new PrismaClient();
 
 const gettransactions = async (req, res) => {
-    const {masteradminid}=req.body;
+    const {userid}=req.body;
     try {
         // Step 1: Fetch transactions
         const transtable = await prisma.transactionsdetails.findMany({
          where:{
-            userid:masteradminid
+            userid:userid
          }
         });
 
