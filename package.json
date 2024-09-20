@@ -30,6 +30,7 @@
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.4",
     "npm-check-updates": "^17.1.0",
+    "ocpp-rpc": "^2.1.2",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "qrcode": "^1.5.4",
