@@ -1,7 +1,7 @@
 import { RPCServer, createRPCError } from 'ocpp-rpc';
 
 const server = new RPCServer({
-    protocols: ['ocpp1.6'], // Specify the OCPP protocol version
+    protocols: ['ocpp2.1'], // Specify the OCPP protocol version
     strictMode: true, // Enable strict validation of requests & responses
 });
 
