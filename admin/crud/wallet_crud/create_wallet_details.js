@@ -82,7 +82,7 @@ const create_wallet_details = async (req, res) => {
             // Create wallet for userProfile
             const walletForAdminProfile = await prisma.wallet.create({
                 data: {
-                    uid: crypto.randomUUID(),
+                    uid:generateCustomRandomUID(),
                     userprofilerelatedwallet: userid,
                     balance: price
                 }
