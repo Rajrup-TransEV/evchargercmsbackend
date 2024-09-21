@@ -29,6 +29,7 @@ const verifyloginOTP = async (req, res) => {
                 email: email
             },select:{
                 uid:true,
+                username:true,
                 userType:true,
                 email:true,
                 emailVerified:true,
