@@ -18,6 +18,9 @@ const rechargewallet = async (req, res) => {
   }
 
   const { userid, walletid, price } = req.body;
+  console.log(userid)
+  console.log(walletid)
+  console.log(price)
 
   // Null exception handling
   if (!userid || !walletid || !price) {
@@ -67,16 +70,16 @@ const rechargewallet = async (req, res) => {
 
     if (findAppUserProfile || findAdminUserProfile) {
       // Prepare payment details
-      const paymentDetails = {
-        firstname: findAdminUserProfile?.firstname || '',
-        email: findAdminUserProfile?.email || findAppUserProfile?.email || '',
-        address: findAdminUserProfile?.address || '',
-        username: findAppUserProfile?.username || '',
-        price,
-      };
+      // const paymentDetails = {
+      //   firstname: findAdminUserProfile?.firstname || '',
+      //   email: findAdminUserProfile?.email || findAppUserProfile?.email || '',
+      //   address: findAdminUserProfile?.address || '',
+      //   username: findAppUserProfile?.username || '',
+      //   price,
+      // };
 
       // Call createPayment with payment details
-      await createPayment(paymentDetails);
+    createPayment(findAdminUserProfile.firstname,findAdminUserProfile.email,findAdminUserProfile.address,price)
 
       // Return the response indicating success
       const messagetype = "success";
