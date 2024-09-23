@@ -10,8 +10,9 @@ import authRoutes from "./androidpac/routes/authroutes.js";
 import { PrismaClient } from '@prisma/client';
 import cron from 'node-cron';
 import { setupSwagger } from './swagger.js';
+import ipTracker from "./iptracker.js";
 // import ipTracker from "./iptracker.js";
-
+import requestIp from 'request-ip';
 const prisma = new PrismaClient();
 
 const app = express();
@@ -22,7 +23,8 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json({ limit: '1000mb' })); // Set limit for JSON payloads
 app.use(bodyParser.urlencoded({ limit: '1000mb', extended: true })); // Handle URL-encoded data
 // app.use(ipTracker)
-app.set('trust proxy', true)
+// app.set('trust proxy', true)
+app.use(requestIp.mw())
 // CORS configuration
 const corsOptions = {
     origin: "*",
