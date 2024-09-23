@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json({ limit: '1000mb' })); // Set limit for JSON payloads
 app.use(bodyParser.urlencoded({ limit: '1000mb', extended: true })); // Handle URL-encoded data
 // app.use(ipTracker)
-
+app.set('trust proxy', true)
 // CORS configuration
 const corsOptions = {
     origin: "*",

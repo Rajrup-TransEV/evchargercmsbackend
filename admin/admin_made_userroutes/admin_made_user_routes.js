@@ -56,6 +56,7 @@ import gettransactions from "../crud/razor_pay_crud/payment_data.js"
 import { todayrevenue } from "../crud/wallet_crud/today_recharge.js"
 import { monthlyRevenue } from "../crud/wallet_crud/monthly_recharge.js"
 import { yearlyRevenue } from "../crud/wallet_crud/yearly_recharge.js"
+import ipTracker from "../../iptracker.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -170,4 +171,6 @@ adminmadeuserroutes.get("/todayrev",todayrevenue)
 adminmadeuserroutes.get("/monthlyrev",monthlyRevenue)
 //yearly recharge revenue
 adminmadeuserroutes.get("/yearlyrev",yearlyRevenue)
+//get ip
+adminmadeuserroutes.get("/getip",ipTracker)
 export default adminmadeuserroutes;
