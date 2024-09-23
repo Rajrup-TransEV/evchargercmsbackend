@@ -53,6 +53,9 @@ import GetSingleHubDetails from "../crud/hub_crud/get_single_hub_details.js"
 import verifyPayment from "../crud/razor_pay_crud/verifypayment.js"
 import totalrevenue from "../crud/wallet_crud/totalrevenue.js"
 import gettransactions from "../crud/razor_pay_crud/payment_data.js"
+import { todayrevenue } from "../crud/wallet_crud/today_recharge.js"
+import { monthlyRevenue } from "../crud/wallet_crud/monthly_recharge.js"
+import { yearlyRevenue } from "../crud/wallet_crud/yearly_recharge.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -160,6 +163,11 @@ adminmadeuserroutes.post("/singlehub",GetSingleHubDetails)
 //transactions get the total revenue
 adminmadeuserroutes.post("/totalrevenue",totalrevenue)
 //get all transactions details
-
 adminmadeuserroutes.post("/alltsdetails",gettransactions)
+//get todays total revenue
+adminmadeuserroutes.get("/todayrev",todayrevenue)
+//monthly recharge revenue
+adminmadeuserroutes.get("/monthlyrev",monthlyRevenue)
+//yearly recharge revenue
+adminmadeuserroutes.get("/yearlyrev",yearlyRevenue)
 export default adminmadeuserroutes;
