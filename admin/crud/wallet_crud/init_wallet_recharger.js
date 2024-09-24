@@ -58,29 +58,37 @@ const rechargewallet = async (req, res) => {
     }
 
     // Check if the user exists in userProfile
-    const findAppUserProfile = await prisma.user.findFirst({
+    //find the user here 
+    const findUser = await prisma.user.findFirst({
       where: { uid: userid },
       select: { uid: true, username: true, email: true },
     });
+    console.log("find application result user ",findUser)
+    //find the corrospondip app user profile 
+    const findAppUserProfile = await prisma.appUserProfile.findFirst({
+      where:{uid:findUser.uid},
+      select:{uid:true,firstname:true}
+    })
 
+    //fomd the main admin profile
     const findAdminUserProfile = await prisma.userProfile.findFirst({
       where: { uid: userid },
       select: { uid: true, firstname: true, email: true, address: true },
     });
 
-    if (findAppUserProfile || findAdminUserProfile) {
+    if (findUser || findAdminUserProfile) {
       // Prepare payment details
-      // const paymentDetails = {
-      //   firstname: findAdminUserProfile?.firstname || '',
-      //   email: findAdminUserProfile?.email || findAppUserProfile?.email || '',
-      //   address: findAdminUserProfile?.address || '',
-      //   username: findAppUserProfile?.username || '',
-      //   price,
-      // };
+      const paymentDetails = {
+        firstname: findAdminUserProfile?.firstname || findAppUserProfile?.firstname || '',
+        email: findAdminUserProfile?.email || findAppUserProfile?.email || '',
+        address: findAdminUserProfile?.address || '',
+        username: findAppUserProfile?.username || '',
+        price,
+      };
 
       // Call createPayment with payment details
-    createPayment(findAdminUserProfile.firstname,findAdminUserProfile.email,findAdminUserProfile.address,price)
-
+    // createPayment(findAdminUserProfile.firstname,findAdminUserProfile.email,findAdminUserProfile.address,price)
+    createPayment(paymentDetails)
       // Return the response indicating success
       const messagetype = "success";
       const message = "Wallet recharge done";

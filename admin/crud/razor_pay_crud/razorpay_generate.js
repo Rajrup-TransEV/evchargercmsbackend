@@ -1,13 +1,17 @@
-// models/RazorpayData.js
 import { PrismaClient } from '@prisma/client';
 import Razorpay from 'razorpay';
 
 const prisma = new PrismaClient();
 
-const createPayment = async (customerName, customerEmail, customerContact, price) => {
-    console.log("razorpay captured price", price);
-    const razid = process.env.RAZOR_PAY_KEY
-    const razsid = process.env.RAZOR_PAY_SECRET
+// Create payment function expects an object with specific properties
+const createPayment = async (paymentDetails) => {
+    // Destructure required fields from paymentDetails
+    const { firstname: customerName, email: customerEmail, address: customerAddress, price } = paymentDetails;
+
+    console.log("Razorpay captured price", price);
+    const razid = process.env.RAZOR_PAY_KEY;
+    const razsid = process.env.RAZOR_PAY_SECRET;
+
     // Create an instance of Razorpay
     const razorpay = new Razorpay({
         key_id: razid,
@@ -18,9 +22,9 @@ const createPayment = async (customerName, customerEmail, customerContact, price
     const orderData = {
         amount: price * 100, // Amount in paise (multiply by 100 to convert to paise)
         currency: 'INR',
-        receipt: `receipt_${Math.random() * 10000}`, // Unique receipt ID
+        receipt: `receipt_${Math.floor(Math.random() * 10000)}`, // Unique receipt ID
         notes: {
-            address: 'Customer Address'
+            address: customerAddress // Use customerAddress for address
         }
     };
 
@@ -39,7 +43,7 @@ const createPayment = async (customerName, customerEmail, customerContact, price
             prefill: {
                 name: customerName,
                 email: customerEmail,
-                contact: customerContact
+                contact: '', // Assuming contact is not provided; you may want to add this if available
             },
             theme: {
                 color: '#F37254'
@@ -47,7 +51,7 @@ const createPayment = async (customerName, customerEmail, customerContact, price
         };
     } catch (error) {
         console.error('Error creating payment:', error);
-        throw error; // Rethrow error for handling in calling function
+        throw new Error(`Payment creation failed - ${error.message}`); // More informative error message
     }
 };
 
