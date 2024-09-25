@@ -72,7 +72,7 @@ export const loginUser = async (req, res) => {
             // Proceed to check email and password after successful OTP verification
             const existingUser = await prisma.user.findUnique({
                 where: { email: email },
-                select: { email: true, password: true }
+                select: { username:true,email: true,uid:true,userType:true,password: true }
             });
 
             if (!existingUser) {
@@ -94,10 +94,20 @@ export const loginUser = async (req, res) => {
             }
 
             // Generate a JWT token for successful login
-            const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign(
+                {
+                    username: existingUser.username,
+                    email: existingUser.email,
+                    userid: existingUser.uid,
+                    userType: existingUser.userType,
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '8h' }
+            );
+    
 
             logging("success", `User logged in successfully for email: ${email}`, "androidpac/loginuser.js");
-            return res.status(200).json({ message: "Login successful", token });
+            return res.status(200).json({ message: "Login successful", token:token });
         }
 
         // If no OTP is provided, proceed with normal login and generate an OTP
