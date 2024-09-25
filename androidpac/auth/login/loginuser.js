@@ -166,11 +166,11 @@ export const loginUser = async (req, res) => {
         console.error(err);
 
         const messagetypeError = "error";
-        const messageError = `Error ${err.message}`;
+        const messageError = `Error ${err}`;
         const filelocationError = "androidpac/loginuser.js";
 
         logging(messagetypeError, messageError, filelocationError);
 
-        return res.status(500).json({ message: "Internal server error.", error: err.message });
+        return res.status(500).json({ message: "Internal server error.", error: err });
     }
 };
