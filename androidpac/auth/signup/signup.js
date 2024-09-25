@@ -121,11 +121,11 @@ export const signupUser = async (req, res) => {
         console.error("The previous logic has failed to execute and error is ", err);
         
         const messagetype = "error";
-        const message = `Something went wrong with the server please try again - ${err.message}`;
+        const message = `Something went wrong with the server please try again - ${err}`;
         const filelocation = "androidpac/signup.js";
         
         logging(messagetype, message, filelocation);
         
-        return res.status(500).json({ message: `${err.message}` });
+        return res.status(500).json({ message: `${err}` });
     }
 };
