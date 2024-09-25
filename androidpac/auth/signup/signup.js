@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
+import generateOtp from "../../../lib/generateotp.js";
 
 const prisma = new PrismaClient()
 
@@ -41,7 +42,7 @@ export const signupUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt); // Await the hashing
         const uuid = generateCustomRandomUID()
         //opt verification process has start here 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
+        const otp = generateOtp();
         const to = email
         const subject = 'Email Verification for Account Creation'
         const text =  `Your OTP for email verification is: ${otp}   ::: this otp only valid for 15 minutes`
