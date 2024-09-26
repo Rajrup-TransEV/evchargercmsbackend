@@ -59,6 +59,7 @@ import { yearlyRevenue } from "../crud/wallet_crud/yearly_recharge.js"
 import ipTracker from "../../iptracker.js"
 import chargercontroller from "../../ocpp/chargercontoller/chargercontroller.js"
 import expenses from "../crud/wallet_crud/expenses.js"
+import delete_hub_data from "../crud/hub_crud/deletehub.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -163,6 +164,8 @@ adminmadeuserroutes.get("/allhubs",GetAllHubdata)
 adminmadeuserroutes.post("/gahuaa",gahuaa)
 //get a hub details by id
 adminmadeuserroutes.post("/singlehub",GetSingleHubDetails)
+//delete hub data
+adminmadeuserroutes.post("/deletehubdata",delete_hub_data)
 //transactions get the total revenue
 adminmadeuserroutes.post("/totalrevenue",totalrevenue)
 //get all transactions details
