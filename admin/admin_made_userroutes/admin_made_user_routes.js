@@ -60,6 +60,7 @@ import ipTracker from "../../iptracker.js"
 import chargercontroller from "../../ocpp/chargercontoller/chargercontroller.js"
 import expenses from "../crud/wallet_crud/expenses.js"
 import delete_hub_data from "../crud/hub_crud/deletehub.js"
+import getvehiclebyid from "../crud/vehicle_crud_logics/get_vehicle_by_id.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -133,6 +134,8 @@ adminmadeuserroutes.post("/assignvtod",vehicle_assign.assignVehicleToDriver)
 adminmadeuserroutes.post("/assigndtov",vehicle_assign.assignDriverToVehicle)
 //get all of the vehicles
 adminmadeuserroutes.get("/listofvehicle",get_all_vehicles)
+//get vehicle details by their owener id
+adminmadeuserroutes.post("/getvdbid",getvehiclebyid)
 //update vehicle details
 adminmadeuserroutes.post("/updatevehicledetails",update_vehicle_details)
 //delete a vehicle
