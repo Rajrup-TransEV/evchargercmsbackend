@@ -11,6 +11,7 @@ import userprofileupdate from "../controller/crud/userprofilecrud/user_profile_u
 import delete_user_profile from "../controller/crud/userprofilecrud/delete_user_profile.js"
 import generateqrcode from "../controller/crud/qrcodeops/qrcode.js"
 import getqrcodedata from "../controller/crud/qrcodeops/get_qr_code_data.js"
+import pprofiledetails from "../controller/crud/userprofilecrud/perticualuserdetails.js"
 const userRoutes = Router()
 
 
@@ -31,5 +32,8 @@ userRoutes.post("/updateappuserprofile",userprofileupdate)
 //delete user profile data
 userRoutes.post("/deleteauserdata",delete_user_profile)
 userRoutes.post("/qrcode",generateqrcode)
+
 userRoutes.get("/getallqrcodes",getqrcodedata)
+
+userRoutes.post("/puprofile",pprofiledetails)
 export default userRoutes;

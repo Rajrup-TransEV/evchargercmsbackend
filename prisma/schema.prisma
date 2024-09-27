@@ -306,10 +306,10 @@ model Transactionsdetails{
 model iptracker{
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
-  ipv4addess String?
-  ipv6address String?
-  originoftheip String?
-
+  ipaddress String?
+  filepath String?
+  datetimeofaccess String?
+  messages String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }

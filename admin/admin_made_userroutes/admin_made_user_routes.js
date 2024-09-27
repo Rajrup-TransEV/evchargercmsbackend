@@ -177,7 +177,7 @@ adminmadeuserroutes.get("/monthlyrev",monthlyRevenue)
 //yearly recharge revenue
 adminmadeuserroutes.get("/yearlyrev",yearlyRevenue)
 //get ip
-adminmadeuserroutes.get("/getip",ipTracker)
+adminmadeuserroutes.post("/getip",ipTracker)
 //charger test endpoint controller
 adminmadeuserroutes.post("/chargercontroller",chargercontroller)
 //expense tracking 
