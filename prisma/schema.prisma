@@ -29,6 +29,7 @@ model User {
 
   appuserprofile   AppUserProfile[]
  wallets    wallet[]
+ vehicles Assigntovechicles[]
 }
 
 model AppUserProfile {
@@ -145,6 +146,8 @@ model Assigntovechicles {
   vehicletype      String?
   vehicleowenerId        String?  // Ensure one vehicle per driver
   vehicleowener          Assigntovehicleowener?  @relation(fields: [vehicleowenerId], references: [uid])
+  userId           String?              // Foreign key for User
+  user             User?                @relation(fields: [userId], references: [uid])
   isvehicleassigned Boolean?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt

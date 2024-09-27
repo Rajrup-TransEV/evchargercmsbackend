@@ -1,91 +1,117 @@
-// vehicle creation logic .
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 
-
-const vehilcle_create = async(req,res)=>{
+const vehilcle_create = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
 
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
-       const messagetype = "error"
-       const message = "API route access error"
-       const filelocation = "vehicle_create.js"
-        logging(messagetype,message,filelocation)
+        const messagetype = "error";
+        const message = "API route access error";
+        const filelocation = "vehicle_create.js";
+        logging(messagetype, message, filelocation);
         return res.status(403).json({ message: "API route access forbidden" });
     }
-    const {uid,vehiclename,vehiclemodel,vehiclelicense,vehicleowner,vehicletype,vehiclecategory} = req.body;
 
-   
+    const { vehiclename, vehiclemodel, vehiclelicense, vehicleowner, vehicletype, vehiclecategory } = req.body;
+
     try {
-        if (vehiclename===""||vehiclemodel===""||vehiclelicense===""||vehicleowner===""||vehicletype===""||vehiclecategory===""){
-            const messagetype = "error"
-            const message = "no value provided for required fields"
-            const filelocation = "vehicle_create.js"
-             logging(messagetype,message,filelocation)
-             return res.status(403).json({ message: "no value provided for required fields" });
+        // Validate required fields
+        if (!vehiclename || !vehiclemodel || !vehiclelicense || !vehicleowner || !vehicletype || !vehiclecategory) {
+            const messagetype = "error";
+            const message = "No value provided for required fields";
+            const filelocation = "vehicle_create.js";
+            logging(messagetype, message, filelocation);
+            return res.status(400).json({ message: "No value provided for required fields" });
         }
-        const vhowener = await prisma.assigntovehicleowener.findFirstOrThrow({
-            where:{
-                vehicleoweneremail:vehicleowner
-            },select:{
-                uid:true
-            }
-        })
-        if(vehicleowner==null && !vehicleowner){
-            return res.status(404).json({message:'No user hasbeen found asshociated with the email'})
-        }
-     
-        const vehicledatamatch = await prisma.assigntovechicles.findFirst({
-            where:{
-                    vehiclelicense:vehiclelicense
-            },select:{
-                vehiclelicense:true
-            }
-        })
-        if (vehicledatamatch){
-            const messagetype = "error"
-            const message = "A vehicle with the same license already exists"
-            const filelocation = "vehicle_create.js"
-             logging(messagetype,message,filelocation)
-            return res.status(409).json({message:`A vehicle with the same license already exists`})
-        }
-        const vhown=vhowener.uid
-        console.log(vhown)
-        const vehicledatacreate  = await prisma.assigntovechicles.create({
-               data:{
-                uid:generateCustomRandomUID(),
-                vehiclename:vehiclename,
-                vehiclemodel:vehiclemodel,
-                vehiclelicense:vehiclelicense,
-                vehicleowenerId:vhown,
-                vehicletype:vehicletype,
-                vehiclecategory:vehiclecategory,
-               }
-        })
+
+        // Check if the owner exists in Assigntovehicleowener model
+        let ownerRecord;
         
-        if(!vehicledatacreate){
-            const messagetype = "error"
-            const message = "There is something wrong"
-            const filelocation = "vehicle_create.js"
-            logging(messagetype,message,filelocation)
-            return res.status(503).json({message:`There is something wrong`})
+        ownerRecord = await prisma.assigntovehicleowener.findUnique({
+            where: { vehicleoweneremail: vehicleowner },
+            select: { uid: true }
+        });
+
+        if (ownerRecord) {
+            // Create the vehicle record using Assigntovehicleowener UID
+            const vehicledatacreate = await prisma.assigntovechicles.create({
+                data: {
+                    uid: generateCustomRandomUID(),
+                    vehiclename,
+                    vehiclemodel,
+                    vehiclelicense,
+                    vehicletype,
+                    vehiclecategory,
+                    vehicleowenerId: ownerRecord.uid,
+                }
+            });
+
+            if (!vehicledatacreate) {
+                const messagetype = "error";
+                const message = "There is something wrong while creating the vehicle";
+                const filelocation = "vehicle_create.js";
+                logging(messagetype, message, filelocation);
+                return res.status(503).json({ message: "There is something wrong" });
+            }
+
+            const messagetype = "success";
+            const message = "Vehicle data has successfully saved";
+            const filelocation = "vehicle_create.js";
+            logging(messagetype, message, filelocation);
+            
+            return res.status(200).json({ message: "Vehicle data has successfully saved" });
+        } else {
+            // If not found in Assigntovehicleowener, check in User model
+            ownerRecord = await prisma.user.findUnique({
+                where: { email: vehicleowner },
+                select: { uid: true } // Assuming user table has a uid field
+            });
+
+            if (!ownerRecord) {
+                return res.status(404).json({ message: 'No user associated with this email' });
+            }
+
+            // Create the vehicle record using User UID
+            const vehicledatacreate = await prisma.assigntovechicles.create({
+                data: {
+                    uid: generateCustomRandomUID(),
+                    vehiclename,
+                    vehiclemodel,
+                    vehiclelicense,
+                    vehicletype,
+                    vehiclecategory,
+                    userId: ownerRecord.uid, // Use userId for normal users
+                }
+            });
+
+            if (!vehicledatacreate) {
+                const messagetype = "error";
+                const message = "There is something wrong while creating the vehicle";
+                const filelocation = "vehicle_create.js";
+                logging(messagetype, message, filelocation);
+                return res.status(503).json({ message: "There is something wrong" });
+            }
+
+            const messagetype = "success";
+            const message = "Vehicle data has successfully saved for normal user";
+            const filelocation = "vehicle_create.js";
+            logging(messagetype, message, filelocation);
+            
+            return res.status(200).json({ message: "Vehicle data has successfully saved for normal user" });
         }
-        const messagetype = "success"
-        const message = "Vehicle data has successfully saved"
-        const filelocation = "vehicle_create.js"
-        logging(messagetype,message,filelocation)
-        return res.status(200).json({message:"Vehicle data has successfully saved"})
+
     } catch (error) {
-        console.log(error)
-        const messagetype = "error"
-        const message = `${JSON.stringify(error)}`
-        const filelocation = "vehicle_create.js"
-        logging(messagetype,message,filelocation)
-        return res.status(500).json({message:error})
+        console.error(error);
+        const messagetype = "error";
+        const message = `${error.message || 'Internal Server Error'}`;
+        const filelocation = "vehicle_create.js";
+        logging(messagetype, message, filelocation);
+        
+        return res.status(500).json({ message });
     }
 }
 
