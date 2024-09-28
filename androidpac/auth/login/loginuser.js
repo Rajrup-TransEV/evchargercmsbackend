@@ -5,8 +5,6 @@ import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
-
-// Temporary storage for login sessions
 const tempStorage = {};
 
 export const loginUser = async (req, res) => {
@@ -15,21 +13,16 @@ export const loginUser = async (req, res) => {
 
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
-        const messagetype = "error";
-        const message = "API route access error";
-        const filelocation = "androidpac/loginuser.js";
-        logging(messagetype, message, filelocation);
+        logging("error", "API route access error", "androidpac/loginuser.js");
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
     const { email, password, otp } = req.body;
-
+    //hardcoded value later on this gonna changed
+    const adminuid = "yyyy"
     // Check for required fields
     if (!email || !password) {
-        const messagetype = "error";
-        const message = "Email and password are required.";
-        const filelocation = "androidpac/loginuser.js";
-        logging(messagetype, message, filelocation);
+        logging("error", "Email and password are required.", "androidpac/loginuser.js");
         return res.status(400).json({ message: "Email and password are required." });
     }
 
@@ -38,10 +31,7 @@ export const loginUser = async (req, res) => {
         if (otp) {
             // Check if email exists in temporary storage
             if (!tempStorage[email]) {
-                const messagetype = "error";
-                const message = "Session expired or invalid. Please log in again.";
-                const filelocation = "androidpac/loginuser.js";
-                logging(messagetype, message, filelocation);
+                logging("error", "Session expired or invalid. Please log in again.", "androidpac/loginuser.js");
                 return res.status(400).json({ message: "Session expired or invalid. Please log in again." });
             }
 
@@ -50,19 +40,13 @@ export const loginUser = async (req, res) => {
             // Check if OTP is expired
             if (Date.now() > otpExpiration) {
                 delete tempStorage[email]; // Clean up expired session
-                const messagetype = "error";
-                const message = "OTP has expired.";
-                const filelocation = "androidpac/loginuser.js";
-                logging(messagetype, message, filelocation);
+                logging("error", "OTP has expired.", "androidpac/loginuser.js");
                 return res.status(400).json({ message: "OTP has expired." });
             }
 
             // Check if provided OTP matches
             if (otp !== generatedOtp) {
-                const messagetype = "error";
-                const message = "Invalid OTP.";
-                const filelocation = "androidpac/loginuser.js";
-                logging(messagetype, message, filelocation);
+                logging("error", "Invalid OTP.", "androidpac/loginuser.js");
                 return res.status(400).json({ message: "Invalid OTP." });
             }
 
@@ -70,67 +54,49 @@ export const loginUser = async (req, res) => {
             delete tempStorage[email];
 
             // Proceed to check email and password after successful OTP verification
-            const existingUser = await prisma.user.findUnique({
-                where: { email: email },
-                select: { username:true,email: true,uid:true,userType:true,password: true }
-            });
+            const existingUser = await findUserByEmail(email);
 
             if (!existingUser) {
-                const messagetype = "error";
-                const message = "Credentials do not match.";
-                const filelocation = "androidpac/loginuser.js";
-                logging(messagetype, message, filelocation);
+                logging("error", "Credentials do not match.", "androidpac/loginuser.js");
                 return res.status(404).json({ message: "Credentials do not match." });
             }
 
             // Compare the password
             const checkPassword = await bcrypt.compare(password, existingUser.password);
             if (!checkPassword) {
-                const messagetype = "error";
-                const message = "Credentials do not match.";
-                const filelocation = "androidpac/loginuser.js";
-                logging(messagetype, message, filelocation);
+                logging("error", "Credentials do not match.", "androidpac/loginuser.js");
                 return res.status(404).json({ message: "Credentials do not match." });
             }
 
             // Generate a JWT token for successful login
             const token = jwt.sign(
                 {
-                    username: existingUser.username,
+                    username: existingUser.firstname || existingUser.username,
                     email: existingUser.email,
                     userid: existingUser.uid,
-                    userType: existingUser.userType,
+                    userType: existingUser.role || existingUser.userType,
+                    adminuid:adminuid
                 },
                 process.env.JWT_SECRET,
                 { expiresIn: '8h' }
             );
-    
 
             logging("success", `User logged in successfully for email: ${email}`, "androidpac/loginuser.js");
-            return res.status(200).json({ message: "Login successful", token:token });
+            return res.status(200).json({ message: "Login successful", token: token });
         }
 
         // If no OTP is provided, proceed with normal login and generate an OTP
-        const existingUserForLogin = await prisma.user.findUnique({
-            where: { email: email },
-            select: { email: true, password: true }
-        });
+        const existingUserForLogin = await findUserByEmail(email);
 
         if (!existingUserForLogin) {
-            const messagetype = "error";
-            const message = "Credentials do not match.";
-            const filelocation = "androidpac/loginuser.js";
-            logging(messagetype, message, filelocation);
+            logging("error", "Credentials do not match.", "androidpac/loginuser.js");
             return res.status(404).json({ message: "Credentials do not match." });
         }
 
         // Compare the password
         const checkPasswordForLogin = await bcrypt.compare(password, existingUserForLogin.password);
         if (!checkPasswordForLogin) {
-            const messagetype = "error";
-            const message = "Credentials do not match.";
-            const filelocation = "androidpac/loginuser.js";
-            logging(messagetype, message, filelocation);
+            logging("error", "Credentials do not match.", "androidpac/loginuser.js");
             return res.status(404).json({ message: "Credentials do not match." });
         }
 
@@ -154,23 +120,30 @@ export const loginUser = async (req, res) => {
             backoff: 10000
         });
 
-        const messagetypeSuccess = "success";
-        const messageSuccess = "OTP sent to your email for two-step authentication.";
-        const filelocationSuccess = "androidpac/loginuser.js";
+        logging("success", "OTP sent to your email for two-step authentication.", "androidpac/loginuser.js");
 
-        logging(messagetypeSuccess, messageSuccess, filelocationSuccess);
-
-        return res.status(201).json({ message: messageSuccess });
+        return res.status(201).json({ message: "OTP sent to your email for two-step authentication." });
 
     } catch (err) {
         console.error(err);
-
-        const messagetypeError = "error";
-        const messageError = `Error ${err}`;
-        const filelocationError = "androidpac/loginuser.js";
-
-        logging(messagetypeError, messageError, filelocationError);
-
+        logging("error", `Error ${err}`, "androidpac/loginuser.js");
         return res.status(500).json({ message: "Internal server error.", error: err });
     }
+};
+
+// Helper function to find user by email in either User or UserProfile tables.
+const findUserByEmail = async (email) => {
+    let user = await prisma.user.findUnique({
+        where: { email },
+        select: { username:true,email: true,uid:true,userType:true,password: true }
+    });
+
+    if (!user) {
+        user = await prisma.userProfile.findUnique({
+            where: { email },
+            select: { firstname:true,email:true,uid:true,password:true,role:true }
+        });
+    }
+
+    return user;
 };

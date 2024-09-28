@@ -16,7 +16,7 @@ const vehilcle_create = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { vehiclename, vehiclemodel, vehiclelicense, vehicleowner, vehicletype, vehiclecategory } = req.body;
+    const { vehiclename, vehiclemodel, vehiclelicense, vehicleowner, vehicletype, vehiclecategory,adminuid } = req.body;
 
     try {
         // Validate required fields
@@ -31,8 +31,8 @@ const vehilcle_create = async (req, res) => {
         // Check if the owner exists in Assigntovehicleowener model
         let ownerRecord;
         
-        ownerRecord = await prisma.assigntovehicleowener.findUnique({
-            where: { vehicleoweneremail: vehicleowner },
+        ownerRecord = await prisma.userProfile.findUnique({
+            where: { email: vehicleowner },
             select: { uid: true }
         });
 
@@ -46,7 +46,7 @@ const vehilcle_create = async (req, res) => {
                     vehiclelicense,
                     vehicletype,
                     vehiclecategory,
-                    vehicleowenerId: ownerRecord.uid,
+                    adminuid:adminuid,
                 }
             });
 
@@ -84,6 +84,7 @@ const vehilcle_create = async (req, res) => {
                     vehiclelicense,
                     vehicletype,
                     vehiclecategory,
+                    adminuid:adminuid,
                     userId: ownerRecord.uid, // Use userId for normal users
                 }
             });

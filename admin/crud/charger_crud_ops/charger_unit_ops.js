@@ -66,6 +66,7 @@ const asssign_buy_charger = async(req,res)=>{
          console.log("normalazie path",normalizepathch)
          fs.writeFileSync(imageFilePath, buffer);
      }
+        const adminuid = usersearch.uid
         const newChargerUnit = await     prisma.charger_Unit.create({
             data:{
                 Chargerserialnum,
@@ -87,7 +88,7 @@ const asssign_buy_charger = async(req,res)=>{
                 twenty_four_seven_open_status,
                 charger_image:normalizepathch,
                 chargeridentity:appenddata,
-                userId:usersearch.uid
+                userId:adminuid
             }
         })
         // const charger_unit_app = await fetch("/")

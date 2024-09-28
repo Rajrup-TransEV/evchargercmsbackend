@@ -73,6 +73,7 @@ model UserProfile {
   wallets    wallet[]
   vehicleowener Assigntovehicleowener[]
   hubs  Addhub[]
+  associatevehicle  Assigntovechicles[]
 }
 
 //fiancial details for all of users 
@@ -148,6 +149,8 @@ model Assigntovechicles {
   vehicleowener          Assigntovehicleowener?  @relation(fields: [vehicleowenerId], references: [uid])
   userId           String?              // Foreign key for User
   user             User?                @relation(fields: [userId], references: [uid])
+  adminuid    String?
+  associateadmin UserProfile? @relation(fields: [adminuid],references: [uid])
   isvehicleassigned Boolean?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -313,6 +316,26 @@ model iptracker{
   filepath String?
   datetimeofaccess String?
   messages String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model Favorites{
+  id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  chargeruid String?
+  useruid String?
+  isfavorite Boolean?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model Bookings {
+    id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  chargeruid String?
+  useruid String?
+  isbooked Boolean?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
