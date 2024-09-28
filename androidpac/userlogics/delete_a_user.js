@@ -23,12 +23,17 @@ const delete_user_data  =  async(req,res)=>{
             logging(messagetype,message,filelocation)
             return res.status(400).json({message:"Necessary fields cannot be empty"})
         }
-        const get_user_data = await prisma.user.deleteMany({
+        const get_user_data = await prisma.user.delete({
             where:{
                 OR:[
                     {uid:userid},
                     {email:email}
                 ]
+            }
+        })
+        const userprofiledetle = await prisma.appUserProfile.delete({
+            where:{
+                userId:userid
             }
         })
         if(!get_user_data){

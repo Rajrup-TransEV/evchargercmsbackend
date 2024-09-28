@@ -12,6 +12,7 @@ import delete_user_profile from "../controller/crud/userprofilecrud/delete_user_
 import generateqrcode from "../controller/crud/qrcodeops/qrcode.js"
 import getqrcodedata from "../controller/crud/qrcodeops/get_qr_code_data.js"
 import pprofiledetails from "../controller/crud/userprofilecrud/perticualuserdetails.js"
+import favoritechargers from "../controller/crud/favorites/createfavorites.js"
 const userRoutes = Router()
 
 
@@ -36,4 +37,6 @@ userRoutes.post("/qrcode",generateqrcode)
 userRoutes.get("/getallqrcodes",getqrcodedata)
 
 userRoutes.post("/puprofile",pprofiledetails)
+
+userRoutes.post("/createfavorites",favoritechargers)
 export default userRoutes;
