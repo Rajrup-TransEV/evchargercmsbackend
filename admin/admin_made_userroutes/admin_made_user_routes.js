@@ -61,6 +61,7 @@ import chargercontroller from "../../ocpp/chargercontoller/chargercontroller.js"
 import expenses from "../crud/wallet_crud/expenses.js"
 import delete_hub_data from "../crud/hub_crud/deletehub.js"
 import getvehiclebyid from "../crud/vehicle_crud_logics/get_vehicle_by_id.js"
+import vehicledetailsbyadminid from "../crud/vehicle_crud_logics/vehicledbyadmin.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -140,6 +141,8 @@ adminmadeuserroutes.post("/getvdbid",getvehiclebyid)
 adminmadeuserroutes.post("/updatevehicledetails",update_vehicle_details)
 //delete a vehicle
 adminmadeuserroutes.post("/deleteavehicle",deleteavehicledata)
+//admin associated vehicle details
+adminmadeuserroutes.post("/adminasvehilces",vehicledetailsbyadminid)
 //wallet crud
 //createwallet
 adminmadeuserroutes.post("/createuserwallet",create_wallet_details)
