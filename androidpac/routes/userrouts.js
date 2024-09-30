@@ -14,6 +14,8 @@ import getqrcodedata from "../controller/crud/qrcodeops/get_qr_code_data.js"
 import pprofiledetails from "../controller/crud/userprofilecrud/perticualuserdetails.js"
 import favoritechargers from "../controller/crud/favorites/createfavorites.js"
 import getfavoritechargerofauser from "../controller/crud/favorites/getfavoritecharges.js"
+import chargerbookings from "../controller/crud/chargerbookings/chargerbookings.js"
+import getlistofbookings from "../controller/crud/chargerbookings/getlistofbookedchargers.js"
 const userRoutes = Router()
 
 
@@ -43,4 +45,8 @@ userRoutes.post("/puprofile",pprofiledetails)
 userRoutes.post("/createfavorites",favoritechargers)
 //get all the favorite chargers of a given user
 userRoutes.post("/loffchargers",getfavoritechargerofauser)
+//create charger booking details
+userRoutes.post("/createbookings",chargerbookings)
+//get list of bookings
+userRoutes.post("/getbookings",getlistofbookings)
 export default userRoutes;

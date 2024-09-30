@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import logging from "../../../logging/logging_generate.js";
-import generateRandomUID from "../../../../lib/generaterandomuid.js";
+import logging from "../../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
 
@@ -47,7 +47,7 @@ const chargerbookings = async (req, res) => {
             // Create a new booking entry
             result = await prisma.bookings.create({
                 data: {
-                    uid: generateRandomUID(),
+                    uid: generateCustomRandomUID(),
                     chargeruid,
                     useruid,
                     isbooked: isBookedBoolean,
