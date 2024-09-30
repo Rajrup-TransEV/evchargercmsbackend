@@ -13,6 +13,7 @@ import generateqrcode from "../controller/crud/qrcodeops/qrcode.js"
 import getqrcodedata from "../controller/crud/qrcodeops/get_qr_code_data.js"
 import pprofiledetails from "../controller/crud/userprofilecrud/perticualuserdetails.js"
 import favoritechargers from "../controller/crud/favorites/createfavorites.js"
+import getfavoritechargerofauser from "../controller/crud/favorites/getfavoritecharges.js"
 const userRoutes = Router()
 
 
@@ -32,11 +33,14 @@ userRoutes.get("/getallappuserdata",getalluserprofile)
 userRoutes.post("/updateappuserprofile",userprofileupdate)
 //delete user profile data
 userRoutes.post("/deleteauserdata",delete_user_profile)
+//generate a qrcode
 userRoutes.post("/qrcode",generateqrcode)
-
+//get all the qrcode
 userRoutes.get("/getallqrcodes",getqrcodedata)
-
+//getprofiledetails if a user
 userRoutes.post("/puprofile",pprofiledetails)
-
+//create favorites
 userRoutes.post("/createfavorites",favoritechargers)
+//get all the favorite chargers of a given user
+userRoutes.post("/loffchargers",getfavoritechargerofauser)
 export default userRoutes;

@@ -1,42 +1,71 @@
-// create favorites
 import { PrismaClient } from "@prisma/client";
-import generateCustomRandomUID from "../../../../lib/customuids";
+import generateCustomRandomUID from "../../../../lib/customuids.js";
+import logging from "../../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
-const favoritechargers = async(req,res)=>{
+
+const favoritechargers = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
+
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
-        const messagetype = "error"
-        const message = "API route access error"
-        const filelocation = "createfavorites.js"
-        logging(messagetype,message,filelocation)
+        const messagetype = "error";
+        const message = "API route access error";
+        const filelocation = "createfavorites.js";
+        logging(messagetype, message, filelocation);
         return res.status(403).json({ message: "API route access forbidden" });
     }
-const {chargeruid,useruid,isfavorite}=req.body
-try {
-    const createdetails = await prisma.favorites.create({
-        data:{
-            uid:generateCustomRandomUID(),
-            chargeruid:chargeruid,
-            useruid:useruid,
-            isfavorite:isfavorite
+
+    const { chargeruid, useruid, isfavorite } = req.body;
+
+    // Convert string 'true'/'false' to boolean
+    const isFavoriteBoolean = (isfavorite === 'true') || (isfavorite === 'false' ? false : undefined);
+
+    try {
+        // Check if the charger already exists in favorites for the user using chargeruid and useruid
+        const existingFavorite = await prisma.favorites.findFirst({
+            where: {
+                chargeruid: chargeruid,
+                useruid: useruid,
+            },
+        });
+
+        let result;
+
+        if (existingFavorite) {
+            // Update the existing favorite entry
+            result = await prisma.favorites.update({
+                where: { uid: existingFavorite.uid },
+                data: { isfavorite: isFavoriteBoolean },
+            });
+
+            const messagetype = "success";
+            const message = "Favorite status updated successfully";
+            logging(messagetype, message, "createfavorites.js");
+            return res.status(200).json({ message: "Charger favorite status updated", result });
+        } else {
+            // Create a new favorite entry
+            result = await prisma.favorites.create({
+                data: {
+                    uid: generateCustomRandomUID(),
+                    chargeruid,
+                    useruid,
+                    isfavorite: isFavoriteBoolean,
+                },
+            });
+
+            const messagetype = "success";
+            const message = "Data has been created successfully";
+            logging(messagetype, message, "createfavorites.js");
+            return res.status(201).json({ message: "Charger added to favorites", result });
         }
-    })
-    const messagetype = "success"
-    const message = "Data hasbeen created successfully"
-    const filelocation = "createfavorites.js"
-    logging(messagetype,message,filelocation)
-    return res.status(200).json({message:"Charger added to favorites",createdetails})
-} catch (error) {
-    const messagetype = "error"
-    const message = `${error}`
-    const filelocation = "createfavorites.js"
-    logging(messagetype,message,filelocation)
-    console.log(error)
-    return res.status(500).json({error:error})
-}
+    } catch (error) {
+        const messagetype = "error";
+        const message = `${error.message || error}`;
+        logging(messagetype, message, "createfavorites.js");
+        console.error(error);
+        return res.status(500).json({ error: error.message || error });
+    }
+};
 
-}
-
-export default favoritechargers
+export default favoritechargers;

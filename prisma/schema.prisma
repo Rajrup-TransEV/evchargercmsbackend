@@ -325,7 +325,7 @@ model Favorites{
   uid                 String?              @unique
   chargeruid String?
   useruid String?
-  isfavorite Boolean?
+   isfavorite   Boolean? @default(false)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
@@ -335,7 +335,7 @@ model Bookings {
   uid                 String?              @unique
   chargeruid String?
   useruid String?
-  isbooked Boolean?
+  isbooked Boolean?  @default(false)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
