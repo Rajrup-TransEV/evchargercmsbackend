@@ -32,7 +32,7 @@ userRoutes.post("/appuserprofilecreate",userprofilecreate)
 //get all user profile data
 userRoutes.get("/getallappuserdata",getalluserprofile)
 // update user profile data
-userRoutes.post("/updateappuserprofile",userprofileupdate)
+userRoutes.post("/updateprofile",userprofileupdate)
 //delete user profile data
 userRoutes.post("/deleteauserdata",delete_user_profile)
 //generate a qrcode
