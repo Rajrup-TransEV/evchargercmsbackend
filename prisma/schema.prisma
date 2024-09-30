@@ -40,6 +40,7 @@ model AppUserProfile {
   bio             String?
   address         String?
   phonenumber     String?
+  profilepicture String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
