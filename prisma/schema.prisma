@@ -21,33 +21,36 @@ model User {
   email           String           @unique
   password        String?
   userType        String?
+
+  phonenumber     String?
+  profilepicture String?
   otp             String?
   otpExpiration   DateTime?
   emailVerified   Boolean?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
-  appuserprofile   AppUserProfile[]
+  // appuserprofile   AppUserProfile[]
  wallets    wallet[]
  vehicles Assigntovechicles[]
 }
 
-model AppUserProfile {
-  id              Int              @id @default(autoincrement())
-  uid             String           @unique // This will be the foreign key
-  firstname       String?
-  lastname        String?
-  bio             String?
-  address         String?
-  phonenumber     String?
-  profilepicture String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+// model AppUserProfile {
+//   id              Int              @id @default(autoincrement())
+//   uid             String           @unique // This will be the foreign key
+//   firstname       String?
+//   lastname        String?
+//   bio             String?
+//   address         String?
+//   phonenumber     String?
+//   profilepicture String?
+//   createdAt       DateTime         @default(now())
+//   updatedAt       DateTime         @updatedAt
 
-  userId String?
-  user User?   @relation(fields: [userId],references: [uid])
+//   userId String?
+//   user User?   @relation(fields: [userId],references: [uid])
  
-}
+// }
 
 
 

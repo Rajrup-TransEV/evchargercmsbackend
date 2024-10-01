@@ -14,7 +14,7 @@ const delete_user_profile = async (req,res)=>{
         logging(messagetype,message,filelocation)
         return res.status(403).json({ message: "API route access forbidden" });
     }
-    const {uid} = req.body ;
+    const {userid} = req.body ;
 
     try {
         if(uid===""){
@@ -24,9 +24,9 @@ const delete_user_profile = async (req,res)=>{
             logging(messagetype,message,filelocation)
             return res.status(400).json({message:"uid is required field"})
         }
-        const deletedata = await prisma.appUserProfile.delete({
+        const deletedata = await prisma.user.delete({
             where:{
-                uid:uid
+                uid:userid
             }
         })
         if(!deletedata){
