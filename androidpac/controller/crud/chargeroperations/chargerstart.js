@@ -28,7 +28,7 @@ const chargerstarttransactions = async(req,res)=>{
             }
         })
         if (walletdetails.balance<=300){
-            return res.status(403).json({message:"Wallet balance is not sufficiant please recharge"})
+            return res.status(400).json({message:"Wallet balance is not sufficiant please recharge"})
         }
         const chargerdetails = {
             "charger_id":chargerid,
