@@ -65,10 +65,6 @@ const rechargewallet = async (req, res) => {
     });
     console.log("find application result user ",findUser)
     //find the corrospondip app user profile 
-    const findAppUserProfile = await prisma.appUserProfile.findFirst({
-      where:{uid:findUser.uid},
-      select:{uid:true,firstname:true}
-    })
 
     //fomd the main admin profile
     const findAdminUserProfile = await prisma.userProfile.findFirst({
@@ -79,10 +75,10 @@ const rechargewallet = async (req, res) => {
     if (findUser || findAdminUserProfile) {
       // Prepare payment details
       const paymentDetails = {
-        firstname: findAdminUserProfile?.firstname || findAppUserProfile?.firstname || '',
-        email: findAdminUserProfile?.email || findAppUserProfile?.email || '',
+        firstname: findAdminUserProfile?.firstname || '',
+        email: findAdminUserProfile?.email || findUser?.email || '',
         address: findAdminUserProfile?.address || '',
-        username: findAppUserProfile?.username || '',
+        username: findUser?.username || '',
         price,
       };
 
