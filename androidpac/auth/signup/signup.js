@@ -22,7 +22,7 @@ export const signupUser = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { username, email, password, otp } = req.body;
+    const { username, email, password,phonenumber, otp } = req.body;
 
     try {
         // If OTP is provided, we are in the verification phase
@@ -61,6 +61,7 @@ export const signupUser = async (req, res) => {
                     email: email,
                     password: hashedPassword,
                     userType: "user",
+                    phonenumber:phonenumber,
                     emailVerified: true
                 }
             });
