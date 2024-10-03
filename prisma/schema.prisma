@@ -343,3 +343,11 @@ model Bookings {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
+model Minimumbalance{
+    id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  minbalance String?
+   createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}

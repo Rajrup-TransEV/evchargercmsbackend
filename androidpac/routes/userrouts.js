@@ -16,6 +16,7 @@ import favoritechargers from "../controller/crud/favorites/createfavorites.js"
 import getfavoritechargerofauser from "../controller/crud/favorites/getfavoritecharges.js"
 import chargerbookings from "../controller/crud/chargerbookings/chargerbookings.js"
 import getlistofbookings from "../controller/crud/chargerbookings/getlistofbookedchargers.js"
+import chargerstarttransactions from "../controller/crud/chargeroperations/chargerstart.js"
 const userRoutes = Router()
 
 
@@ -49,4 +50,6 @@ userRoutes.post("/loffchargers",getfavoritechargerofauser)
 userRoutes.post("/createbookings",chargerbookings)
 //get list of bookings
 userRoutes.post("/getbookings",getlistofbookings)
+//chargerstart transaction
+userRoutes.post("/startcharge",chargerstarttransactions)
 export default userRoutes;
