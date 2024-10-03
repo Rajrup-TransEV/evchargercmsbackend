@@ -62,6 +62,7 @@ import expenses from "../crud/wallet_crud/expenses.js"
 import delete_hub_data from "../crud/hub_crud/deletehub.js"
 import getvehiclebyid from "../crud/vehicle_crud_logics/get_vehicle_by_id.js"
 import vehicledetailsbyadminid from "../crud/vehicle_crud_logics/vehicledbyadmin.js"
+import walletdatagetbyadminid from "../crud/wallet_crud/walletdatagetbyadminid.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -156,6 +157,8 @@ adminmadeuserroutes.post("/editwalletdata",edit_wallet)
 adminmadeuserroutes.post("/deletewalletdata",deletewalletdata)
 //get all wallet recharge history
 adminmadeuserroutes.get("/getallwalletrechargehistory",get_all_wallet_recharge_history)
+//getwalletdata by adminid
+adminmadeuserroutes.post("/gwdbadminid",walletdatagetbyadminid)
 //verifypayment
 adminmadeuserroutes.post("/verifypayment",verifyPayment)
 //get wallet history for a perticular user
@@ -188,7 +191,6 @@ adminmadeuserroutes.post("/getip",ipTracker)
 adminmadeuserroutes.post("/chargercontroller",chargercontroller)
 //expense tracking 
 adminmadeuserroutes.get("/expenses",expenses)
-
 
 
 export default adminmadeuserroutes;

@@ -6,7 +6,7 @@ import generateCustomRandomUID from "../../../lib/customuids.js";
 const prisma = new PrismaClient();
 
 const create_wallet_details = async (req, res) => {
-    try {
+ 
         const apiauthkey = req.headers['apiauthkey'];
         // Check if the API key is valid
         if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
@@ -17,7 +17,7 @@ const create_wallet_details = async (req, res) => {
             return res.status(403).json({ message: "API route access forbidden" });
         }
 
-        const { userid } = req.body;
+        const { userid,adminuid } = req.body;
         //add null exception handeling
         if(userid===""){
             const messagetype = "error";
@@ -27,7 +27,7 @@ const create_wallet_details = async (req, res) => {
             return res.status(400).json({message:"User id not needs to give in order to perform operation"})
         }
         let price = "0";
-        
+        try { 
         // Check if the user exists in appUserProfile
         const findAppUserProfile = await prisma.user.findUnique({
             where: { uid: userid },
@@ -67,7 +67,8 @@ const create_wallet_details = async (req, res) => {
                 data: {
                     uid:generateCustomRandomUID(),
                     appuserrelatedwallet: userid,
-                    balance: price
+                    balance: price,
+                    associatedadminuid:adminuid
                 }
             });
             const messagetype = "success";
@@ -84,7 +85,8 @@ const create_wallet_details = async (req, res) => {
                 data: {
                     uid:generateCustomRandomUID(),
                     userprofilerelatedwallet: userid,
-                    balance: price
+                    balance: price,
+                    associatedadminuid:adminuid
                 }
             });
             const messagetype = "success";
