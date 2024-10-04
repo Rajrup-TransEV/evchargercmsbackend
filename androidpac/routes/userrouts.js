@@ -17,6 +17,7 @@ import getfavoritechargerofauser from "../controller/crud/favorites/getfavoritec
 import chargerbookings from "../controller/crud/chargerbookings/chargerbookings.js"
 import getlistofbookings from "../controller/crud/chargerbookings/getlistofbookedchargers.js"
 import chargerstarttransactions from "../controller/crud/chargeroperations/chargerstart.js"
+import createminthreshhold from "../controller/crud/min_threshhold/createthreshhold.js"
 const userRoutes = Router()
 
 
@@ -52,4 +53,6 @@ userRoutes.post("/createbookings",chargerbookings)
 userRoutes.post("/getbookings",getlistofbookings)
 //chargerstart transaction
 userRoutes.post("/startcharge",chargerstarttransactions)
+//set minimum balance route
+userRoutes.post("/createmb",createminthreshhold)
 export default userRoutes;
