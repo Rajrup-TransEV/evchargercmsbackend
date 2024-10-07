@@ -63,6 +63,7 @@ import delete_hub_data from "../crud/hub_crud/deletehub.js"
 import getvehiclebyid from "../crud/vehicle_crud_logics/get_vehicle_by_id.js"
 import vehicledetailsbyadminid from "../crud/vehicle_crud_logics/vehicledbyadmin.js"
 import walletdatagetbyadminid from "../crud/wallet_crud/walletdatagetbyadminid.js"
+import GetAHubDetails from "../crud/hub_crud/gethubdetail.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -171,8 +172,10 @@ adminmadeuserroutes.post("/addhubs",addhub)
 adminmadeuserroutes.get("/allhubs",GetAllHubdata)
 //get hub under a admin
 adminmadeuserroutes.post("/gahuaa",gahuaa)
-//get a hub details by id
+//get a hub details by charger id
 adminmadeuserroutes.post("/singlehub",GetSingleHubDetails)
+//get a hub by chubid
+adminmadeuserroutes.post("/hubdetails",GetAHubDetails)
 //delete hub data
 adminmadeuserroutes.post("/deletehubdata",delete_hub_data)
 //transactions get the total revenue
