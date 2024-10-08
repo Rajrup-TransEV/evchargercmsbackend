@@ -15,7 +15,7 @@ const thl = async(req,res)=>{
     }
 
     try {
-        const getlists = await prisma.transactionsdetails.findMany({})
+        const getlists = await prisma.transactionsdetails.findMany()
         const messagetype = "success"
         const message = "List of data accessed successfully"
         const filelocation = "transactionhistory.js"
