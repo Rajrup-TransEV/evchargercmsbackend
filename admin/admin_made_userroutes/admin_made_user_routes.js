@@ -64,6 +64,7 @@ import getvehiclebyid from "../crud/vehicle_crud_logics/get_vehicle_by_id.js"
 import vehicledetailsbyadminid from "../crud/vehicle_crud_logics/vehicledbyadmin.js"
 import walletdatagetbyadminid from "../crud/wallet_crud/walletdatagetbyadminid.js"
 import GetAHubDetails from "../crud/hub_crud/gethubdetail.js"
+import thisu from "../crud/transactions/thisu.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -195,5 +196,7 @@ adminmadeuserroutes.post("/chargercontroller",chargercontroller)
 //expense tracking 
 adminmadeuserroutes.get("/expenses",expenses)
 
+//transaction history of a user
+adminmadeuserroutes.post("/thisu",thisu)
 
 export default adminmadeuserroutes;
