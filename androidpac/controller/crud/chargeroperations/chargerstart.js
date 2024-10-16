@@ -5,17 +5,21 @@ import logging from "../../../../logging/logging_generate.js";
 const prisma = new PrismaClient();
 const chargerstarttransactions = async(req,res)=>{
 
-    const {chargerid,userid,state}=req.body
+    const {chargerid}=req.body
     try {
         const findcharger = await prisma.charger_Unit.findFirstOrThrow({
             where:{
                 uid:chargerid
+            },select:{
+                uid:true,
+                Chargerserialnum:true,
+                userId:true
             }
         })
         if(findcharger==null){
             return res.status(404).json({message:"no charger found with this id"})
         }
-        
+        const userid= findcharger.userId;
         const walletdetails = await prisma.wallet.findFirstOrThrow({
             where:{
                 OR:[
