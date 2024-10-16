@@ -31,11 +31,13 @@ const chargerstarttransactions = async(req,res)=>{
             return res.status(400).json({message:"Wallet balance is not sufficiant please recharge"})
         }
         const chargerdetails = {
-            "charger_id":chargerid,
-            "id_tag":userid
+            "uid":chargerid,
+            "connector_id":1,
+            "type":"Operative"
+
             
         }
-        const chargerstart = await fetch("http://srv586896.hstgr.cloud:80/api/start_transaction",{
+        const chargerstart = await fetch("http://srv586896.hstgr.cloud:80/api/change_availability",{
             method:"POST",
             headers: { 
                 'Content-Type': 'application/json' 
