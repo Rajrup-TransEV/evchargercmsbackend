@@ -55,12 +55,12 @@ cron.schedule('0 0 * * *', async () => {
 });
 
 // Define the gateway route
-gateway.get("/", async (req, res) => {
-    return res.status(400).json({ message: "API gateway access not allowed" });
-});
+// gateway.get("/", async (req, res) => {
+//     return res.status(400).json({ message: "API gateway access not allowed" });
+// });
 
 // Use the gateway router for the root path
-app.use("/", gateway);
+// app.use("/", gateway);
 
 // Define your routes
 app.use("/userauth", authRoutes);
