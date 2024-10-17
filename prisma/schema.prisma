@@ -314,6 +314,18 @@ model Transactionsdetails{
   updatedAt           DateTime             @updatedAt
 }
 
+model TransactionHistory{
+  id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  paymentid  String?
+  walletid String?
+  userid String?
+  price String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+
 model iptracker{
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
@@ -352,5 +364,18 @@ model Minimumbalance{
   uid                 String?              @unique
   minbalance String?
    createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model HelpandSupport{
+  id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  name String?
+  email String?
+  phonenumber String?
+  message String?
+  adminuid String?
+  
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }

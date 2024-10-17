@@ -66,6 +66,7 @@ import walletdatagetbyadminid from "../crud/wallet_crud/walletdatagetbyadminid.j
 import GetAHubDetails from "../crud/hub_crud/gethubdetail.js"
 import thisu from "../crud/transactions/thisu.js"
 import thl from "../crud/transactions/transactionhistory.js"
+import createmessage from "../crud/helpandsupport/crearemessage.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -201,5 +202,7 @@ adminmadeuserroutes.get("/expenses",expenses)
 adminmadeuserroutes.post("/thisu",thisu)
 //transactionhistory list
 adminmadeuserroutes.get("/thl",thl)
+//help and support create message
+adminmadeuserroutes.post("/has",createmessage)
 
 export default adminmadeuserroutes;
