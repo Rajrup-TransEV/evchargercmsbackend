@@ -16,7 +16,7 @@ const chargerstarttransactions = async(req,res)=>{
                 userId:true
             }
         })
-        if(findcharger==null){
+        if(!findcharger||findcharger==null){
             return res.status(404).json({message:"no charger found with this id"})
         }
         const userid= findcharger.userId;
@@ -35,8 +35,8 @@ const chargerstarttransactions = async(req,res)=>{
             return res.status(400).json({message:"Wallet balance is not sufficiant please recharge"})
         }
         const chargerdetails = {
-            "uid":chargerid,
-            "connector_id":1,
+            "uid":findcharger.uid,
+            "connector_id":"1",
             "type":"Operative"
 
             
@@ -48,9 +48,16 @@ const chargerstarttransactions = async(req,res)=>{
             },
             body:JSON.stringify(chargerdetails)
         })
-        const response = chargerstart.json()
-        if(response){
-            return res.status(200).json({message:"Charging session started"})
+        const response = await chargerstart.json()
+        console.log(response)
+        const messagetype = "unknown";
+        const re = JSON.stringify(response)
+        const message = `${re}`;
+        logging(messagetype, message, "chargerbookings.js");
+        if(response.status=="Accepted"){
+            return res.status(200).json({message:"Charging disengagged"})
+        }else{
+            return res.status(400).json({message:"Unknown error please check logs for more details"})
         }
     } catch (error) {
         return res.status(500).json({error:error})

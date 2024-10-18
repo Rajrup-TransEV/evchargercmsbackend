@@ -375,7 +375,7 @@ model HelpandSupport{
   phonenumber String?
   message String?
   adminuid String?
-  
+  messagestatus Boolean? @default(true)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }

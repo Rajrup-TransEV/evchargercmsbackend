@@ -67,6 +67,10 @@ import GetAHubDetails from "../crud/hub_crud/gethubdetail.js"
 import thisu from "../crud/transactions/thisu.js"
 import thl from "../crud/transactions/transactionhistory.js"
 import createmessage from "../crud/helpandsupport/crearemessage.js"
+import viewallmessages from "../crud/helpandsupport/viewallmessages.js"
+import details from "../crud/helpandsupport/detailsofamessage.js"
+import closeamessage from "../crud/helpandsupport/closeamessage.js"
+import underadmin from "../crud/helpandsupport/underadminmessage.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -204,5 +208,12 @@ adminmadeuserroutes.post("/thisu",thisu)
 adminmadeuserroutes.get("/thl",thl)
 //help and support create message
 adminmadeuserroutes.post("/has",createmessage)
-
+//get all of the help and support messages
+adminmadeuserroutes.get("/vham",viewallmessages)
+//details of a message using their id
+adminmadeuserroutes.post("/dsm",details)
+//close a message
+adminmadeuserroutes.post("/cam",closeamessage)
+//admin message
+adminmadeuserroutes.post("/udm",underadmin)
 export default adminmadeuserroutes;

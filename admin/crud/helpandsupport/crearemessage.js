@@ -1,8 +1,8 @@
 
 import { PrismaClient } from "@prisma/client";
-import generateRandomUID from "../../../lib/generaterandomuid.js";
 import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
+import generateCustomRandomUID from "../../../lib/customuids.js";
 const prisma = new PrismaClient();
 const createmessage = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
@@ -19,7 +19,7 @@ const createmessage = async(req,res)=>{
     try {
            const cm = await prisma.helpandSupport.create({
             data:{
-                uid:generateRandomUID(),
+                uid:generateCustomRandomUID(),
                 name:name,
                 email:email,
                 phonenumber:phonenumber,
