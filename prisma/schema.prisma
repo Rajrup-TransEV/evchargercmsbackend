@@ -379,3 +379,23 @@ model HelpandSupport{
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
+model DisputFrom{
+  id                  Int                  @id @default(autoincrement())
+  uid                 String?              @unique
+  customername String?
+  relatedtoev String?
+  reason String?
+  morethanonecharge String?
+  wrongcharged String?
+  didnotreceiverefund String?
+  paidforothermeans String?
+  disputtransaction String?
+  chargedregularly String?
+  notlistedabove String?
+  transactiondetails String?
+  disputedetails String?
+  associatedadminid String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
