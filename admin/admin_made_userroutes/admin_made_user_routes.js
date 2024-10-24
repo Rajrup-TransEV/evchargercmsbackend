@@ -73,6 +73,7 @@ import closeamessage from "../crud/helpandsupport/closeamessage.js"
 import underadmin from "../crud/helpandsupport/underadminmessage.js"
 import disputeformcreate from "../crud/disputform/disputformcreate.js"
 import dispurefromshow from "../crud/disputform/disputeformshow.js"
+import userspecificmessage from "../crud/helpandsupport/userspecificmessage.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -214,6 +215,8 @@ adminmadeuserroutes.post("/has",createmessage)
 adminmadeuserroutes.get("/vham",viewallmessages)
 //details of a message using their id
 adminmadeuserroutes.post("/dsm",details)
+//user specific help and support message
+adminmadeuserroutes.post("/usspm",userspecificmessage)
 //close a message
 adminmadeuserroutes.post("/cam",closeamessage)
 //admin message
