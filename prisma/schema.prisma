@@ -383,6 +383,7 @@ model HelpandSupport{
 model DisputFrom{
   id                  Int                  @id @default(autoincrement())
   uid                 String?              @unique
+  userid String?
   customername String?
   relatedtoev String?
   reason String?
