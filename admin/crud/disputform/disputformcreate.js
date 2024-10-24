@@ -16,12 +16,13 @@ const disputeformcreate = async(req,res)=>{
   }
     const {customername,relatedtoev,reason,morethanonecharge,wrongcharged,didnotreceiverefund,
         paidforothermeans,disputtransaction,chargedregularly,notlistedabove,
-        transactiondetails,disputedetails,associatedadminid
+        transactiondetails,disputedetails,associatedadminid,userid
     }=req.body
     try {
         const savedetails = await prisma.disputFrom.create({
             data:{
                 uid:generateCustomRandomUID(),
+                userid:userid,
                 customername:customername,
                 relatedtoev:relatedtoev,
                 reason:reason,
@@ -41,7 +42,7 @@ const disputeformcreate = async(req,res)=>{
         const message = "Dispute form data hasbeen saved successfully"
         const filelocation = "disputeformcreate.js"
         logging(messagetype,message,filelocation)
-        return res.status(200).json({message:"Information hasbeen saved successfully"})
+        return res.status(200).json({message:"Information hasbeen saved successfully",data:savedetails})
     } catch (error) {
         console.log(error)
         const messagetype = "error"
