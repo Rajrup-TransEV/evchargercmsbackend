@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../../lib/customuids.js";
+import emailQueue from "../../../lib/emailqueue.js";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +17,7 @@ const chargerbookings = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { chargeruid, useruid, isbooked } = req.body;
+    const { chargeruid, useruid, isbooked, bookingtimefrom, bookingtimeto, email } = req.body;
 
     // Convert string 'true'/'false' to boolean
     const isBookedBoolean = (isbooked === 'true') || (isbooked === 'false' ? false : undefined);
@@ -36,7 +37,11 @@ const chargerbookings = async (req, res) => {
             // Update the existing booking entry
             result = await prisma.bookings.update({
                 where: { uid: existingBooking.uid },
-                data: { isbooked: isBookedBoolean },
+                data: { 
+                    isbooked: isBookedBoolean,
+                    bookingtimefrom: new Date(bookingtimefrom),
+                    bookingtimeto: new Date(bookingtimeto)
+                },
             });
 
             const messagetype = "success";
@@ -51,12 +56,37 @@ const chargerbookings = async (req, res) => {
                     chargeruid,
                     useruid,
                     isbooked: isBookedBoolean,
+                    bookingtimefrom: new Date(bookingtimefrom),
+                    bookingtimeto: new Date(bookingtimeto),
                 },
             });
 
             const messagetype = "success";
             const message = "Booking created successfully";
             logging(messagetype, message, "chargerbookings.js");
+
+            // Send confirmation email
+            const subject = "Charger Booking Confirmation";
+            const text = `Your charger has been booked successfully from ${bookingtimefrom} to ${bookingtimeto}.`;
+            
+            await emailQueue.add({ to: email, subject, text }, {
+                attempts: 5,
+                backoff: 10000
+            });
+
+            // Schedule reminder email 15 minutes before the end time
+            const reminderTime = new Date(new Date(bookingtimeto).getTime() - 15 * 60 * 1000); // 15 minutes before end time
+            
+            await emailQueue.add({ 
+                to: email,
+                subject: "Charger Booking Reminder",
+                text: `This is a reminder that your charger booking will end at ${bookingtimeto}.`
+            }, {
+                attempts: 5,
+                backoff: 10000,
+                delay: reminderTime.getTime() - Date.now() // Delay until reminder time
+            });
+
             return res.status(201).json({ message: "Charger booked successfully", result });
         }
     } catch (error) {

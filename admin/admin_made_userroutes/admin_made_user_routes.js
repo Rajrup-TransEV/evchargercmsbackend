@@ -226,5 +226,6 @@ adminmadeuserroutes.post("/udm",underadmin)
 adminmadeuserroutes.post("/dspf",disputeformcreate)
 //disputeform show 
 adminmadeuserroutes.post("/dfsh",dispurefromshow)
+//transaction history
 adminmadeuserroutes.post("/transactionhistory",generatebill)
 export default adminmadeuserroutes;
