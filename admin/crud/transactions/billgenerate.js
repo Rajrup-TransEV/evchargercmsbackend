@@ -1,12 +1,24 @@
 //Generate billing 
 //for testing usecase this is now sending as json array
+import logging from "../../../logging/logging_generate.js";
 const generatebill = async (req, res) => {
+    const apiauthkey = req.headers['apiauthkey'];
+
+    // Check if the API key is valid
+    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
+        const messagetype = "error";
+        const message = "API route access error";
+        const filelocation = "billgenerate.js";
+        logging(messagetype, message, filelocation);
+        return res.status(403).json({ message: "API route access forbidden" });
+    }
+
     const sample = [
         {
             "uid": "uin23b",
-            "userid":"",
-            "name": "Sujoy",
-            "username": "sujoy",
+            "userid":"qal0",
+            "name": "Chitradeep Ghosh",
+            "username": "Chitradeep Ghosh",
             "walletid": "tty12e",
             "lasttransaction": "1000",
             "balancededuct": "1000",
@@ -17,8 +29,9 @@ const generatebill = async (req, res) => {
         },
         {
             "uid": "uin34c",
-            "name": "Aditi",
-            "username": "aditi123",
+            "userid":"r0h6",
+            "name": "TransEV",
+            "username": "TransEV",
             "walletid": "tty34f",
             "lasttransaction": "1500",
             "balancededuct": "500",
@@ -41,8 +54,9 @@ const generatebill = async (req, res) => {
         },
         {
             "uid": "uin56e",
-            "name": "Priya",
-            "username": "priya_88",
+            "userid":"r0h6",
+            "name": "TransEV",
+            "username": "TransEV",
             "walletid": "tty67h",
             "lasttransaction": "800",
             "balancededuct": "300",
@@ -53,8 +67,9 @@ const generatebill = async (req, res) => {
         },
         {
             "uid": "uin67f",
-            "name": "Ankit",
-            "username": "_ankit_77",
+            "userid":"r0h6",
+            "name": "TransEV",
+            "username": "TransEV",
             "walletid": "tty78i",
             "lasttransaction": "1200",
             "balancededuct": "600",
@@ -65,8 +80,9 @@ const generatebill = async (req, res) => {
         },
         {
             "uid":"uin78g", 
-            "name":"Neha", 
-            "username":"neha_singh", 
+            "userid":"qal0",
+            "name": "Chitradeep Ghosh",
+            "username": "Chitradeep Ghosh",
             "walletid":"tty89j", 
             "lasttransaction":"900", 
             "balancededuct":"400", 
@@ -77,8 +93,9 @@ const generatebill = async (req, res) => {
         },
         {
             "uid":"uin89h", 
-            "name":"Karan", 
-            "username":"karan_123", 
+            "userid":"qal0",
+            "name": "Chitradeep Ghosh",
+            "username": "Chitradeep Ghosh", 
             "walletid":"tty90k", 
             "lasttransaction":"1100", 
             "balancededuct":"700", 
@@ -89,8 +106,9 @@ const generatebill = async (req, res) => {
         },
         {
             "uid":"uin90i", 
-            "name":"Riya", 
-            "username":"riya_456", 
+            "userid":"jsec",
+            "name": "Subhankar",
+            "username": "Subhankar",  
             "walletid":"tty01l", 
             "lasttransaction":"1300", 
             "balancededuct":"800", 
@@ -101,8 +119,9 @@ const generatebill = async (req, res) => {
         },
         {
               	"uid":"uin01j", 
-              	"name":"Vikram", 
-              	"username":"vikram_789", 
+                "userid":"jsec",
+                "name": "Subhankar",
+                "username": "Subhankar",
               	"walletid":"tty12m", 
               	"lasttransaction":"1400", 
               	"balancededuct":"900",  
@@ -113,8 +132,9 @@ const generatebill = async (req, res) => {
         },
         {
              	"uid":"uin12k",  
-             	"name":"Sita",  
-             	"username":"sita_321",  
+                 "userid":"5dii",
+                  "name": "Trans_Sujata",
+                  "username": "Trans_Sujata", 
              	"walletid":"tty23n",  
              	"lasttransaction":"1150",  
              	"balancededuct":"550",  
@@ -125,8 +145,9 @@ const generatebill = async (req, res) => {
         },
         {
              	"uid":"uin23l",  
-             	"name":"Ajay",  
-             	"username":"ajay_6543",  
+                 "userid":"5dii",
+                 "name": "Trans_Sujata",
+                 "username": "Trans_Sujata", 
              	"walletid":"tty34o",  
              	"lasttransaction":"1250",  
              	"balancededuct":"650",  
@@ -149,5 +170,18 @@ const generatebill = async (req, res) => {
         },
      ];
 
-     res.status(200).json({message:"Transaction history",data:sample})
+ // Extract userid from request body
+ const { userid } = req.body;
+
+ // Filter the sample data to find matching transactions
+ const filteredData = sample.filter(transaction => transaction.userid === userid);
+
+ if (filteredData.length > 0) {
+     res.status(200).json({ message: "Transaction history", data: filteredData });
+ } else {
+     res.status(404).json({ message: "No transactions found for this user ID." });
+ }
+
 };
+
+export default generatebill

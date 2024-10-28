@@ -74,6 +74,7 @@ import underadmin from "../crud/helpandsupport/underadminmessage.js"
 import disputeformcreate from "../crud/disputform/disputformcreate.js"
 import dispurefromshow from "../crud/disputform/disputeformshow.js"
 import userspecificmessage from "../crud/helpandsupport/userspecificmessage.js"
+import generatebill from "../crud/transactions/billgenerate.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -225,4 +226,5 @@ adminmadeuserroutes.post("/udm",underadmin)
 adminmadeuserroutes.post("/dspf",disputeformcreate)
 //disputeform show 
 adminmadeuserroutes.post("/dfsh",dispurefromshow)
+adminmadeuserroutes.post("/transactionhistory",generatebill)
 export default adminmadeuserroutes;
