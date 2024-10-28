@@ -13,6 +13,7 @@ import { setupSwagger } from './swagger.js';
 import ipTracker from "./iptracker.js";
 // import ipTracker from "./iptracker.js";
 import requestIp from 'request-ip';
+import sendReminderEmails from "./androidpac/controller/crud/chargerbookings/chargerbookingscheduler.js";
 const prisma = new PrismaClient();
 
 const app = express();
@@ -52,6 +53,16 @@ cron.schedule('0 0 * * *', async () => {
     } catch (error) {
         console.error('Error deleting old logs:', error);
     }
+});
+
+//corn job booking reminder scheduler
+// Schedule the job to run every minute in IST
+cron.schedule('* * * * *', () => {
+    console.log('Running reminder email job...');
+    sendReminderEmails();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata" // Set timezone to IST
 });
 
 // Define the gateway route

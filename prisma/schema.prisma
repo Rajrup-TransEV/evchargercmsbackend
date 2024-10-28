@@ -355,6 +355,7 @@ model Bookings {
   isbooked Boolean?  @default(false)
   bookingtimefrom  DateTime?
   bookingtimeto DateTime?
+  remindersent Boolean?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
