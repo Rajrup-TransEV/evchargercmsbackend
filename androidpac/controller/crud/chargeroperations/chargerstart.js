@@ -41,7 +41,7 @@ const chargerstarttransactions = async(req,res)=>{
 
             
         }
-        const chargerstart = await fetch("http://srv586896.hstgr.cloud:80/api/change_availability",{
+        const chargerstart = await fetch("http://172.236.164.175:80/api/change_availability",{
             method:"POST",
             headers: { 
                 'Content-Type': 'application/json' 

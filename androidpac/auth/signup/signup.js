@@ -15,14 +15,11 @@ export const signupUser = async (req, res) => {
 
     // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
-        const messagetype = "error";
-        const message = "API route access forbidden";
-        const filelocation = "androidpac/signup.js";
-        logging(messagetype, message, filelocation);
+        logging("error", "API route access forbidden", "androidpac/signup.js");
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { username, email, password,phonenumber, otp } = req.body;
+    const { username, email, password, phonenumber, otp } = req.body;
 
     try {
         // If OTP is provided, we are in the verification phase
@@ -58,18 +55,44 @@ export const signupUser = async (req, res) => {
                 data: {
                     uid: generateCustomRandomUID(),
                     username: storedUsername,
-                    email: email,
+                    email,
                     password: hashedPassword,
                     userType: "user",
-                    phonenumber:phonenumber,
+                    phonenumber,
                     emailVerified: true
                 }
             });
 
             logging("info", `User signup completed successfully for email: ${email}`, "androidpac/signup.js");
             
+            // Prepare and send welcome email using data from temp storage
+            const { phonenumber: storedPhoneNumber } = tempStorage[email];
+            
+            const subject = "Thank you for signing up! Welcome to Transev app";
+            const text = `
+                Hello ${storedUsername}, welcome to the Transev Android application!
+
+                Your credentials are:
+                Email: ${email}
+                Phone Number: ${storedPhoneNumber}
+
+                Thank you for signing up!
+
+                Best regards,
+                Team Transev
+            `;
+
             // Cleanup temporary storage after successful signup
             delete tempStorage[email];
+
+            try {
+                await emailQueue.add({ to: email, subject, text }, {
+                    attempts: 5,
+                    backoff: 10000
+                });
+            } catch (emailError) {
+                logging("error", `Failed to send welcome email to ${email}: ${emailError.message}`, "androidpac/signup.js");
+            }
 
             return res.status(201).json({ message: "Signup completed successfully!" });
         }
@@ -78,19 +101,13 @@ export const signupUser = async (req, res) => {
         logging("info", `Signup initiated for username: ${username}, email: ${email}`, "androidpac/signup.js");
 
         const existingUser = await prisma.user.findUnique({
-            where: {
-                email: email,
-                username: username,
-            },
-            select: {
-                email: true,
-                username: true,
-            }
+            where: { email },
+            select: { email: true, username: true }
         });
 
         if (existingUser) {
-            logging("error", `User with the same email or username already exists for email: ${email}, username: ${username}`, "androidpac/signup.js");
-            return res.status(409).json({ message: "User with the same email or username already exists" });
+            logging("error", `User with the same email already exists for email: ${email}`, "androidpac/signup.js");
+            return res.status(409).json({ message: "User with the same email already exists" });
         }
 
         // Generate OTP and store it in temporary storage
@@ -101,7 +118,8 @@ export const signupUser = async (req, res) => {
             username,
             password,
             otp: otpGenerated,
-            otpExpiration: Date.now() + 15 * 60 * 1000 // 15 minutes from now
+            otpExpiration: Date.now() + 15 * 60 * 1000, // 15 minutes from now,
+            phonenumber // Store phone number as well in temporary storage.
         };
 
         // Send OTP via email
@@ -121,12 +139,8 @@ export const signupUser = async (req, res) => {
     } catch (err) {
         console.error("The previous logic has failed to execute and error is ", err);
         
-        const messagetype = "error";
-        const message = `Something went wrong with the server please try again - ${err}`;
-        const filelocation = "androidpac/signup.js";
+        logging("error", `Server error occurred during signup process - ${err.message}`, "androidpac/signup.js");
         
-        logging(messagetype, message, filelocation);
-        
-        return res.status(500).json({ message: `${err}` });
+        return res.status(500).json({ message: "Something went wrong with the server. Please try again later." });
     }
-};
+}
