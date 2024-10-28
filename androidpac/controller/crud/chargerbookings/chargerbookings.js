@@ -1,11 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../../lib/customuids.js";
-import emailQueue from "../../../lib/emailqueue.js";
+import emailQueue from "../../../../lib/emailqueue.js";
 
 const prisma = new PrismaClient();
 
-const chargerbookings = async (req, res) => {
+const chargerBookings = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
 
     // Check if the API key is valid
@@ -17,12 +17,27 @@ const chargerbookings = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { chargeruid, useruid, isbooked, bookingtimefrom, bookingtimeto, email } = req.body;
+    const { chargeruid, useruid, isbooked, bookingtimefrom, bookingtimeto } = req.body;
 
     // Convert string 'true'/'false' to boolean
     const isBookedBoolean = (isbooked === 'true') || (isbooked === 'false' ? false : undefined);
 
     try {
+        // Fetch user info
+        const userinfo = await prisma.user.findFirstOrThrow({
+            where: {
+                uid: useruid
+            },
+            select: {
+                email: true,
+                username: true
+            }
+        });
+
+        // Convert booking times from IST to Date objects (IST remains as is)
+        const istBookingTimeFrom = new Date(bookingtimefrom);
+        const istBookingTimeTo = new Date(bookingtimeto);
+
         // Check if a booking already exists for this charger and user
         const existingBooking = await prisma.bookings.findFirst({
             where: {
@@ -39,8 +54,9 @@ const chargerbookings = async (req, res) => {
                 where: { uid: existingBooking.uid },
                 data: { 
                     isbooked: isBookedBoolean,
-                    bookingtimefrom: new Date(bookingtimefrom),
-                    bookingtimeto: new Date(bookingtimeto)
+                    bookingtimefrom: istBookingTimeFrom,
+                    bookingtimeto: istBookingTimeTo,
+                    remindersent: false, // Reset reminderSent when updating
                 },
             });
 
@@ -56,8 +72,9 @@ const chargerbookings = async (req, res) => {
                     chargeruid,
                     useruid,
                     isbooked: isBookedBoolean,
-                    bookingtimefrom: new Date(bookingtimefrom),
-                    bookingtimeto: new Date(bookingtimeto),
+                    bookingtimefrom: istBookingTimeFrom,
+                    bookingtimeto: istBookingTimeTo,
+                    remindersent: false, // Set reminderSent to false when creating new booking
                 },
             });
 
@@ -65,26 +82,21 @@ const chargerbookings = async (req, res) => {
             const message = "Booking created successfully";
             logging(messagetype, message, "chargerbookings.js");
 
-            // Send confirmation email
+            // Send confirmation email with IST times for display purposes
             const subject = "Charger Booking Confirmation";
-            const text = `Your charger has been booked successfully from ${bookingtimefrom} to ${bookingtimeto}.`;
-            
-            await emailQueue.add({ to: email, subject, text }, {
+            const text = `
+            Hi ${userinfo.username},
+
+            Your charger has been booked successfully from ${istBookingTimeFrom.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} to ${istBookingTimeTo.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}.
+
+            Best Regards,
+
+            Team Transev.
+            `;
+
+            await emailQueue.add({ to: userinfo.email, subject, text }, {
                 attempts: 5,
                 backoff: 10000
-            });
-
-            // Schedule reminder email 15 minutes before the end time
-            const reminderTime = new Date(new Date(bookingtimeto).getTime() - 15 * 60 * 1000); // 15 minutes before end time
-            
-            await emailQueue.add({ 
-                to: email,
-                subject: "Charger Booking Reminder",
-                text: `This is a reminder that your charger booking will end at ${bookingtimeto}.`
-            }, {
-                attempts: 5,
-                backoff: 10000,
-                delay: reminderTime.getTime() - Date.now() // Delay until reminder time
             });
 
             return res.status(201).json({ message: "Charger booked successfully", result });
@@ -98,4 +110,4 @@ const chargerbookings = async (req, res) => {
     }
 };
 
-export default chargerbookings;
+export default chargerBookings;
