@@ -15,7 +15,7 @@ datasource db {
 
 //application user and super user user model
 model User {
-  id              Int              @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid             String?           @unique @db.VarChar(255)
   username        String?           @unique @db.VarChar(255)
   email           String?           @unique @db.VarChar(255)
@@ -58,7 +58,7 @@ model User {
 
 //super admin created admin details
 model UserProfile {
-  id                Int              @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid               String?          @unique   @db.VarChar(255)
   firstname         String?          @db.VarChar(255)
   lastname          String?          @db.VarChar(255)
@@ -84,7 +84,7 @@ model UserProfile {
 
 //fiancial details for all of users 
 model Financial_details {
-  id                Int              @id @default(autoincrement())
+ id                 String                @id @default(uuid())
   uid               String?          @unique @db.VarChar(255)
   bank_account_number String?        @db.VarChar(255)
   isfc_code        String?           @db.VarChar(255)
@@ -102,7 +102,7 @@ model Financial_details {
 
 //chargerunit buying model
 model Charger_Unit {
-  id                          Int              @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                         String?          @unique @db.VarChar(255)
   chargeridentity             String?          @db.VarChar(655)
   Chargerserialnum             String?         @db.VarChar(255)
@@ -134,7 +134,7 @@ model Charger_Unit {
 }
 //all of the role will goes here
 model AssignRoles{
-  id                          Int              @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                         String?          @unique @db.VarChar(255)
   userid                      String?          @db.VarChar(255)
   rolename                    String?          @db.VarChar(255)
@@ -146,7 +146,7 @@ model AssignRoles{
 
 //vehicle registration model
 model Assigntovechicles {
-  id              Int             @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid             String?         @unique @db.VarChar(255)
   vehiclename     String?         @db.VarChar(255)
   vehiclemodel    String?         @db.VarChar(255)
@@ -167,7 +167,7 @@ model Assigntovechicles {
 
 //vehicle owener model
 model Assigntovehicleowener {
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   vehicleowenerfirstname     String?       @db.VarChar(255)
   vehicleowenerlastename     String?       @db.VarChar(255)
@@ -188,7 +188,7 @@ model Assigntovehicleowener {
 
 //to be implemented in future
 model RazorpayData {
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   orderId             String?              @unique @db.VarChar(255)
   paymentId           String?              @unique @db.VarChar(255)
@@ -203,7 +203,7 @@ model RazorpayData {
 }
 //group of models for analytics and retention
 model Analytics{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   totalnumberofusers  String?              @db.VarChar(255)
   totalnumberofuserprofiles String?        @db.VarChar(255)
@@ -216,7 +216,7 @@ model Analytics{
 }
 //daily signup log retention model
 model DailySignup {
-  id             Int      @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid            String?  @db.VarChar(255)
   date           DateTime @default(now())
   newSignupCount Int      @default(0)
@@ -226,7 +226,7 @@ model DailySignup {
 }
 
 model LogRetention{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   messagetype        String?               @db.VarChar(255)
   messages   Json?
@@ -241,7 +241,7 @@ model LogRetention{
 //model for generating qr code
 
 model QRCode {
-  id          Int          @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid         String?      @unique @db.VarChar(255)
   chargerid   String?      @db.VarChar(255)   // This will reference Charger_Unit.uid
   qrcodedata  String?      @db.VarChar(255)
@@ -255,7 +255,7 @@ model QRCode {
 
 //model for generating wallet
 model wallet{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   userprofilerelatedwallet String?         @db.VarChar(255)
   userprofile   UserProfile? @relation(fields: [userprofilerelatedwallet],references: [uid])
@@ -271,7 +271,7 @@ model wallet{
 }
 
 model walletreachargehistory{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   userassociatedid            String?      @db.VarChar(255)
   previousbalance String?                  @db.VarChar(255)
@@ -293,12 +293,12 @@ model walletreachargehistory{
 // }
 
 model Counter {
-  id    Int    @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   value Int    @default(100)
 }
 
 model Addhub{
-    id                  Int                @id @default(autoincrement())
+    id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   hubname String?                          @db.VarChar(255)
   hubchargers Json?    
@@ -312,7 +312,7 @@ model Addhub{
 }
 
 model Transactionsdetails{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   paymentid  String?                       @db.VarChar(255)
   walletid String?                         @db.VarChar(255)
@@ -325,7 +325,7 @@ model Transactionsdetails{
 }
 
 model TransactionHistory{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique  @db.VarChar(255)
   paymentid  String?                       @db.VarChar(255)
   walletid String?                         @db.VarChar(255)
@@ -338,7 +338,7 @@ model TransactionHistory{
 
 
 model iptracker{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   ipaddress String?                        @db.VarChar(255)
   filepath String?                         @db.VarChar(255)
@@ -350,7 +350,7 @@ model iptracker{
 }
 
 model Favorites{
-  id                  Int                  @id @default(autoincrement())
+ id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   chargeruid String?                       @db.VarChar(255)
   useruid String?                          @db.VarChar(255)
@@ -361,7 +361,7 @@ model Favorites{
 }
 
 model Bookings {
-    id                  Int                  @id @default(autoincrement())
+   id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   chargeruid String?                       @db.VarChar(255)
   useruid String?                          @db.VarChar(255)
@@ -375,7 +375,7 @@ model Bookings {
 }
 
 model Minimumbalance{
-    id                  Int                @id @default(autoincrement())
+   id                 String                @id @default(uuid())
   uid                 String?              @unique  @db.VarChar(255)
   minbalance String?                       @db.VarChar(255)
    createdAt           DateTime            @default(now())
@@ -384,7 +384,7 @@ model Minimumbalance{
 }
 
 model HelpandSupport{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   name String?                             @db.VarChar(255)
   email String?                            @db.VarChar(255)
@@ -398,7 +398,7 @@ model HelpandSupport{
 }
 
 model DisputFrom{
-  id                  Int                  @id @default(autoincrement())
+  id                 String                @id @default(uuid())
   uid                 String?              @unique @db.VarChar(255)
   userid String?                           @db.VarChar(255)
   customername String?                     @db.VarChar(255)
