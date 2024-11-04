@@ -75,6 +75,7 @@ import disputeformcreate from "../crud/disputform/disputformcreate.js"
 import dispurefromshow from "../crud/disputform/disputeformshow.js"
 import userspecificmessage from "../crud/helpandsupport/userspecificmessage.js"
 import generatebill from "../crud/transactions/billgenerate.js"
+import loggingdetails from "../../logging/loggingdetails.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -177,6 +178,8 @@ adminmadeuserroutes.post("/verifypayment",verifyPayment)
 adminmadeuserroutes.post("/find_wh_o_s_w",find_wh_o_s_w)
 //get all log data
 adminmadeuserroutes.get("/getalllogs",get_all_logs)
+//get log details data
+adminmadeuserroutes.post("/logdetails",loggingdetails)
 //add hub
 adminmadeuserroutes.post("/addhubs",addhub)
 //get all hub data

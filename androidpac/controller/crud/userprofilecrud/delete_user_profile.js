@@ -17,7 +17,7 @@ const delete_user_profile = async (req,res)=>{
     const {userid} = req.body ;
 
     try {
-        if(uid===""){
+        if(userid===""){
             const messagetype = "error"
             const message = "uid is required field"
             const filelocation = "delete_user_profile.js"
