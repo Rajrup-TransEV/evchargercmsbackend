@@ -39,6 +39,7 @@ const edit_charger_details = async (req, res) => {
         // Destructure the updated data from the request body
         const {
             Chargerserialnum,
+            chargeridentity,
             ChargerName,
             Chargerhost,
             Segment,
@@ -65,6 +66,14 @@ const edit_charger_details = async (req, res) => {
             const message = `Charger seraolnum: ${Chargerserialnum}`
             const filelocation = "edit_chargerunit.js"
             logging(messagetype,message,filelocation)
+        }
+        if(chargeridentity){
+            updateData.chargeridentity=chargeridentity
+            const messagetype = "update"
+            const message = `Charger Identity: ${chargeridentity}`
+            const filelocation = "edit_chargerunit.js"
+            logging(messagetype,message,filelocation)
+            updatedFields.push(`Charger Identity: ${chargeridentity}`);
         }
         if (ChargerName) {
             updateData.ChargerName = ChargerName;
