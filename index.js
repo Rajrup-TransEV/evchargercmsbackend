@@ -11,9 +11,10 @@ import { PrismaClient } from '@prisma/client';
 import cron from 'node-cron';
 import { setupSwagger } from './swagger.js';
 import ipTracker from "./iptracker.js";
-// import ipTracker from "./iptracker.js";
 import requestIp from 'request-ip';
 import sendReminderEmails from "./androidpac/controller/crud/chargerbookings/chargerbookingscheduler.js";
+import rateLimit from 'express-rate-limit';
+
 const prisma = new PrismaClient();
 
 const app = express();
@@ -33,8 +34,24 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization','apiauthkey'], // Add the headers you want to allow
     credentials: true, // Enable sending cookies across domains
 };
-
 app.use(cors(corsOptions));
+
+//global rate limiter
+const globalRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: {
+        status: 429,
+        message: "Too many requests, please try again later."
+    },
+    standardHeaders: true, 
+    legacyHeaders: false, 
+});
+
+// Apply the rate limiting middleware globally
+app.use(globalRateLimiter);
+
+
 
 // Cron job to delete logs older than 1 year
 cron.schedule('0 0 * * *', async () => {
