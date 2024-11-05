@@ -33,6 +33,7 @@ const getformbyadminid = async(req,res)=>{
     const message = `${error}`
     const filelocation = "getformbyadminid.js"
     logging(messagetype,message,filelocation)
+    return res.status(500).json({error:error})
   }
 }
 export default getformbyadminid
