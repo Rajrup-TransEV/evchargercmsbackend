@@ -414,6 +414,7 @@ model DisputFrom{
   transactiondetails String?               @db.VarChar(255)
   disputedetails String?                   @db.VarChar(255)
   associatedadminid String?                @db.VarChar(255)
+  resolvedstatus Boolean?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }

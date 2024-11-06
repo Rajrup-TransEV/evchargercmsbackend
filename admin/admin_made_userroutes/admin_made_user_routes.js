@@ -81,6 +81,9 @@ import disputeformupdate from "../crud/disputform/disputeformupdate.js"
 import getformbyadminid from "../crud/disputform/getformbydminid.js"
 import disputeformlist from "../crud/disputform/disputeformlist.js"
 import disputeform from "../crud/disputform/disputeformbyid.js"
+import disputeresolved from "../crud/disputform/disputeresolved.js"
+import updatemessage from "../crud/helpandsupport/updatemessage.js"
+import resolvesupport from "../crud/helpandsupport/resolvesupport.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -228,6 +231,10 @@ adminmadeuserroutes.post("/dsm",details)
 adminmadeuserroutes.post("/usspm",userspecificmessage)
 //close a message
 adminmadeuserroutes.post("/cam",closeamessage)
+//update a support message
+adminmadeuserroutes.post("/usprtmsg",updatemessage)
+//resolve support status
+adminmadeuserroutes.post("/ust",resolvesupport)
 //admin message
 adminmadeuserroutes.post("/udm",underadmin)
 //disputeformcreate
@@ -244,6 +251,9 @@ adminmadeuserroutes.post("/difba",getformbyadminid)
 adminmadeuserroutes.get("/alldfs",disputeformlist)
 //dispute form by it's id
 adminmadeuserroutes.post("/dfsbid",disputeform)
+//dispute form sttaus update
+adminmadeuserroutes.post("/resolvestatus",disputeresolved)
 //transaction history
 adminmadeuserroutes.post("/transactionhistory",generatebill)
+
 export default adminmadeuserroutes;
