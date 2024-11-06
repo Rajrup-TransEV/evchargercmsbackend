@@ -35,7 +35,8 @@ const disputeformcreate = async(req,res)=>{
                 notlistedabove:notlistedabove,
                 transactiondetails:transactiondetails,
                 disputedetails:disputedetails,
-                associatedadminid:associatedadminid
+                associatedadminid:associatedadminid,
+                resolvedstatus:false,
             }
         })
         const messagetype = "success"
