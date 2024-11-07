@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
-
+import generateCustomRandomUID from "../../../lib/customuids.js";
+import fs from 'fs';
+import path from 'path';
 const prisma = new PrismaClient();
 
 const edit_charger_details = async (req, res) => {
@@ -196,7 +198,12 @@ const edit_charger_details = async (req, res) => {
             logging(messagetype,message,filelocation)
         }
         if (charger_image) {
-            updateData.charger_image = charger_image;
+            const base64Data = charger_image.replace(/^data:image\/\w+;base64,/, "");
+            const buffer = Buffer.from(base64Data,'base64');
+            const imageName = `${generateCustomRandomUID()}.png`
+            const imageFilePath = path.join('chargerimages',imageName)
+            fs.writeFileSync(imageFilePath,buffer)
+            updateData.charger_image = imageFilePath.replace(/\\/g, '/');
             updatedFields.push(`Charger Image: Updated`);
             const messagetype = "update"
             const message = `charger_image: ${charger_image}`
@@ -235,7 +242,7 @@ const edit_charger_details = async (req, res) => {
         });
 
         // Return the updated charger details
-        return res.status(200).json(updatedCharger);
+        return res.status(200).json({message:`charger details with uid ${uid} hasbeen updated successfully`});
     } catch (error) {
         console.error('Error updating charger details:', error);
         const messagetype = "error"
