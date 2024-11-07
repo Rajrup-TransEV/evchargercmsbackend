@@ -14,18 +14,16 @@ const closeamessage = async(req,res)=>{
   }
   const {uid}=req.body;
   try {
-   const updatedata = await prisma.helpandSupport.update({
+   const updatedata = await prisma.helpandSupport.delete({
       where:{
         uid:uid
-      },data:{
-        messagestatus:false
-      }
+      },
    })
-   const messagetype = "update"
-   const message = "message status hasbeen updated"
+   const messagetype = "success"
+   const message = "This support message hasbeen deleted successfully"
    const filelocation = "closemessage.js"
    logging(messagetype,message,filelocation)
-   return res.status(200).json({message:"this message now mark as resolved"})
+   return res.status(200).json({message:"This support message hasbeen deleted successfully"})
   } catch (error) {
     console.log(error)
     const messagetype = "error"
