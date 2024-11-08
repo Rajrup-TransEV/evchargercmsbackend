@@ -1,4 +1,8 @@
 //list of feedbacks
+import logging from "../../../../logging/logging_generate.js";
+
+import { PrismaClient } from '@prisma/client'; // Assuming you're using Prisma for database interaction
+const prisma = new PrismaClient();
 
 const listoffeedbacks = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
