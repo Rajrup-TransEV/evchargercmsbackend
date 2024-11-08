@@ -18,6 +18,11 @@ import chargerbookings from "../controller/crud/chargerbookings/chargerbookings.
 import getlistofbookings from "../controller/crud/chargerbookings/getlistofbookedchargers.js"
 import chargerstarttransactions from "../controller/crud/chargeroperations/chargerstart.js"
 import createminthreshhold from "../controller/crud/min_threshhold/createthreshhold.js"
+import feedbackcreate from "../controller/crud/feedbackops/feedbackcreate.js"
+import listoffeedbacks from "../controller/crud/feedbackops/feedbacklist.js"
+import feedbackdetailbyid from "../controller/crud/feedbackops/feedbackdetailbyid.js"
+import feedbackbyadminid from "../controller/crud/feedbackops/feedbackbyadminid.js"
+import feedbackdelete from "../controller/crud/feedbackops/feedbackdelete.js"
 const userRoutes = Router()
 
 
@@ -55,4 +60,14 @@ userRoutes.post("/getbookings",getlistofbookings)
 userRoutes.post("/startcharge",chargerstarttransactions)
 //set minimum balance route
 userRoutes.post("/createmb",createminthreshhold)
+//feedback create
+userRoutes.post("/fbgen",feedbackcreate)
+//listof feedback
+userRoutes.get("/liofdbck",listoffeedbacks)
+//get feedback form by id
+userRoutes.post("/getfeedbackformbyid",feedbackdetailbyid)
+//get feedback by adminid
+userRoutes.post("/fedbadmn",feedbackbyadminid)
+//delete feedback
+userRoutes.post("/fedbkdel",feedbackdelete)
 export default userRoutes;
