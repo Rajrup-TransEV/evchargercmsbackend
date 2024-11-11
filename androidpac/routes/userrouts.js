@@ -28,6 +28,10 @@ import faqopscreate from "../controller/crud/faqops/faqops.js"
 import faqupdate from "../controller/crud/faqops/faqupdate.js"
 import faqdelete from "../controller/crud/faqops/faqdelete.js"
 import getfaqbyid from "../controller/crud/faqops/faqid.js"
+import listofcontactform from "../controller/crud/contactform/listofcontactform.js"
+import contactform from "../controller/crud/contactform/contactformops.js"
+import contactmessagebyid from "../controller/crud/contactform/getcfbyid.js"
+import contactmessagedelete from "../controller/crud/contactform/contactmessagedelete.js"
 const userRoutes = Router()
 
 
@@ -85,4 +89,12 @@ userRoutes.post("/faqupdate",faqupdate)
 userRoutes.post("/faqdelete",faqdelete)
 //get faq by id
 userRoutes.post("/faqbyid",getfaqbyid)
+//list of contact form
+userRoutes.get("/listofcontactform",listofcontactform)
+//contact form create
+userRoutes.post("/cfcr",contactform)
+//getcfbyid
+userRoutes.get("/getcfbyid",contactmessagebyid)
+//contact message delete
+userRoutes.post("/deletecm",contactmessagedelete)
 export default userRoutes;
