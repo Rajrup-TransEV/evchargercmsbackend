@@ -441,3 +441,15 @@ model FAQ{
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
+model Contactform{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  firstname           String?              @db.VarChar(255)
+  lastname            String?              @db.VarChar(255)
+  email               String?              @db.VarChar(255)
+  message             String?              @db.VarChar(600)
+  associatedadminid   String?              @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
