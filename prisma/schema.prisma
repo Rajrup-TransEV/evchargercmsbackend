@@ -432,3 +432,12 @@ model Feedback{
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
+model FAQ{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  faqquestion         String?              @db.VarChar(255)
+  faqdescription      String?              @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
