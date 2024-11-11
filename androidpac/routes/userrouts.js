@@ -23,6 +23,11 @@ import listoffeedbacks from "../controller/crud/feedbackops/feedbacklist.js"
 import feedbackdetailbyid from "../controller/crud/feedbackops/feedbackdetailbyid.js"
 import feedbackbyadminid from "../controller/crud/feedbackops/feedbackbyadminid.js"
 import feedbackdelete from "../controller/crud/feedbackops/feedbackdelete.js"
+import faqlist from "../controller/crud/faqops/faqlist.js"
+import faqopscreate from "../controller/crud/faqops/faqops.js"
+import faqupdate from "../controller/crud/faqops/faqupdate.js"
+import faqdelete from "../controller/crud/faqops/faqdelete.js"
+import getfaqbyid from "../controller/crud/faqops/faqid.js"
 const userRoutes = Router()
 
 
@@ -70,4 +75,14 @@ userRoutes.post("/getfeedbackformbyid",feedbackdetailbyid)
 userRoutes.post("/fedbadmn",feedbackbyadminid)
 //delete feedback
 userRoutes.post("/fedbkdel",feedbackdelete)
+//faq create
+userRoutes.post("/faqcreate",faqopscreate)
+//get user list
+userRoutes.get("/faqlist",faqlist)
+//faqupdate
+userRoutes.post("/faqupdate",faqupdate)
+//faqdelete
+userRoutes.post("/faqdelete",faqdelete)
+//get faq by id
+userRoutes.post("/faqbyid",getfaqbyid)
 export default userRoutes;
