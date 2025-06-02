@@ -453,3 +453,28 @@ model Contactform{
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
+
+model Charingsessions{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  sessionid           String?              @db.VarChar(255)
+  chargerid String? @db.VarChar(255)
+  startime String? @db.VarChar(255)
+  stoptime String? @db.VarChar(255)
+  meterstart String? @db.VarChar(255)
+  meterstop String? @db.VarChar(255)
+  consumedkwh String? @db.VarChar(255)
+  totalcost String? @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model DynamicRate{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  chargerid String? @db.VarChar(255)
+  chargingstation String? @db.VarChar(255)
+  rate String? @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
