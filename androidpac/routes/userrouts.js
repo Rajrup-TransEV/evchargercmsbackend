@@ -32,6 +32,7 @@ import listofcontactform from "../controller/crud/contactform/listofcontactform.
 import contactform from "../controller/crud/contactform/contactformops.js"
 import contactmessagebyid from "../controller/crud/contactform/getcfbyid.js"
 import contactmessagedelete from "../controller/crud/contactform/contactmessagedelete.js"
+import checktransaction from "../controller/crud/chargeroperations/checktransation.js"
 // import createminrate from "../controller/crud/min_threshhold/createminrate.js"
 const userRoutes = Router()
 
@@ -66,8 +67,10 @@ userRoutes.post("/loffchargers",getfavoritechargerofauser)
 userRoutes.post("/createbookings",chargerbookings)
 //get list of bookings
 userRoutes.post("/getbookings",getlistofbookings)
+//charger check transaction
+userRoutes.post("/checktransaction",checktransaction)
 //chargerstart transaction
-userRoutes.post("/startcharge",chargerstarttransactions)
+// userRoutes.post("/startcharge",chargerstarttransactions)
 //set minimum balance route
 userRoutes.post("/createmb",createminthreshhold)
 //feedback create
