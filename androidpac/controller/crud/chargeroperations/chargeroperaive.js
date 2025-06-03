@@ -1,0 +1,59 @@
+import logging from "../../../../logging/logging_generate.js";
+
+const setChargerOperative = async (req, res) => {
+  try {
+   
+    const { chargerUid, userid,useraccept } = req.body;
+    const connectorstatecheck = {
+      uid: chargerUid,
+    };
+    const startresponse = await fetch("http://172.236.164.175:80/api/status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(connectorstatecheck),
+    });
+    const connectoravailability = await startresponse.json();
+    if (connectoravailability?.status?.toLowerCase() !== "available") {
+      return res.status(400).json({ message: "Charger is not available" });
+    }
+    if (connectoravailability?.status?.toLowerCase() !== "operative") {
+      return res.status(400).json({ message: "Charger is not operative" });
+    }
+    if (connectoravailability?.status?.toLowerCase() == "busy"){
+        return res.status(400).json({ message: "Charger endpoint is busy" });
+    }
+    const connectorid = connectoravailability?.connector_id;
+
+    const requestBody = {
+      uid: chargerUid,
+      userid: userid,
+      useraccept: useraccept,
+      connector_id: connectorid,
+      type: "Operative",
+    };
+    if (useraccept == "true"){
+    const response = await fetch("http://172.236.164.175:80/api/change_availability", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
+
+    const result = await response.json();
+    logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
+
+    const status = result?.status?.toLowerCase();
+
+    if (status === "accepted" || status === "success") {
+      return res.status(200).json({ message: "Charging started" });
+    } else {
+      return res.status(400).json({ message: "Something went wrong. Please try again." });
+    }
+    }
+  } catch (err) {
+    logging("charger_status_error", err.message, "chargerbookings.js");
+    return res.status(500).json({ status: "Error", message: err.message });
+  }
+
+};
+
+export default setChargerOperative;

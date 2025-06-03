@@ -16,7 +16,7 @@ import favoritechargers from "../controller/crud/favorites/createfavorites.js"
 import getfavoritechargerofauser from "../controller/crud/favorites/getfavoritecharges.js"
 import chargerbookings from "../controller/crud/chargerbookings/chargerbookings.js"
 import getlistofbookings from "../controller/crud/chargerbookings/getlistofbookedchargers.js"
-import chargerstarttransactions from "../controller/crud/chargeroperations/chargerstart.js"
+// import chargerstarttransactions from "../controller/crud/chargeroperations/chargerstart.js"
 import createminthreshhold from "../controller/crud/min_threshhold/createthreshhold.js"
 import feedbackcreate from "../controller/crud/feedbackops/feedbackcreate.js"
 import listoffeedbacks from "../controller/crud/feedbackops/feedbacklist.js"
@@ -32,6 +32,11 @@ import listofcontactform from "../controller/crud/contactform/listofcontactform.
 import contactform from "../controller/crud/contactform/contactformops.js"
 import contactmessagebyid from "../controller/crud/contactform/getcfbyid.js"
 import contactmessagedelete from "../controller/crud/contactform/contactmessagedelete.js"
+import checktransaction from "../controller/crud/chargeroperations/checktransation.js"
+import setChargerOperative from "../controller/crud/chargeroperations/chargeroperaive.js"
+import setChargerStop from "../controller/crud/chargeroperations/chargerstop.js"
+
+// import createminrate from "../controller/crud/min_threshhold/createminrate.js"
 const userRoutes = Router()
 
 
@@ -65,8 +70,12 @@ userRoutes.post("/loffchargers",getfavoritechargerofauser)
 userRoutes.post("/createbookings",chargerbookings)
 //get list of bookings
 userRoutes.post("/getbookings",getlistofbookings)
-//chargerstart transaction
-userRoutes.post("/startcharge",chargerstarttransactions)
+//charger check transaction
+userRoutes.post("/checktransaction",checktransaction)
+//set charger operative
+userRoutes.post("/chargeroperative",setChargerOperative)
+//set charger stop
+userRoutes.post("/chargerstop",setChargerStop)
 //set minimum balance route
 userRoutes.post("/createmb",createminthreshhold)
 //feedback create
@@ -97,4 +106,6 @@ userRoutes.post("/cfcr",contactform)
 userRoutes.get("/getcfbyid",contactmessagebyid)
 //contact message delete
 userRoutes.post("/deletecm",contactmessagedelete)
+//create min rate
+// userRoutes.post("/createminrate",createminrate)
 export default userRoutes;
