@@ -32,6 +32,7 @@ import listofcontactform from "../controller/crud/contactform/listofcontactform.
 import contactform from "../controller/crud/contactform/contactformops.js"
 import contactmessagebyid from "../controller/crud/contactform/getcfbyid.js"
 import contactmessagedelete from "../controller/crud/contactform/contactmessagedelete.js"
+// import createminrate from "../controller/crud/min_threshhold/createminrate.js"
 const userRoutes = Router()
 
 
@@ -97,4 +98,6 @@ userRoutes.post("/cfcr",contactform)
 userRoutes.get("/getcfbyid",contactmessagebyid)
 //contact message delete
 userRoutes.post("/deletecm",contactmessagedelete)
+//create min rate
+// userRoutes.post("/createminrate",createminrate)
 export default userRoutes;
