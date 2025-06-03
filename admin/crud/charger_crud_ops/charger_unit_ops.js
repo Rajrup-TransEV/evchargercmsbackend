@@ -41,14 +41,22 @@ const asssign_buy_charger = async(req,res)=>{
                 return res.status(400).json({message:"Required fields are not given please fillup all the fields"})
             }
                
-        const usersearch= await prisma.userProfile.findFirst({
-            where:{
-                email:chargerbuyer
-            },select:{
-                uid:true
+            const usersearch = await prisma.userProfile.findFirst({
+                where: {
+                    email: chargerbuyer
+                },
+                select: {
+                    uid: true
+                }
+            });
+            
+            if (!usersearch) {
+                const messagetype = "error";
+                const message = "User not found with the provided chargerbuyer email.";
+                const filelocation = "charger_unit_ops.js";
+                logging(messagetype, message, filelocation);
+                return res.status(404).json({ message: "User not found with the given email" });
             }
-        })
-
         const appen =await getNextCounterValue()
          // Combine with charger identity
          const appenddata = `${chargeridentity}-${appen}`;
@@ -66,7 +74,7 @@ const asssign_buy_charger = async(req,res)=>{
          console.log("normalazie path",normalizepathch)
          fs.writeFileSync(imageFilePath, buffer);
      }
-        const adminuid = usersearch.uid
+        
         const newChargerUnit = await     prisma.charger_Unit.create({
             data:{
                 Chargerserialnum,
@@ -88,7 +96,7 @@ const asssign_buy_charger = async(req,res)=>{
                 twenty_four_seven_open_status,
                 charger_image:normalizepathch,
                 chargeridentity:appenddata,
-                userId:adminuid
+                userId:usersearch.uid
             }
         })
         // const charger_unit_app = await fetch("/")
@@ -137,7 +145,8 @@ const asssign_buy_charger = async(req,res)=>{
           twenty_four_seven_open_status - ${twenty_four_seven_open_status} \n
         `
           // Add the email job to the queue
-          console.log('Adding email job to queue:', { to, subject, text });
+        console.log('Adding email job to queue:', { to, subject, text });
+      
           await emailQueue.add({ to, subject, text }, {
               attempts: 5, // Number of retry attempts
               backoff: 10000 // Wait 10 seconds before retrying
