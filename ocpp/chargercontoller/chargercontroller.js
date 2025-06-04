@@ -8,7 +8,7 @@ const chargercontroller = async () => {
     };
 
     try {
-        const API_URL = 'http://srv586896.hstgr.cloud:80/api/change_availability';
+        const API_URL = 'http://192.168.0.101:80/api/change_availability';
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 
