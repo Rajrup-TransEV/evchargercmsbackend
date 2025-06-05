@@ -84,6 +84,7 @@ import disputeform from "../crud/disputform/disputeformbyid.js"
 import disputeresolved from "../crud/disputform/disputeresolved.js"
 import updatemessage from "../crud/helpandsupport/updatemessage.js"
 import resolvesupport from "../crud/helpandsupport/resolvesupport.js"
+import determineuser from "../crud/admin_made_user_cruds/adminuserdetermine.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -121,6 +122,8 @@ adminmadeuserroutes.post("/getroleanduser",get_user_by_role)
 adminmadeuserroutes.post("/createrole",createlistofroles)
 //delete role from the database
 adminmadeuserroutes.post("/deleterole",delete_a_role)
+//determine user
+adminmadeuserroutes.post("/determineuser",determineuser)
 //logout a user
 adminmadeuserroutes.post("/logoutusers",adminUserLogout)
 //create financial details and stored data into database
