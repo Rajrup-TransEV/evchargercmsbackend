@@ -1,15 +1,20 @@
 import logging from "../../../../logging/logging_generate.js";
 
 const setChargerOperative = async (req, res) => {
+  
+const EXTERNAL_URI = "http://hal.ocpp.transev.site";
+const OCPP_API_KEY = "J9YtyNYdbLD8N4qMwU2WQrr9XV2SJn4Q3qrCLEcHa8wwaZC34xhAd3RotuYdHwiB";
   try {
    
     const { chargerUid, userid,useraccept } = req.body;
     const connectorstatecheck = {
       uid: chargerUid,
     };
-    const startresponse = await fetch("http://172.236.164.175:80/api/status", {
+    const startresponse = await fetch(`${EXTERNAL_URI}/api/status`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+        "x-api-key":OCPP_API_KEY
+       },
       body: JSON.stringify(connectorstatecheck),
     });
     const connectoravailability = await startresponse.json();
@@ -32,9 +37,11 @@ const setChargerOperative = async (req, res) => {
       type: "Operative",
     };
     if (useraccept == "true"){
-    const response = await fetch("http://172.236.164.175:80/api/change_availability", {
+    const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+        "x-api-key":OCPP_API_KEY
+       },
       body: JSON.stringify(requestBody),
     });
 

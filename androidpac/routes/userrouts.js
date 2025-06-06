@@ -35,7 +35,7 @@ import contactmessagedelete from "../controller/crud/contactform/contactmessaged
 import checktransaction from "../controller/crud/chargeroperations/checktransation.js"
 import setChargerOperative from "../controller/crud/chargeroperations/chargeroperaive.js"
 import setChargerStop from "../controller/crud/chargeroperations/chargerstop.js"
-
+import setChargerOn from "../controller/crud/chargeroperations/chop.js"
 // import createminrate from "../controller/crud/min_threshhold/createminrate.js"
 const userRoutes = Router()
 
@@ -106,6 +106,8 @@ userRoutes.post("/cfcr",contactform)
 userRoutes.get("/getcfbyid",contactmessagebyid)
 //contact message delete
 userRoutes.post("/deletecm",contactmessagedelete)
+//set charger on
+userRoutes.post("/chargeron",setChargerOn)
 //create min rate
 // userRoutes.post("/createminrate",createminrate)
 export default userRoutes;
