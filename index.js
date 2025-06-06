@@ -19,7 +19,7 @@ const prisma = new PrismaClient();
 
 const app = express();
 const gateway = Router();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3500;
 
 // Middleware to parse JSON and URL-encoded bodies
 app.use(bodyParser.json({ limit: '1000mb' })); // Set limit for JSON payloads
