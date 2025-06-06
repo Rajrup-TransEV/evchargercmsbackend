@@ -9,11 +9,12 @@ if (!EXTERNAL_URI || !OCPP_API_KEY) {
   process.exit(1);
 }
 
-const setChargerOn = async () => {
+const setChargerOn = async (req,res) => {
+  const {chargerid} = req.body
   const requestBody = {
-    "uid": "6nvvs3",
+    "uid": chargerid,
     "connector_id": "1",
-    "type": "Operative"
+    "type": "Inoperative"
   };
 
   try {
