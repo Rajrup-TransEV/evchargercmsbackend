@@ -122,6 +122,7 @@ model Charger_Unit {
   charger_use_type            String?          @db.VarChar(255)   // if the charger will be used for private or commercial
   twenty_four_seven_open_status String?        @db.VarChar(255)
   charger_image               String?          @db.VarChar(255)
+  googlemapslink              String?          @db.VarChar(255)
   userId                      String?             // Foreign key to UserProfile
   chargerbuyer                        UserProfile?     @relation(fields: [userId], references: [uid])
   
