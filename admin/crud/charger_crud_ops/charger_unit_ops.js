@@ -30,15 +30,7 @@ const asssign_buy_charger = async (req, res) => {
     const ranuid = generateRandomUID();
 
     try {
-        if (
-            !Chargerserialnum || !ChargerName || !Chargerhost || !Segment || !Subsegment || !Total_Capacity ||
-            !Chargertype || !parking || !number_of_connectors || !Connector_type || !connector_total_capacity ||
-            !lattitude || !longitute || !full_address || !charger_use_type ||
-            !twenty_four_seven_open_status || !chargerbuyer || !chargeridentity
-        ) {
-            logging("error", "Required fields are not given please fillup all the fields", "charger_unit_ops.js");
-            return res.status(400).json({ message: "Required fields are not given please fillup all the fields" });
-        }
+       
 
         const usersearch = await prisma.userProfile.findFirst({
             where: { email: chargerbuyer },
