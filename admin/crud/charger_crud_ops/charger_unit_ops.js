@@ -44,7 +44,7 @@ const asssign_buy_charger = async (req, res) => {
 
         const appen = await getNextCounterValue();
         const appenddata = `${chargeridentity}-${appen}`;
-        const googleMapsUrl = `https://www.google.com/maps?q=${lattitude},${longitute}`;
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lattitude},${longitute}`;
 
         // Handle base64 image data
         let imageFilePath = null;
