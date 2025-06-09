@@ -15,11 +15,7 @@ const flushCache = async () => {
       console.log('Cache flushed successfully:', result);
     } catch (error) {
       console.error('Error flushing cache:', error);
-    } finally {
-      // Close the Redis connection
-      redis.disconnect();
     }
   };
   
-  // Call the flushCache function
-  flushCache();
+  export default flushCache;

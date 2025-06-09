@@ -14,6 +14,7 @@ import ipTracker from "./iptracker.js";
 import requestIp from 'request-ip';
 import sendReminderEmails from "./androidpac/controller/crud/chargerbookings/chargerbookingscheduler.js";
 import rateLimit from 'express-rate-limit';
+import flushCache from "./utils/flushcache.js";
 
 const prisma = new PrismaClient();
 
@@ -80,6 +81,18 @@ cron.schedule('* * * * *', () => {
 }, {
     scheduled: true,
     timezone: "Asia/Kolkata" // Set timezone to IST
+});
+cron.schedule('* * * * *', async () => {
+    console.log('Running cache flush job...');
+    try {
+        await flushCache();
+        console.log('Cache flush completed successfully');
+    } catch (error) {
+        console.error('Error during cache flush:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata" // Use IST timezone to be consistent
 });
 
 // Define the gateway route
