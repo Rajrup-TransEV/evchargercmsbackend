@@ -1,8 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import generateCustomRandomUID from "../../../../lib/customuids.js";
 import logging from "../../../../logging/logging_generate.js";
+import dotenv from "dotenv"
+dotenv.config()
 
 const prisma = new PrismaClient();
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 
 const favoritechargers = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
@@ -27,6 +30,7 @@ const favoritechargers = async (req, res) => {
             where: {
                 chargeruid: chargeruid,
                 useruid: useruid,
+
             },
         });
 
@@ -51,6 +55,7 @@ const favoritechargers = async (req, res) => {
                     chargeruid,
                     useruid,
                     isfavorite: isFavoriteBoolean,
+                    associatedadminid:ASSOCIATED_ADMINID
                 },
             });
 

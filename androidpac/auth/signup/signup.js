@@ -4,12 +4,13 @@ import emailQueue from "../../../lib/emailqueue.js";
 import logging from "../../../logging/logging_generate.js";
 import generateOtp from "../../../lib/generateotp.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
-
+import dotenv from "dotenv"
+dotenv.config()
 const prisma = new PrismaClient();
 
 // Temporary storage for signups
 const tempStorage = {};
-
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 export const signupUser = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
 
@@ -59,7 +60,8 @@ export const signupUser = async (req, res) => {
                     password: hashedPassword,
                     userType: "user",
                     phonenumber,
-                    emailVerified: true
+                    emailVerified: true,
+                    associatedadminid:ASSOCIATED_ADMINID
                 }
             });
 

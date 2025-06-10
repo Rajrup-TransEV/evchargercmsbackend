@@ -3,8 +3,11 @@ import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../../lib/customuids.js";
 import emailQueue from "../../../../lib/emailqueue.js";
+import dotenv from "dotenv"
+dotenv.config()
 
 const prisma = new PrismaClient();
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 
 const feedbackcreate = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
@@ -28,8 +31,8 @@ const feedbackcreate = async(req,res)=>{
             ratingnumber:ratingnumber,
             feedbackmessage:feedbackmessage,
             feedbacktype:feedbacktype,
-            associatedadminid:'yyyy',
-            isserveytook:true
+            isserveytook:true,
+            associatedadminid:ASSOCIATED_ADMINID
         }
        })
 

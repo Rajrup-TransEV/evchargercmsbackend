@@ -3,9 +3,11 @@ import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../../lib/customuids.js";
 import emailQueue from "../../../../lib/emailqueue.js";
-
+import dotenv from "dotenv"
+dotenv.config()
 
 const prisma = new PrismaClient();
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 const contactform = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
 
@@ -25,7 +27,8 @@ const contactform = async(req,res)=>{
                 firstname:firstname,
                 lastname:lastname,
                 email:email,
-                message:usermessage
+                message:usermessage,
+                associatedadminid:ASSOCIATED_ADMINID
             }
         })   
         const messagetype = "success";
