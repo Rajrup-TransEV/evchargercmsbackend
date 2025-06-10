@@ -9,9 +9,11 @@ import getNextCounterValue from "../../../lib/serialnumbergen.js";
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+dotenv.config()
 
 const prisma = new PrismaClient();
-
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 const asssign_buy_charger = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
 
@@ -80,7 +82,8 @@ const asssign_buy_charger = async (req, res) => {
                 charger_image: normalizepathch,
                 chargeridentity: appenddata,
                 userId: usersearch.uid,
-                googlemapslink: googleMapsUrl
+                googlemapslink: googleMapsUrl,
+                associatedadminid:ASSOCIATED_ADMINID
             }
         });
 

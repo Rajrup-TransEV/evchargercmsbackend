@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
-
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 const associateRoleToUser = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
 
@@ -70,7 +70,8 @@ const associateRoleToUser = async (req, res) => {
                 data: {
                     userid: userid,
                     rolename: rolename,
-                    roledesc: roledesc
+                    roledesc: roledesc,
+                    associatedadminid:ASSOCIATED_ADMINID
                 }
             });
             const messagetype = "success";

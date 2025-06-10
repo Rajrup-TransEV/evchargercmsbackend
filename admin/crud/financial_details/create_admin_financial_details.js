@@ -4,6 +4,7 @@ import logging from "../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 
 const add_user_financial_details = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
@@ -52,6 +53,7 @@ const add_user_financial_details = async (req, res) => {
                 branch_name: branch_name,
                 branch_address: branch_address,
                 userProfileId: userid, // Associate with the user profile
+                associatedadminid:ASSOCIATED_ADMINID
             },
         });
         const messagetype = "success"

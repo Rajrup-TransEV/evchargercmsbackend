@@ -3,6 +3,7 @@ import logging from "../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 
 const vehilcle_create = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
@@ -47,6 +48,7 @@ const vehilcle_create = async (req, res) => {
                     vehicletype,
                     vehiclecategory,
                     adminuid:adminuid,
+                    associatedadminid:ASSOCIATED_ADMINID
                 }
             });
 

@@ -3,6 +3,7 @@ import logging from "../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 
 const addhub = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
@@ -35,7 +36,8 @@ const addhub = async (req, res) => {
                 hubchargers: hubchargers, // Directly assign the array
                 hubtariff: hubtariff,
                 hublocation: hublocation,
-                adminuid: adminid
+                adminuid: adminid,
+                associatedadminid:ASSOCIATED_ADMINID
             }
         });
 

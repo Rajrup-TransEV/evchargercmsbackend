@@ -4,6 +4,7 @@ import logging from "../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
 
 const prisma = new PrismaClient();
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 const createdriver = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
     // Check if the API key is valid
@@ -69,7 +70,8 @@ const createdriver = async(req,res)=>{
                 vehicleowenernationality:vehicleowenernationality,
                 adminid:adminid,
                 vehicleoweneraddress:vehicleoweneraddress,
-                vehicleowenerrole:vehicleowenerrole
+                vehicleowenerrole:vehicleowenerrole,
+                associatedadminid:ASSOCIATED_ADMINID
             }
         })
     

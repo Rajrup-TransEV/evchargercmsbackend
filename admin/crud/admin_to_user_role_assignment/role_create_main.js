@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
 import generateCustomRandomUID from "../../../lib/customuids.js";
 const prisma = new PrismaClient();
-
+const ASSOCIATED_ADMINID=process.env.ASSOCIATED_ADMIN
 const createlistofroles = async(req,res)=>{
     const apiauthkey = req.headers['apiauthkey'];
   // Check if the API key is valid
@@ -27,7 +27,8 @@ const createlistofroles = async(req,res)=>{
             data:{
                 uid:generateCustomRandomUID(),
                 rolename:rolename,
-                roledesc:roledesc
+                roledesc:roledesc,
+                associatedadminid:ASSOCIATED_ADMINID
             }
         })
         if(!createroles){

@@ -15,12 +15,15 @@ import requestIp from 'request-ip';
 import sendReminderEmails from "./androidpac/controller/crud/chargerbookings/chargerbookingscheduler.js";
 import rateLimit from 'express-rate-limit';
 import flushCache from "./utils/flushcache.js";
+import dotenv from 'dotenv';
+import os from 'os';
+dotenv.config()
 
 const prisma = new PrismaClient();
 
 const app = express();
 const gateway = Router();
-const PORT = process.env.PORT || 3500;
+const PORT = process.env.PORT;
 
 // Middleware to parse JSON and URL-encoded bodies
 app.use(bodyParser.json({ limit: '1000mb' })); // Set limit for JSON payloads
