@@ -1,4 +1,6 @@
 import logging from "../../../../logging/logging_generate.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const setChargerOperative = async (req, res) => {
   

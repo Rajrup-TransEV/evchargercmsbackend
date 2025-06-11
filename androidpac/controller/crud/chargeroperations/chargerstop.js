@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const prisma = new PrismaClient();
 const EXTERNAL_URI = process.env.EXTERNAL_URI
