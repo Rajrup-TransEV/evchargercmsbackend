@@ -2,8 +2,8 @@ import logging from "../../../../logging/logging_generate.js";
 
 const setChargerOperative = async (req, res) => {
   
-const EXTERNAL_URI = "http://hal.ocpp.transev.site";
-const OCPP_API_KEY = "J9YtyNYdbLD8N4qMwU2WQrr9XV2SJn4Q3qrCLEcHa8wwaZC34xhAd3RotuYdHwiB";
+const EXTERNAL_URI = process.env.EXTERNAL_URI
+const OCPP_API_KEY = process.env.OCPP_API_KEY;
   try {
    
     const { chargerUid, userid,useraccept } = req.body;

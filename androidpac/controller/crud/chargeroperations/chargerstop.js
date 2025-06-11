@@ -2,13 +2,15 @@ import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 
 const prisma = new PrismaClient();
+const EXTERNAL_URI = process.env.EXTERNAL_URI
+const OCPP_API_KEY = process.env.OCPP_API_KEY;
 const chargerstop = async(req,res)=>{
     const {userid,chargerid,useraccept}=req.body;
     try {
         const connectorstatecheck = {
             uid: chargerid,
           };
-          const startresponse = await fetch("http://172.236.164.175:80/api/status", {
+          const startresponse = await fetch(`${EXTERNAL_URI}/api/status`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(connectorstatecheck),
@@ -30,7 +32,7 @@ const chargerstop = async(req,res)=>{
             connector_id: connectoravailability?.connector_id,
             type: "Inoperative",
         }
-        const response = await fetch("http://172.236.164.175:80/api/change_availability", {
+        const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody),

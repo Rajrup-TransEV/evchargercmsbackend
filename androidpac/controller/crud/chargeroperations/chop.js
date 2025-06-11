@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const EXTERNAL_URI = "http://hal.ocpp.transev.site";
-const OCPP_API_KEY = "J9YtyNYdbLD8N4qMwU2WQrr9XV2SJn4Q3qrCLEcHa8wwaZC34xhAd3RotuYdHwiB";
+const EXTERNAL_URI = process.env.EXTERNAL_URI
+const OCPP_API_KEY = process.env.OCPP_API_KEY;
 
 if (!EXTERNAL_URI || !OCPP_API_KEY) {
   console.error("Environment variables are missing. Check your .env file.");
