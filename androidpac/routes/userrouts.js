@@ -76,6 +76,8 @@ userRoutes.post("/checktransaction",checktransaction)
 userRoutes.post("/chargeroperative",setChargerOperative)
 //set charger stop
 userRoutes.post("/chargerstop",setChargerStop)
+//set charger on
+userRoutes.post("/setchargeron",setChargerOn)
 //set minimum balance route
 userRoutes.post("/createmb",createminthreshhold)
 //feedback create
