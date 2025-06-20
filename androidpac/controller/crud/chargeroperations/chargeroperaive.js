@@ -29,10 +29,16 @@ const OCPP_API_KEY = process.env.OCPP_API_KEY;
     });
 
     const result = await response.json();
+    console.log("result",result)
     logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
 
     const status = result?.status?.toLowerCase();
-    return res.status(200).json({message:"Charger status changed successfully"})
+    console.log("status",status)
+    if (status === "accepted" || status === "success") {
+      return res.status(200).json({message:"Charger status changed successfully"})
+    }else{
+      return res.status(400).json({message:"Charger status change failed"})
+    }
   } catch (err) {
     logging("charger_status_error", err.message, "chargerbookings.js");
     return res.status(500).json({ status: "Error", message: err.message });
