@@ -20,7 +20,7 @@ const deductcalculate = async (req, res) => {
     const findcharger = await prisma.charger_Unit.findFirstOrThrow({
       where: { uid: chargerid },
     });
-    console.log(findcharger)
+
     // 2. Validate Hub
     const findhub = await prisma.addhub.findFirstOrThrow({
       where: {
@@ -36,18 +36,17 @@ const deductcalculate = async (req, res) => {
     }
 
     // 4. Get User Wallet
-    const userdata = userid;
     const walletdetails = await prisma.wallet.findFirstOrThrow({
       where: {
         OR: [
-          { appuserrelatedwallet: userdata },
-          { userprofilerelatedwallet: userdata },
+          { appuserrelatedwallet: userid },
+          { userprofilerelatedwallet: userid },
         ],
       },
       select: { balance: true, uid: true },
     });
 
-    // 5. Calculate kWh consumed (fallback to consumedkwh if provided)
+    // 5. Calculate kWh consumed
     const kwhConsumed =
       consumedkwh ?? (parseFloat(meterstop) - parseFloat(meterstart)) / 1000;
 
@@ -58,48 +57,61 @@ const deductcalculate = async (req, res) => {
     // 6. Compute cost
     const totalCost = kwhConsumed * hubtariff;
 
-    // 7. Check wallet balance
-    if (walletdetails.balance < totalCost) {
+    const currentBalance = parseFloat(walletdetails.balance || "0");
+
+    // 7. Check balance
+    if (currentBalance < totalCost) {
       return res
         .status(400)
         .json({ message: "Wallet balance is not sufficient. Please recharge." });
     }
 
-    // 8. Deduct balance from wallet
+    const updatedBalance = (currentBalance - totalCost).toFixed(2);
+
+    // 8. Update wallet balance
     await prisma.wallet.update({
       where: { uid: walletdetails.uid },
       data: {
-        balance: {
-          decrement: totalCost,
-        },
+        balance: updatedBalance.toString(),
       },
     });
 
-    // 9. Log charging session (optional)
+    // 9. Log charging session
     await prisma.charingsessions.create({
       data: {
         sessionid,
         chargerid,
-        userid: userdata,
-        starttime: new Date(starttime),
-        stoptime: new Date(stoptime),
-        meterstart: parseFloat(meterstart),
-        meterstop: parseFloat(meterstop),
+        userid,
+        startime: starttime,
+        stoptime: stoptime,
+        meterstart: meterstart,
+        meterstop: meterstop,
         consumedkwh: kwhConsumed,
-        cost: totalCost,
+        totalcost: totalCost.toString(),
       },
     });
 
-    logging.info(`Charging session ${sessionid} stopped. Cost: ₹${totalCost}`);
+    // 10. Add transaction history entry
+    await prisma.transactionHistory.create({
+      data: {
+        uid: crypto.randomUUID(),
+        paymentid: `charge_${sessionid}`,
+        walletid: walletdetails.uid,
+        userid: userid,
+        price: totalCost.toString(),
+      },
+    });
+
+    console.log(`Charging session ${sessionid} stopped. Cost: ₹${totalCost}`);
 
     return res.status(200).json({
       message: "Charging session completed successfully",
       consumed: kwhConsumed,
       cost: totalCost,
-      remainingBalance: walletdetails.balance - totalCost,
+      remainingBalance: parseFloat(updatedBalance),
     });
   } catch (error) {
-    logging.error("Error in chargerstop: ", error);
+    console.log("Error in chargerstop: ", error);
     return res.status(500).json({ error: error.message });
   }
 };
