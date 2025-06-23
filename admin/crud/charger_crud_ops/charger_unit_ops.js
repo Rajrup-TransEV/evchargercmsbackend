@@ -125,15 +125,42 @@ const asssign_buy_charger = async (req, res) => {
 
         logging("success", "Charger unit has been created successfully", "charger_unit_ops.js");
 
-        // Generate and save QR Code
-        const qrcodedata = `${ranuid}`;
-        const qrcodeBuffer = await saveqrcode(qrcodedata);
+            // Prepare full charger data for QR code (excluding sensitive or large fields like image)
+        const qrcodedata = {
+            uid: ranuid,
+            Chargerserialnum,
+            ChargerName,
+            Chargerhost,
+            Segment,
+            Subsegment,
+            Total_Capacity,
+            Chargertype,
+            parking,
+            number_of_connectors,
+            Connector_type,
+            connector_total_capacity,
+            lattitude,
+            longitute,
+            full_address,
+            charger_use_type,
+            twenty_four_seven_open_status,
+            chargeridentity: appenddata,
+            googlemapslink: googleMapsUrl,
+            associatedadminid: ASSOCIATED_ADMINID,
+            userId: usersearch.uid
+        };
+
+        // Convert object to JSON string to encode into QR
+        const qrStringData = JSON.stringify(qrcodedata);
+
+        // Save QR code with full charger data
+        const qrcodeBuffer = await saveqrcode(qrStringData);
         const normalizedQrcodePath = qrcodeBuffer.qrCodePath.replace(/\\/g, '/');
 
         await prisma.qRCode.create({
             data: {
                 uid: crypto.randomUUID(),
-                chargerid: qrcodedata,
+                chargerid: ranuid,  // Keep ranuid as chargerid
                 qrcodedata: normalizedQrcodePath
             },
             select: {
