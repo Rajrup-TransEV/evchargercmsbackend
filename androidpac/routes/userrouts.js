@@ -36,6 +36,7 @@ import checktransaction from "../controller/crud/chargeroperations/checktransati
 import setChargerOperative from "../controller/crud/chargeroperations/chargeroperaive.js"
 import setChargerStop from "../controller/crud/chargeroperations/chargerstop.js"
 import setChargerOn from "../controller/crud/chargeroperations/chop.js"
+import setChargerStart from "../controller/crud/chargeroperations/chargerstart.js"
 import deductcalculate from "../controller/crud/chargeroperations/deductcalculate.js"
 import checkstartresponse from "../controller/crud/chargeroperations/checkstartresponse.js"
 import getchargingsessionbyuserid from "../controller/crud/chargingsessions/getchargingsessionbyuserid'.js"
@@ -113,6 +114,8 @@ userRoutes.get("/getcfbyid",contactmessagebyid)
 userRoutes.post("/deletecm",contactmessagedelete)
 //set charger on
 userRoutes.post("/chargeron",setChargerOn)
+//set charger start
+userRoutes.post("/chargerstart",setChargerStart)
 //check start response
 userRoutes.post("/checkstartresponse",checkstartresponse)
 //deduct calculate
