@@ -15,9 +15,9 @@ const redis = new Redis(redisconnuri)
 export const setCache = async(key,value,expiration)=>{
     try {
         await redis.set(key,JSON.stringify(value),'EX',expiration)
-        console.log(`Cache set for key: ${key}`)
+        console.log(`Cache set fo`)
         const messagetype = "success"
-        const message =`Data set to cache ${JSON.stringify(value)}`
+        const message =`Data set to cache`
         const filelocation = "cacheops.js";
         logging(messagetype,message,filelocation)
     } catch (error) {
@@ -40,7 +40,7 @@ export const getCache = async(key)=>{
         const cachedValue = await redis.get(key);
         if (cachedValue) {
             const messagetype = "success"
-            const message =`Cache hit for key: ${key}`
+            const message ="cache hit"
             const filelocation = "cacheops.js";
             logging(messagetype,message,filelocation)
             console.log(`Cache hit for key: ${key}`);
@@ -48,7 +48,7 @@ export const getCache = async(key)=>{
             
         } else {
             const messagetype = "error"
-            const message =`Cache miss for key: ${key}`
+            const message ="cache miss"
             const filelocation = "cacheops.js";
             logging(messagetype,message,filelocation)
             console.log(`Cache miss for key: ${key}`);
