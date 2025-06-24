@@ -37,6 +37,7 @@ import setChargerOperative from "../controller/crud/chargeroperations/chargerope
 import setChargerStop from "../controller/crud/chargeroperations/chargerstop.js"
 import setChargerOn from "../controller/crud/chargeroperations/chop.js"
 import deductcalculate from "../controller/crud/chargeroperations/deductcalculate.js"
+import checkstartresponse from "../controller/crud/chargeroperations/checkstartresponse.js"
 // import createminrate from "../controller/crud/min_threshhold/createminrate.js"
 const userRoutes = Router()
 
@@ -111,6 +112,8 @@ userRoutes.get("/getcfbyid",contactmessagebyid)
 userRoutes.post("/deletecm",contactmessagedelete)
 //set charger on
 userRoutes.post("/chargeron",setChargerOn)
+//check start response
+userRoutes.post("/checkstartresponse",checkstartresponse)
 //deduct calculate
 userRoutes.post("/deductcalculate",deductcalculate)
 //create min rate

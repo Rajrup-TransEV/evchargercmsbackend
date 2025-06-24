@@ -1,3 +1,4 @@
+//ocpp 2.0  implement
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

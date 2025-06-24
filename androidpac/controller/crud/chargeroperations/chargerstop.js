@@ -7,32 +7,32 @@ const prisma = new PrismaClient();
 const EXTERNAL_URI = process.env.EXTERNAL_URI
 const OCPP_API_KEY = process.env.OCPP_API_KEY;
 const chargerstop = async(req,res)=>{
-    const {userid,chargerid,useraccept}=req.body;
+    const { chargerUid, userid}=req.body;
     try {
-        const connectorstatecheck = {
-            uid: chargerid,
-          };
-          const startresponse = await fetch(`${EXTERNAL_URI}/api/status`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json",
-              "x-api-key":OCPP_API_KEY
-             },
-            body: JSON.stringify(connectorstatecheck),
-          });
-          const connectoravailability = await startresponse.json();
-          if (connectoravailability?.status?.toLowerCase() !== "available") {
-            return res.status(400).json({ message: "Charger is not available" });
-          }
-          if (connectoravailability?.status?.toLowerCase() !== "operative") {
-            return res.status(400).json({ message: "Charger is not operative" });
-          }
-          if (connectoravailability?.status?.toLowerCase() == "busy"){
-              return res.status(400).json({ message: "Charger endpoint is busy" });
-          }
+          const stoptransaction = await prisma.chargerTransaction.findFirstOrThrow({
+            where:{
+              AND:[
+                {
+                  chargerid:chargerUid
+                },
+                {
+                  userid:userid
+                }
+              ]
+            },
+            select:{
+              uid:true,
+              transactionid:true,
+              connectorid:true
+            }
+          })
+          const stoptransactionid = stoptransaction.transactionid;
+          const connectorid = stoptransaction.connectorid;
         const requestBody ={
-            uid: chargerid,
-            id_tag: userid,
-            connector_id: connectoravailability?.connector_id,
+          uid: chargerUid,
+          id_tag: userid,
+          connector_id: connectorid,
+          transactionid:stoptransactionid,
         }
         const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
             method: "POST",

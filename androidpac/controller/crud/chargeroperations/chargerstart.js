@@ -1,68 +1,92 @@
+import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 import dotenv from "dotenv";
 dotenv.config();
 
+const prisma = new PrismaClient();
+
 const setChargerStart = async (req, res) => {
-  
-const EXTERNAL_URI = process.env.EXTERNAL_URI
-console.log("EXTERNAL_URI",EXTERNAL_URI)
-const OCPP_API_KEY = process.env.OCPP_API_KEY;
-console.log("OCPP_API_KEY",OCPP_API_KEY)
+  const EXTERNAL_URI = process.env.EXTERNAL_URI;
+  const OCPP_API_KEY = process.env.OCPP_API_KEY;
+
   try {
-   
-    const { chargerUid, userid,useraccept } = req.body;
-    const connectorstatecheck = {
-      uid: chargerUid,
-    };
-    const startresponse = await fetch(`${EXTERNAL_URI}/api/status`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json",
-        "x-api-key":OCPP_API_KEY
-       },
-      body: JSON.stringify(connectorstatecheck),
-    });
-    const connectoravailability = await startresponse.json();
-    if (connectoravailability?.status?.toLowerCase() !== "available") {
-      return res.status(400).json({ message: "Charger is not available" });
-    }
-    if (connectoravailability?.status?.toLowerCase() !== "operative") {
-      return res.status(400).json({ message: "Charger is not operative" });
-    }
-    if (connectoravailability?.status?.toLowerCase() == "busy"){
-        return res.status(400).json({ message: "Charger endpoint is busy" });
-    }
-    const connectorid = connectoravailability?.connector_id;
+    const { chargerUid, userid, useraccept } = req.body;
 
-    const requestBody = {
-      uid: chargerUid,
-      id_tag: userid,
-      connector_id: connectorid,
-    };
-    if (useraccept == "true"){
-    const response = await fetch(`${EXTERNAL_URI}/api/start_transaction`, {
+    // 1. Fetch charger status
+    const statusRes = await fetch(`${EXTERNAL_URI}/api/status`, {
       method: "POST",
-      headers: { "Content-Type": "application/json",
-        "x-api-key":OCPP_API_KEY
-       },
-      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": OCPP_API_KEY,
+      },
+      body: JSON.stringify({ uid: chargerUid }),
     });
 
-    const result = await response.json();
-    logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
+    const statusData = await statusRes.json();
+    const connectorid = statusData?.connector_id;
 
-    const status = result?.status?.toLowerCase();
+    // 2. Fetch hub tariff
+    const findhub = await prisma.addhub.findFirstOrThrow({
+      where: { hubchargers: { has: chargerUid } },
+      select: { hubtariff: true },
+    });
+    const tariffPerKwh = findhub.hubtariff;
 
-    if (status === "accepted" || status === "success") {
-      return res.status(200).json({ message: "Charging started" });
+    // 3. Fetch wallet balance
+    const wallet = await prisma.wallet.findFirstOrThrow({
+      where: {
+        OR: [
+          { appuserrelatedwallet: userid },
+          { userprofilerelatedwallet: userid },
+        ],
+      },
+      select: { balance: true },
+    });
+    const balance = wallet.balance;
+
+    // 4. Calculate max kWh (wallet / tariff)
+    const kwh = balance / tariffPerKwh;
+
+    // 5. Send to /start_transaction if accepted
+    if (useraccept === "true") {
+      const startRes = await fetch(`${EXTERNAL_URI}/api/start_transaction`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": OCPP_API_KEY,
+        },
+        body: JSON.stringify({
+          uid: chargerUid,
+          id_tag: userid,
+          connector_id: connectorid,
+          maximum_kwh: parseFloat(kwh.toFixed(2)), // Send as `kwh`
+        }),
+      });
+
+      const result = await startRes.json();
+      logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
+
+      const resultStatus = result?.status?.toLowerCase();
+      if (resultStatus === "accepted" || resultStatus === "success") {
+        
+        return res.status(200).json({
+          message: "Charging started",
+          max_kwh: kwh.toFixed(2),
+        });
+      } else {
+        return res.status(400).json({ message: "Charging could not be started." });
+      }
     } else {
-      return res.status(400).json({ message: "Something went wrong. Please try again." });
+      return res.status(200).json({
+        message: "kWh calculated from wallet",
+        max_kwh: kwh.toFixed(2),
+      });
     }
-    }
+
   } catch (err) {
     logging("charger_status_error", err.message, "chargerbookings.js");
     return res.status(500).json({ status: "Error", message: err.message });
   }
-
 };
 
 export default setChargerStart;

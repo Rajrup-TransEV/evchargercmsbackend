@@ -472,6 +472,17 @@ model Charingsessions{
   updatedAt           DateTime             @updatedAt
 }
 
+model ChargerTransaction{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  chargerid String? @db.VarChar(255)
+  userid String? @db.VarChar(255)
+  transactionid String? @db.VarChar(255)
+  connectorid String? @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
 // model DynamicRate{
 //   id                 String                @id @default(uuid())
 //   uid                 String?              @unique @db.VarChar(255)
