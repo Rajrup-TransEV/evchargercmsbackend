@@ -10,7 +10,7 @@ const checkstartresponse = async (req, res) => {
     try {
          // 2. Fetch hub tariff
     const findhub = await prisma.addhub.findFirstOrThrow({
-        where: { hubchargers: { has: chargerUid } },
+        where: { hubchargers: { has: chargerid } },
         select: { hubtariff: true },
       });
       const tariffPerKwh = findhub.hubtariff;
