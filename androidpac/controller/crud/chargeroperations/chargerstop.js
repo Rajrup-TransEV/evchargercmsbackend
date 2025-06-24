@@ -40,7 +40,7 @@ const chargerstop = async(req,res)=>{
           transaction_id:stoptransactionid,
           max_kwh:max_kwh
         }
-        const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
+        const response = await fetch(`${EXTERNAL_URI}/api/stop_transaction`, {
             method: "POST",
             headers: { "Content-Type": "application/json",
               "x-api-key":OCPP_API_KEY
