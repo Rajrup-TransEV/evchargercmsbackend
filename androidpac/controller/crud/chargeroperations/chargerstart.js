@@ -25,27 +25,7 @@ const setChargerStart = async (req, res) => {
     const statusData = await statusRes.json();
     const connectorid = statusData?.connector_id;
 
-    // 2. Fetch hub tariff
-    const findhub = await prisma.addhub.findFirstOrThrow({
-      where: { hubchargers: { has: chargerUid } },
-      select: { hubtariff: true },
-    });
-    const tariffPerKwh = findhub.hubtariff;
-
-    // 3. Fetch wallet balance
-    const wallet = await prisma.wallet.findFirstOrThrow({
-      where: {
-        OR: [
-          { appuserrelatedwallet: userid },
-          { userprofilerelatedwallet: userid },
-        ],
-      },
-      select: { balance: true },
-    });
-    const balance = wallet.balance;
-
-    // 4. Calculate max kWh (wallet / tariff)
-    const kwh = balance / tariffPerKwh;
+   
 
     // 5. Send to /start_transaction if accepted
     if (useraccept === "true") {
@@ -58,8 +38,7 @@ const setChargerStart = async (req, res) => {
         body: JSON.stringify({
           uid: chargerUid,
           id_tag: userid,
-          connector_id: connectorid,
-          maximum_kwh: parseFloat(kwh.toFixed(2)), // Send as `kwh`
+          connector_id: connectorid
         }),
       });
 

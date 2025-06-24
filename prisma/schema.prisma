@@ -479,6 +479,7 @@ model ChargerTransaction{
   userid String? @db.VarChar(255)
   transactionid String? @db.VarChar(255)
   connectorid String? @db.VarChar(255)
+  max_kwh String? @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
