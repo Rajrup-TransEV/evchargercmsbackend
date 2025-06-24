@@ -10,7 +10,7 @@ const setChargerStart = async (req, res) => {
   const OCPP_API_KEY = process.env.OCPP_API_KEY;
 
   try {
-    const { chargerUid, userid, useraccept } = req.body;
+    const { chargerid, userid, useraccept } = req.body;
 
     // 1. Fetch charger status
     const statusRes = await fetch(`${EXTERNAL_URI}/api/status`, {
@@ -19,7 +19,7 @@ const setChargerStart = async (req, res) => {
         "Content-Type": "application/json",
         "x-api-key": OCPP_API_KEY,
       },
-      body: JSON.stringify({ uid: chargerUid }),
+      body: JSON.stringify({ uid: chargerid }),
     });
 
     const statusData = await statusRes.json();
@@ -36,7 +36,7 @@ const setChargerStart = async (req, res) => {
           "x-api-key": OCPP_API_KEY,
         },
         body: JSON.stringify({
-          uid: chargerUid,
+          uid: chargerid,
           id_tag: userid,
           connector_id: connectorid
         }),

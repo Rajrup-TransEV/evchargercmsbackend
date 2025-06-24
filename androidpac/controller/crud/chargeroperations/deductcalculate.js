@@ -20,6 +20,10 @@ const deductcalculate = async (req, res) => {
   const ASSOCIATED_ADMIN = process.env.ASSOCIATED_ADMIN;
   try {
     // 1. Validate Charger
+    if (!chargerid) {
+      return res.status(400).json({ message: "Missing chargerid in request body" });
+    }
+    
     const findcharger = await prisma.charger_Unit.findFirstOrThrow({
       where: { uid: chargerid },
     });
@@ -27,7 +31,7 @@ const deductcalculate = async (req, res) => {
     // 2. Validate Hub
     const findhub = await prisma.addhub.findFirstOrThrow({
       where: {
-        hubchargers: { has: chargerid },
+        hubchargers: { array_contains: [chargerid] },
       },
     });
 

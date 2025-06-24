@@ -7,13 +7,13 @@ const prisma = new PrismaClient();
 const EXTERNAL_URI = process.env.EXTERNAL_URI
 const OCPP_API_KEY = process.env.OCPP_API_KEY;
 const chargerstop = async(req,res)=>{
-    const { chargerUid, userid}=req.body;
+    const { chargerid, userid}=req.body;
     try {
           const stoptransaction = await prisma.chargerTransaction.findFirstOrThrow({
             where:{
               AND:[
                 {
-                  chargerid:chargerUid
+                  chargerid:chargerid
                 },
                 {
                   userid:userid
@@ -34,7 +34,7 @@ const chargerstop = async(req,res)=>{
           const connectorid = stoptransaction.connectorid;
           const max_kwh = stoptransaction.max_kwh;
         const requestBody ={
-          uid: chargerUid,
+          uid: chargerid,
           id_tag: userid,
           connector_id: connectorid,
           transactionid:stoptransactionid,
