@@ -35,8 +35,7 @@ console.log("OCPP_API_KEY",OCPP_API_KEY)
 
     const requestBody = {
       uid: chargerUid,
-      userid: userid,
-      useraccept: useraccept,
+      id_tag: userid,
       connector_id: connectorid,
     };
     if (useraccept == "true"){

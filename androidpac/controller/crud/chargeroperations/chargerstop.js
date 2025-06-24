@@ -31,10 +31,8 @@ const chargerstop = async(req,res)=>{
           }
         const requestBody ={
             uid: chargerid,
-            userid: userid,
-            useraccept: useraccept,
+            id_tag: userid,
             connector_id: connectoravailability?.connector_id,
-            type: "Inoperative",
         }
         const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
             method: "POST",
