@@ -26,16 +26,19 @@ const chargerstop = async(req,res)=>{
             select:{
               uid:true,
               transactionid:true,
-              connectorid:true
+              connectorid:true,
+              max_kwh:true
             }
           })
           const stoptransactionid = stoptransaction.transactionid;
           const connectorid = stoptransaction.connectorid;
+          const max_kwh = stoptransaction.max_kwh;
         const requestBody ={
           uid: chargerUid,
           id_tag: userid,
           connector_id: connectorid,
           transactionid:stoptransactionid,
+          max_kwh:max_kwh
         }
         const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
             method: "POST",
