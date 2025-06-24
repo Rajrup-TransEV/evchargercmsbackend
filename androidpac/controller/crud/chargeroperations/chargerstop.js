@@ -37,7 +37,7 @@ const chargerstop = async(req,res)=>{
           uid: chargerid,
           id_tag: userid,
           connector_id: connectorid,
-          transactionid:stoptransactionid,
+          transaction_id:stoptransactionid,
           max_kwh:max_kwh
         }
         const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
