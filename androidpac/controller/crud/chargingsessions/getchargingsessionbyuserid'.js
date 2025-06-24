@@ -5,7 +5,7 @@ dotenv.config();
 
 const prisma = new PrismaClient();
 
-const chagingsessionbyuserid = async(req,res)=>{
+const getchargingsessionbyuserid = async(req,res)=>{
     try {
         const {userid} = req.body;
         const findchargingsession = await prisma.charingsessions.findMany({
@@ -20,4 +20,4 @@ const chagingsessionbyuserid = async(req,res)=>{
     }
 }
 
-export default chagingsessionbyuserid
+export default getchargingsessionbyuserid
