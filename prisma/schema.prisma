@@ -470,6 +470,7 @@ model Charingsessions{
   connectorid String? @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+  associatedadminid String? @db.VarChar(255)
 }
 
 model ChargerTransaction{
@@ -482,6 +483,7 @@ model ChargerTransaction{
   max_kwh String? @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+  associatedadminid String? @db.VarChar(255)
 }
 
 // model DynamicRate{

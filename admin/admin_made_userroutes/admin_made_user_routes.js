@@ -85,6 +85,7 @@ import disputeresolved from "../crud/disputform/disputeresolved.js"
 import updatemessage from "../crud/helpandsupport/updatemessage.js"
 import resolvesupport from "../crud/helpandsupport/resolvesupport.js"
 import determineuser from "../crud/admin_made_user_cruds/adminuserdetermine.js"
+import fetchchargingsessionbyadminid from "../../androidpac/controller/crud/chargingsessions/fetchchargingsessionbyadminid.js"
 const adminmadeuserroutes = Router()
 //create admin made by super admin
 adminmadeuserroutes.post("/create/userprofilecreate",admincreateuser)
@@ -258,5 +259,7 @@ adminmadeuserroutes.post("/dfsbid",disputeform)
 adminmadeuserroutes.post("/resolvestatus",disputeresolved)
 //transaction history
 adminmadeuserroutes.post("/transactionhistory",generatebill)
+//get charging session by admin id
+adminmadeuserroutes.post("/fetchchargingsessionbyadminid",fetchchargingsessionbyadminid)
 
 export default adminmadeuserroutes;

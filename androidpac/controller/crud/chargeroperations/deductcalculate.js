@@ -1,5 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 const prisma = new PrismaClient();
 
@@ -14,7 +17,7 @@ const deductcalculate = async (req, res) => {
     meterstop,
     consumedkwh,
   } = req.body;
-
+  const ASSOCIATED_ADMIN = process.env.ASSOCIATED_ADMIN;
   try {
     // 1. Validate Charger
     const findcharger = await prisma.charger_Unit.findFirstOrThrow({
@@ -88,6 +91,7 @@ const deductcalculate = async (req, res) => {
         meterstop: meterstop,
         consumedkwh: kwhConsumed,
         totalcost: totalCost.toString(),
+        associatedadminid: ASSOCIATED_ADMIN,
       },
     });
 
