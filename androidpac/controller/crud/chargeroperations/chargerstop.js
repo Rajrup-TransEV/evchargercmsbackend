@@ -20,6 +20,9 @@ const chargerstop = async(req,res)=>{
                 }
               ]
             },
+            orderBy:{
+              createdAt:"desc"
+            },
             select:{
               uid:true,
               transactionid:true,
