@@ -49,8 +49,10 @@ const chargerstop = async(req,res)=>{
           });
           const result = await response.json();
           logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
+          return res.status(200).json({message:"Charger stopped successfully"})
     } catch (error) {
         console.log(error)    
+        return res.status(500).json({message:"Charger stopped failed"})
     }
 }
 
