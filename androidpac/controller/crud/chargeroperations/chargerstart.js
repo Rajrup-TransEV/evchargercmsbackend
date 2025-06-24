@@ -38,10 +38,9 @@ console.log("OCPP_API_KEY",OCPP_API_KEY)
       userid: userid,
       useraccept: useraccept,
       connector_id: connectorid,
-      type: type, // set type Operative or Inoperative
     };
     if (useraccept == "true"){
-    const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
+    const response = await fetch(`${EXTERNAL_URI}/api/start_transaction`, {
       method: "POST",
       headers: { "Content-Type": "application/json",
         "x-api-key":OCPP_API_KEY

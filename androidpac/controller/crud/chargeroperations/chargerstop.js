@@ -14,7 +14,9 @@ const chargerstop = async(req,res)=>{
           };
           const startresponse = await fetch(`${EXTERNAL_URI}/api/status`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              "x-api-key":OCPP_API_KEY
+             },
             body: JSON.stringify(connectorstatecheck),
           });
           const connectoravailability = await startresponse.json();
@@ -36,7 +38,9 @@ const chargerstop = async(req,res)=>{
         }
         const response = await fetch(`${EXTERNAL_URI}/api/change_availability`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              "x-api-key":OCPP_API_KEY
+             },
             body: JSON.stringify(requestBody),
           });
           const result = await response.json();
