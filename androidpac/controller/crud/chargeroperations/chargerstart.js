@@ -10,7 +10,7 @@ const OCPP_API_KEY = process.env.OCPP_API_KEY;
 console.log("OCPP_API_KEY",OCPP_API_KEY)
   try {
    
-    const { chargerUid, userid,useraccept, type } = req.body;
+    const { chargerUid, userid,useraccept } = req.body;
     const connectorstatecheck = {
       uid: chargerUid,
     };
