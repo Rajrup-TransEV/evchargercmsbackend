@@ -13,6 +13,7 @@ const setChargerStart = async (req, res) => {
     const { chargerid, userid, useraccept,connectorid } = req.body;
 
     if (useraccept === "true") {
+      console.log("user accepted but not working")
       const startRes = await fetch(`${EXTERNAL_URI}/api/start_transaction`, {
         method: "POST",
         headers: {
@@ -27,19 +28,24 @@ const setChargerStart = async (req, res) => {
       });
 
       const result = await startRes.json();
-      logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
+      console.log("result",result)
+      logging("charger_status_change", "charger in operative","chargerstart.js");
 
       const resultStatus = result?.status?.toLowerCase();
+      console.log(resultStatus)
       if (resultStatus === "accepted" || resultStatus === "success") {   
+        console.log("Charging started")
         return res.status(200).json({
           message: "Charging started",
         });
       } else {
+        console.log("Charging could not be started")
         return res.status(400).json({ message: "Charging could not be started." });
       }
     }
 
   } catch (err) {
+    console.log(err.message)
     logging("charger_status_error", err.message, "chargerbookings.js");
     return res.status(500).json({ status: "Error", message: err.message });
   }
