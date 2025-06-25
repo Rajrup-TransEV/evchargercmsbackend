@@ -41,19 +41,19 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 //global rate limiter
-const globalRateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 1000,
-    message: {
-        status: 429,
-        message: "Too many requests, please try again later."
-    },
-    standardHeaders: true, 
-    legacyHeaders: false, 
-});
+// const globalRateLimiter = rateLimit({
+//     windowMs: 15 * 60 * 1000,
+//     max: 1000,
+//     message: {
+//         status: 429,
+//         message: "Too many requests, please try again later."
+//     },
+//     standardHeaders: true, 
+//     legacyHeaders: false, 
+// });
 
-// Apply the rate limiting middleware globally
-app.use(globalRateLimiter);
+// // Apply the rate limiting middleware globally
+// app.use(globalRateLimiter);
 
 
 
