@@ -36,7 +36,7 @@ const checkstartresponse = async (req, res) => {
                 uid: crypto.randomUUID(),
                 chargerid: chargerid,
                 userid: userid,
-                transactionid: transactionid,
+                transaction_id: transactionid,
                 connectorid: connectorid,
                 max_kwh: kwh.toFixed(2),
             }
