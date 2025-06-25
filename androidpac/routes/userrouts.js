@@ -34,12 +34,12 @@ import contactmessagebyid from "../controller/crud/contactform/getcfbyid.js"
 import contactmessagedelete from "../controller/crud/contactform/contactmessagedelete.js"
 import checktransaction from "../controller/crud/chargeroperations/checktransation.js"
 import setChargerOperative from "../controller/crud/chargeroperations/chargeroperaive.js"
-import setChargerStop from "../controller/crud/chargeroperations/chargerstop.js"
 import setChargerOn from "../controller/crud/chargeroperations/chop.js"
 import setChargerStart from "../controller/crud/chargeroperations/chargerstart.js"
 import deductcalculate from "../controller/crud/chargeroperations/deductcalculate.js"
 import checkstartresponse from "../controller/crud/chargeroperations/checkstartresponse.js"
 import getchargingsessionbyuserid from "../controller/crud/chargingsessions/getchargingsessionbyuserid'.js"
+import chargerstop from "../controller/crud/chargeroperations/chargerstop.js"
 // import createminrate from "../controller/crud/min_threshhold/createminrate.js"
 const userRoutes = Router()
 
@@ -79,7 +79,7 @@ userRoutes.post("/checktransaction",checktransaction)
 //set charger operative
 userRoutes.post("/chargeroperative",setChargerOperative)
 //set charger stop
-userRoutes.post("/chargerstop",setChargerStop)
+userRoutes.post("/chargerstop",chargerstop)
 //set charger on
 userRoutes.post("/setchargeron",setChargerOn)
 //set minimum balance route
