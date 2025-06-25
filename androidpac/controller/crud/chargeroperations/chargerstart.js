@@ -6,6 +6,7 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 const setChargerStart = async (req, res) => {
+  console.log("set charger start function is running")
   const EXTERNAL_URI = process.env.EXTERNAL_URI;
   const OCPP_API_KEY = process.env.OCPP_API_KEY;
 
