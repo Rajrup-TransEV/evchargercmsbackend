@@ -10,22 +10,7 @@ const setChargerStart = async (req, res) => {
   const OCPP_API_KEY = process.env.OCPP_API_KEY;
 
   try {
-    const { chargerid, userid, useraccept } = req.body;
-
-    // 1. Fetch charger status
-    const statusRes = await fetch(`${EXTERNAL_URI}/api/status`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": OCPP_API_KEY,
-      },
-      body: JSON.stringify({ uid: chargerid }),
-    });
-
-    const statusData = await statusRes.json();
-    const connectorid = statusData?.connector_id;
-
-   
+    const { chargerid, userid, useraccept,connectorid } = req.body;
 
     // 5. Send to /start_transaction if accepted
     if (useraccept === "true") {
