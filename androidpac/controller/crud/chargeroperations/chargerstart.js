@@ -12,7 +12,6 @@ const setChargerStart = async (req, res) => {
   try {
     const { chargerid, userid, useraccept,connectorid } = req.body;
 
-    // 5. Send to /start_transaction if accepted
     if (useraccept === "true") {
       const startRes = await fetch(`${EXTERNAL_URI}/api/start_transaction`, {
         method: "POST",
@@ -31,20 +30,13 @@ const setChargerStart = async (req, res) => {
       logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
 
       const resultStatus = result?.status?.toLowerCase();
-      if (resultStatus === "accepted" || resultStatus === "success") {
-        
+      if (resultStatus === "accepted" || resultStatus === "success") {   
         return res.status(200).json({
           message: "Charging started",
-          max_kwh: kwh.toFixed(2),
         });
       } else {
         return res.status(400).json({ message: "Charging could not be started." });
       }
-    } else {
-      return res.status(200).json({
-        message: "kWh calculated from wallet",
-        max_kwh: kwh.toFixed(2),
-      });
     }
 
   } catch (err) {
