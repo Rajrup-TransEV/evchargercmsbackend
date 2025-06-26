@@ -67,12 +67,12 @@ const deductcalculate = async (req, res) => {
 
     const currentBalance = parseFloat(walletdetails.balance || "0");
 
-    // 7. Check balance
-    if (currentBalance < totalCost) {
-      return res
-        .status(400)
-        .json({ message: "Wallet balance is not sufficient. Please recharge." });
-    }
+    // // 7. Check balance
+    // if (currentBalance < totalCost) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Wallet balance is not sufficient. Please recharge." });
+    // }
 
     const updatedBalance = (currentBalance - totalCost).toFixed(2);
 
