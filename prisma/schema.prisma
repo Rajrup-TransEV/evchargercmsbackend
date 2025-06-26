@@ -467,7 +467,6 @@ model Charingsessions{
   meterstop String? @db.VarChar(255)
   consumedkwh String? @db.VarChar(255)
   totalcost String? @db.VarChar(255)
-  connectorid String? @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   associatedadminid String? @db.VarChar(255)
@@ -484,6 +483,23 @@ model ChargerTransaction{
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   associatedadminid String? @db.VarChar(255)
+}
+
+
+model UserBilling{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  userid String? @db.VarChar(255)
+  chargerid String? @db.VarChar(255)
+  username String? @db.VarChar(255)
+  walletid String? @db.VarChar(255)
+  lasttransaction String? @db.VarChar(255)
+  balancededuct String? @db.VarChar(255)
+  energyconsumption String? @db.VarChar(255)
+  chargingtime String? @db.VarChar(255)
+  associatedadminid String? @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 }
 
 // model DynamicRate{
