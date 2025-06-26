@@ -498,6 +498,7 @@ model UserBilling{
   energyconsumption String? @db.VarChar(255)
   chargingtime String? @db.VarChar(255)
   associatedadminid String? @db.VarChar(255)
+  billingpdf String? @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
