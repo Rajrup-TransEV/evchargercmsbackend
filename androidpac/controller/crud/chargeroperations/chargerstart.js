@@ -12,8 +12,25 @@ const setChargerStart = async (req, res) => {
 
   try {
     const { chargerid, userid, useraccept,connectorid } = req.body;
-
+   
     if (useraccept === "true") {
+      const walletdetails = await prisma.wallet.findFirstOrThrow({
+        where: {
+          OR: [
+            { appuserrelatedwallet: userid },
+            { userprofilerelatedwallet: userid },
+          ],
+        },
+        select: { balance: true },
+      });
+      if (!walletdetails) {
+        return res.status(404).json({ message: "Wallet not found" });
+      }
+      const balance = walletdetails.balance;
+      if (balance <= 0) {
+        return res.status(400).json({ message: "Wallet balance is not sufficiant to start charging. please recharge" });
+      }
+  
       console.log("user accepted but not working")
       const startRes = await fetch(`${EXTERNAL_URI}/api/start_transaction`, {
         method: "POST",
