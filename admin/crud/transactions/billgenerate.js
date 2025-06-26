@@ -3,23 +3,17 @@ import { PrismaClient } from "@prisma/client";
 import crypto from "crypto";
 const prisma = new PrismaClient();
 
-const generatebill = async (req, res) => {
-    const apiauthkey = req.headers['apiauthkey'];
-
-    if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
-        logging("error", "API route access error", "billgenerate.js");
-        return res.status(403).json({ message: "API route access forbidden" });
-    }
-
-    const { userid } = req.body;
-
+const generatebill = async (userid) => {
     try {
-        const [userdetails, walletdetails, transactionhistory, charingsessions] = await Promise.all([
+        const [userdetails, walletdetails, transactionhistoryList, charingsessions] = await Promise.all([
             prisma.user.findFirstOrThrow({ where: { uid: userid } }),
-            prisma.wallet.findFirstOrThrow({ where: { user: userid } }),
-            prisma.transactionHistory.findFirstOrThrow({ where: { userid } }),
+            prisma.wallet.findFirstOrThrow({ where: { appuserrelatedwallet: userid } }),
+            prisma.transactionHistory.findMany({ 
+                where: { userid: userid }, 
+                orderBy: { createdAt: 'desc' }
+            }),
             prisma.charingsessions.findMany({
-                where: { uid: userid },
+                where: { userid: userid },
                 select: {
                     sessionid: true,
                     chargerid: true,
@@ -36,37 +30,45 @@ const generatebill = async (req, res) => {
 
         if (charingsessions.length === 0) {
             logging("info", `No charging sessions found for user ${userid}`, "billgenerate.js");
-            return res.status(404).json({ message: "No charging sessions found" });
+            return 0;
         }
 
-        const session = charingsessions[0]; // Taking the latest or first session for now
+        const latestTransaction = transactionhistoryList[0];
+        if (!latestTransaction) {
+            logging("info", `No transaction history found for user ${userid}`, "billgenerate.js");
+            return 0;
+        }
 
-        // Calculate charging time (assuming both timestamps are Date objects or ISO strings)
-        const start = new Date(session.startime);
-        const stop = new Date(session.stoptime);
-        const durationMs = stop - start;
-        const billingdata = {
-            uid: crypto.randomUUID(),
-            userid: userid,
-            username: userdetails.username,
-            walletid: walletdetails.uid,
-            lasttransaction: transactionhistory.price,
-            balancededuct: session.totalcost,
-            energyconsumption: session.consumedkwh,
-            chargerid: session.chargerid,
-            chargingtime: durationMs,
-            associatedadminid: userdetails.associatedadminid
-        };
+        const generatedBills = [];
 
-        // Save to userbilling table
-        await prisma.userBilling.create({ data: billingdata });
+        for (const session of charingsessions) {
+            const start = new Date(session.startime);
+            const stop = new Date(session.stoptime);
+            const durationMs = stop - start;
+            
+            const billingdata = {
+                uid: crypto.randomUUID(),
+                userid: userid,
+                username: userdetails.username,
+                walletid: walletdetails.uid,
+                lasttransaction: latestTransaction.price,
+                balancededuct: session.totalcost,
+                energyconsumption: session.consumedkwh,
+                chargerid: session.chargerid,
+                chargingtime: durationMs.toString(),
+                associatedadminid: userdetails.associatedadminid
+            };
 
-        logging("info", `Billing generated for user ${userid}`, "billgenerate.js");
-        return res.status(200).json({ message: "Billing generated successfully", billing: billingdata });
+            const bill = await prisma.userBilling.create({ data: billingdata });
+            generatedBills.push(bill);
+        }
+
+        logging("info", `Billing generated for ${generatedBills.length} sessions of user ${userid}`, "billgenerate.js");
+        return 1;
 
     } catch (err) {
         logging("error", `Billing generation failed: ${err.message}`, "billgenerate.js");
-        return res.status(500).json({ message: "Internal Server Error", error: err.message });
+        return 3;
     }
 };
 

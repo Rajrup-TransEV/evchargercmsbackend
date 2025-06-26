@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 import dotenv from "dotenv";
+import generatebill from "../../../../admin/crud/transactions/billgenerate.js";
 dotenv.config();
 
 
@@ -86,6 +87,7 @@ const deductcalculate = async (req, res) => {
     // 9. Log charging session
     await prisma.charingsessions.create({
       data: {
+        uid: crypto.randomUUID(),
         sessionid,
         chargerid,
         userid,
@@ -111,7 +113,15 @@ const deductcalculate = async (req, res) => {
     });
 
     console.log(`Charging session ${sessionid} stopped. Cost: ₹${totalCost}`);
-
+    const billResult = await generatebill(userid);
+    if (billResult == 1) {
+      logging("info", `Billing generated for user ${userid}`, "billgenerate.js");
+    }else if(billResult == 0){
+      logging("info", `Billing not generated for user ${userid}`, "billgenerate.js");
+    }else{
+      logging("info", `Billing generation failed for user ${userid}`, "billgenerate.js");
+    }
+    
     return res.status(200).json({
       message: "Charging session completed successfully",
       consumed: kwhConsumed,

@@ -40,6 +40,7 @@ import deductcalculate from "../controller/crud/chargeroperations/deductcalculat
 import checkstartresponse from "../controller/crud/chargeroperations/checkstartresponse.js"
 import getchargingsessionbyuserid from "../controller/crud/chargingsessions/getchargingsessionbyuserid'.js"
 import chargerstop from "../controller/crud/chargeroperations/chargerstop.js"
+import generatebill from "../../admin/crud/transactions/billgenerate.js"
 // import createminrate from "../controller/crud/min_threshhold/createminrate.js"
 const userRoutes = Router()
 
@@ -122,6 +123,8 @@ userRoutes.post("/checkstartresponse",checkstartresponse)
 userRoutes.post("/deductcalculate",deductcalculate)
 //get charging session by user id
 userRoutes.post("/chargingsessionbyuserid",getchargingsessionbyuserid)
+//generate bill
+// userRoutes.post("/generatebill",generatebill)
 //create min rate
 // userRoutes.post("/createminrate",createminrate)
 export default userRoutes;

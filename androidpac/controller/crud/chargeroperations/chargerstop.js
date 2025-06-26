@@ -54,8 +54,7 @@ const chargerstop = async(req,res)=>{
              },
             body: JSON.stringify(requestBody),
           });
-          const result = await response.json();
-          console.log("result",result)
+          const result = await response.json()
           const consumedkwhx = result.consumedkwh;
           const totalcostx = consumedkwhx* hubtariff
           if (result.status == "true"){
@@ -83,7 +82,7 @@ const chargerstop = async(req,res)=>{
           }
    
     } catch (error) {
-        console.log("error",error)    
+        console.log(error)    
         return res.status(500).json({message:"Charger stopped failed"})
     }
 }
