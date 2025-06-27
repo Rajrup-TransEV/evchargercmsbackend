@@ -87,6 +87,7 @@ import resolvesupport from "../crud/helpandsupport/resolvesupport.js"
 import determineuser from "../crud/admin_made_user_cruds/adminuserdetermine.js"
 import fetchchargingsessionbyadminid from "../../androidpac/controller/crud/chargingsessions/fetchchargingsessionbyadminid.js"
 import Getbillbyadminid from "../crud/transactions/getbillbyadminid.js"
+import updatehub from "../crud/hub_crud/updatehubdata.js"
 
 const adminmadeuserroutes = Router()
 //create admin made by super admin
@@ -204,6 +205,8 @@ adminmadeuserroutes.post("/gahuaa",gahuaa)
 adminmadeuserroutes.post("/singlehub",GetSingleHubDetails)
 //get a hub by chubid
 adminmadeuserroutes.post("/hubdetails",GetAHubDetails)
+//update hub data
+adminmadeuserroutes.post("/updatehubdata",updatehub)
 //delete hub data
 adminmadeuserroutes.post("/deletehubdata",delete_hub_data)
 //transactions get the total revenue
