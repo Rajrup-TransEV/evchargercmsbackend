@@ -52,7 +52,7 @@ const updatehub = async (req, res) => {
         };
 
         await prisma.addhub.update({
-            where: { uid },
+            where: { uid:hubid },
             data: updatedFields
         });
 
