@@ -11,25 +11,20 @@ export const loginUser = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
     console.log("API key is for login user:", apiauthkey);
 
-    // Check if the API key is valid
     if (!apiauthkey || apiauthkey !== process.env.API_KEY) {
         logging("error", "API route access error", "androidpac/loginuser.js");
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
     const { email, password, otp } = req.body;
-    //hardcoded value later on this gonna changed
     const adminuid = "yyyy"
-    // Check for required fields
     if (!email || !password) {
         logging("error", "Email and password are required.", "androidpac/loginuser.js");
         return res.status(400).json({ message: "Email and password are required." });
     }
 
     try {
-        // If OTP is provided, verify it
         if (otp) {
-            // Check if email exists in temporary storage
             if (!tempStorage[email]) {
                 logging("error", "Session expired or invalid. Please log in again.", "androidpac/loginuser.js");
                 return res.status(400).json({ message: "Session expired or invalid. Please log in again." });
@@ -37,23 +32,19 @@ export const loginUser = async (req, res) => {
 
             const { otpExpiration, generatedOtp } = tempStorage[email];
 
-            // Check if OTP is expired
             if (Date.now() > otpExpiration) {
-                delete tempStorage[email]; // Clean up expired session
+                delete tempStorage[email];
                 logging("error", "OTP has expired.", "androidpac/loginuser.js");
                 return res.status(400).json({ message: "OTP has expired." });
             }
 
-            // Check if provided OTP matches
             if (otp !== generatedOtp) {
                 logging("error", "Invalid OTP.", "androidpac/loginuser.js");
                 return res.status(400).json({ message: "Invalid OTP." });
             }
 
-            // Clear OTP after successful verification
             delete tempStorage[email];
 
-            // Proceed to check email and password after successful OTP verification
             const existingUser = await findUserByEmail(email);
 
             if (!existingUser) {
@@ -61,21 +52,26 @@ export const loginUser = async (req, res) => {
                 return res.status(404).json({ message: "Credentials do not match." });
             }
 
-            // Compare the password
+           
             const checkPassword = await bcrypt.compare(password, existingUser.password);
             if (!checkPassword) {
                 logging("error", "Credentials do not match.", "androidpac/loginuser.js");
                 return res.status(404).json({ message: "Credentials do not match." });
             }
 
-            // Generate a JWT token for successful login
+            const userwalletdetails = await prisma.wallet.findFirstOrThrow({
+                where: { appuserrelatedwallet: existingUser.uid },
+                select: { uid:true }
+            });
+            console.log(userwalletdetails)
             const token = jwt.sign(
                 {
                     username: existingUser.firstname || existingUser.username,
                     email: existingUser.email,
                     userid: existingUser.uid,
                     userType: existingUser.role || existingUser.userType,
-                    adminuid:adminuid
+                    adminuid:adminuid,
+                    userwalletid:userwalletdetails.uid
                 },
                 process.env.JWT_SECRET,
                 { expiresIn: '8h' }
@@ -85,7 +81,6 @@ export const loginUser = async (req, res) => {
             return res.status(200).json({ message: "Login successful", token: token });
         }
 
-        // If no OTP is provided, proceed with normal login and generate an OTP
         const existingUserForLogin = await findUserByEmail(email);
 
         if (!existingUserForLogin) {
@@ -93,23 +88,18 @@ export const loginUser = async (req, res) => {
             return res.status(404).json({ message: "Credentials do not match." });
         }
 
-        // Compare the password
         const checkPasswordForLogin = await bcrypt.compare(password, existingUserForLogin.password);
         if (!checkPasswordForLogin) {
             logging("error", "Credentials do not match.", "androidpac/loginuser.js");
             return res.status(404).json({ message: "Credentials do not match." });
         }
 
-        // Generate a 6-digit OTP
         const otpGenerated = Math.floor(100000 + Math.random() * 900000).toString();
 
-        // Store the generated OTP and expiration in temporary storage
         tempStorage[email] = {
             generatedOtp: otpGenerated,
-            otpExpiration: Date.now() + 15 * 60 * 1000 // Set OTP expiration to 15 minutes from now
+            otpExpiration: Date.now() + 15 * 60 * 1000 
         };
-
-        // Send the OTP via email
         const subject= 'OTP for Two-Step Authentication';
         const text = `Your OTP for two-step authentication is: ${otpGenerated}`;
 
@@ -131,7 +121,6 @@ export const loginUser = async (req, res) => {
     }
 };
 
-// Helper function to find user by email in either User or UserProfile tables.
 const findUserByEmail = async (email) => {
     let user = await prisma.user.findUnique({
         where: { email },
