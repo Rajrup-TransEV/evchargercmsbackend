@@ -15,10 +15,10 @@ const find_wh_o_s_w = async(req,res)=>{
       return res.status(403).json({ message: "API route access forbidden" });
   }
   //taking wallet history id and wallet unique id 
-    const {whid,whuid}=req.body;
+    const {whid,userid}=req.body;
     try {
         //null exception handeling
-        if(whid===""||whuid===""){
+        if(whid===""||userid===""){
             const messagetype = "error"
             const message = "Required fields must be given"
             const filelocation = "wall_history_for_asingle_user.js"
@@ -29,7 +29,7 @@ const find_wh_o_s_w = async(req,res)=>{
             where:{
                 OR:[
                     {uid:whid},
-                    {userassociatedid:whuid}
+                    {userassociatedid:userid}
                 ]
             }
         })
