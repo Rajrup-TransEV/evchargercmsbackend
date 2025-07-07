@@ -87,6 +87,8 @@ import determineuser from "../crud/admin_made_user_cruds/adminuserdetermine.js"
 import fetchchargingsessionbyadminid from "../../androidpac/controller/crud/chargingsessions/fetchchargingsessionbyadminid.js"
 import Getbillbyadminid from "../crud/transactions/getbillbyadminid.js"
 import updatehub from "../crud/hub_crud/updatehubdata.js"
+import setgst from "../crud/wallet_crud/setgst.js"
+import setwallethardlimit from "../crud/wallet_crud/setwallethardlimit.js"
 
 const adminmadeuserroutes = Router()
 //create admin made by super admin

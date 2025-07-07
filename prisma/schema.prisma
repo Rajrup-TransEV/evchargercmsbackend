@@ -280,6 +280,7 @@ model walletreachargehistory{
   addedbalance String?                     @db.VarChar(255)
   numberofrecharge String?                 @db.VarChar(255)
   associatedadminid           String?          @db.VarChar(255)
+  gst String? @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
@@ -512,3 +513,19 @@ model UserBilling{
 //   createdAt           DateTime             @default(now())
 //   updatedAt           DateTime             @updatedAt
 // }
+
+model GstCreate{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  gst String? @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model WalletHardLimit{
+  id                 String                @id @default(uuid())
+  uid                 String?              @unique @db.VarChar(255)
+  hardlimit String? @db.VarChar(255)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
