@@ -8,32 +8,32 @@ const prisma = new PrismaClient();
 const setgst = async(req, res)=>{
     try {
         const {gst } = req.body;
-        const existinggst = await prisma.walletHardLimit.findFirst();
+        const existinggst = await prisma.gstCreate.findFirst();
         if(existinggst){
-            await prisma.walletHardLimit.update({
+            await prisma.gstCreate.update({
                 where:{id:existinggst.id},
-                data:{hardlimit:hardlimit}
+                data:{gst:gst}
             })
             const messagetype = "success";
-            const message = "Wallet hard limit updated successfully";
-            const filelocation = "setwallethardlimit.js";
+            const message = "GST updated successfully";
+            const filelocation = "setgst.js";
             logging(messagetype, message, filelocation);
-            return res.status(200).json({ message: "Wallet hard limit updated successfully" });
+            return res.status(200).json({ message: "GST updated successfully" });
         }else{
-            await prisma.walletHardLimit.create({
+            await prisma.gstCreate.create({
                 data:{
                     uid:crypto.randomUUID(),
-                    hardlimit:hardlimit
+                    gst:gst
                 }
             })
             const messagetype = "success";
-            const message = "Wallet hard limit created successfully";
-            const filelocation = "setwallethardlimit.js";
+            const message = "GST created successfully";
+            const filelocation = "setgst.js";
             logging(messagetype, message, filelocation);
-            return res.status(200).json({ message: "Wallet hard limit created successfully" });
+            return res.status(200).json({ message: "GST created successfully" });
         }
     } catch (error) {
-        logging("wallet_hard_limit_error", error.message, "setwallethardlimit.js");
+        logging("gst_error", error.message, "setgst.js");
         return res.status(500).json({ status: "Error", message: error.message });
     }
 }
