@@ -333,6 +333,7 @@ model TransactionHistory{
   walletid String?                         @db.VarChar(255)
   userid String?                           @db.VarChar(255)
   price String?                            @db.VarChar(255)
+  gst String?                              @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   associatedadminid   String?              @db.VarChar(255)
