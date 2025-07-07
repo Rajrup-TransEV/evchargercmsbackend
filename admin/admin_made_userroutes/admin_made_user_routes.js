@@ -267,5 +267,9 @@ adminmadeuserroutes.post("/transactionhistory",generatebill)
 adminmadeuserroutes.post("/fetchchargingsessionbyadminid",fetchchargingsessionbyadminid)
 //get bill by admin id
 adminmadeuserroutes.post("/getbillbyadminid",Getbillbyadminid)
+//set gst
+adminmadeuserroutes.post("/setgst",setgst)
+//set wallet hard limit
+adminmadeuserroutes.post("/setwallethardlimit",setwallethardlimit)
 
 export default adminmadeuserroutes;
