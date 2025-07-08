@@ -334,6 +334,8 @@ model TransactionHistory{
   userid String?                           @db.VarChar(255)
   price String?                            @db.VarChar(255)
   gst String?                              @db.VarChar(255)
+  gstdeductedamount String?                 @db.VarChar(255)
+  taxableamount     String?                 @db.VarChar(255)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   associatedadminid   String?              @db.VarChar(255)

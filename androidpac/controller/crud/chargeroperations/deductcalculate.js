@@ -114,6 +114,8 @@ const deductcalculate = async (req, res) => {
         userid: userid,
         price: totalCost.toFixed(2),
         gst: gstAmount.toFixed(2),
+        gstdeductedamount:gstAmount.toFixed(2),
+        taxableamount:taxableAmount.toFixed(2),
         associatedadminid: ASSOCIATED_ADMIN,
       },
     });
