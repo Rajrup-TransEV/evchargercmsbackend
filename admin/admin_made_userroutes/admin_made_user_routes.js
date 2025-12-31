@@ -47,6 +47,7 @@ import upload from "../../lib/uploadMiddleware.js"
 import getdriverbyadminid from "../crud/driver_crud_logics/get_driver_list_by_adminid.js"
 import addhub from "../crud/hub_crud/addhub.js"
 import GetAllHubdata from "../crud/hub_crud/getallhubdata.js"
+import get_all_charger_by_adminuid from "../crud/charger_crud_ops/get_all_charger_unit_for_adminuid.js"
 import gahuaa from "../crud/hub_crud/get_all_hubs_under_a_admin.js"
 import GetSingleHubDetails from "../crud/hub_crud/get_single_hub_details.js"
 import verifyPayment from "../crud/razor_pay_crud/verifypayment.js"
@@ -103,6 +104,8 @@ adminmadeuserroutes.get("/getalladmindata",alladminuserdata)
 adminmadeuserroutes.post("/getadminbyemail",get_single_admin_data)
 //all of the charger list data
 adminmadeuserroutes.get("/listofcharges",get_all_charger)
+// get all charrger units for a specific adminuid
+adminmadeuserroutes.post("/getchargersforadminuid",get_all_charger_by_adminuid)
 //edit charger details one by one
 adminmadeuserroutes.post("/editchargerdetails",edit_charger_details)
 //delete charger details one by one
