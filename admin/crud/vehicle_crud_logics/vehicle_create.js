@@ -46,6 +46,7 @@ const vehilcle_create = async (req, res) => {
                     vehiclemodel,
                     vehiclelicense,
                     vehicletype,
+                    vehicleowner,
                     vehiclecategory,
                     adminuid:adminuid,
                     associatedadminid:ASSOCIATED_ADMINID
@@ -85,6 +86,7 @@ const vehilcle_create = async (req, res) => {
                     vehiclemodel,
                     vehiclelicense,
                     vehicletype,
+                    vehicleowner,
                     vehiclecategory,
                     adminuid:adminuid,
                     userId: ownerRecord.uid, // Use userId for normal users
