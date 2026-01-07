@@ -66,7 +66,7 @@ const adminuserlogin = async (req, res) => {
                 firstname:existingUser.firstname,
                 lastname:existingUser.lastname,
                 email: existingUser.email,
-                userid: existingUser.uid,
+                adminid: existingUser.uid,
                 userType: existingUser.role,
             },
             process.env.JWT_SECRET, // Make sure to set your JWT secret in environment variables
