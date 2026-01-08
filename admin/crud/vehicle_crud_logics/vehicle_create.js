@@ -17,7 +17,9 @@ const vehilcle_create = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { vehiclename, vehiclemodel, vehiclelicense, vehicleowner, vehicletype, vehiclecategory,adminuid } = req.body;
+    const { vehiclename, vehiclemodel, vehiclelicense, vehicleowner, vehicletype, vehiclecategory,adminuid,vehiclevin,
+  vehiclerange,
+  vehiclebatterycapacity } = req.body;
 
     try {
         // Validate required fields
@@ -49,7 +51,10 @@ const vehilcle_create = async (req, res) => {
                     vehicleowner,
                     vehiclecategory,
                     adminuid:adminuid,
-                    associatedadminid:ASSOCIATED_ADMINID
+                    associatedadminid:ASSOCIATED_ADMINID,
+                    vehiclevin,
+                    vehiclerange,
+                    vehiclebatterycapacity,
                 }
             });
 
@@ -90,6 +95,9 @@ const vehilcle_create = async (req, res) => {
                     vehiclecategory,
                     adminuid:adminuid,
                     userId: ownerRecord.uid, // Use userId for normal users
+                    vehiclevin,
+                    vehiclerange,
+                    vehiclebatterycapacity,
                 }
             });
 

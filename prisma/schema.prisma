@@ -147,11 +147,14 @@ model AssignRoles{
 
 //vehicle registration model
 model Assigntovechicles {
-  id                 String                @id @default(uuid())
+  id              String                @id @default(uuid())
   uid             String?         @unique @db.VarChar(255)
   vehiclename     String?         @db.VarChar(255)
   vehiclemodel    String?         @db.VarChar(255)
   vehiclelicense  String?         @unique  @db.VarChar(255)
+  vehiclevin      String?         @unique  @db.VarChar(255) @default(uuid())
+  vehiclebatterycapacity String?  @default("0")
+  vehiclerange     String?        @default("0")
   vehicleowner    String?         @db.VarChar(255)
   vehiclecategory String?         @db.VarChar(255)
   vehicletype     String?         @db.VarChar(255)
