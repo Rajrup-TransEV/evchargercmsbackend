@@ -24,6 +24,7 @@ const getsingledetails = async (req, res) => {
                 Total_Capacity: true,
                 Chargertype: true,
                 parking: true,
+                protocol: true,
                 number_of_connectors: true,
                 Connector_type: true,
                 connector_total_capacity: true,

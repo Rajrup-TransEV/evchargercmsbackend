@@ -113,6 +113,7 @@ model Charger_Unit {
   Total_Capacity              String?          @db.VarChar(255)
   Chargertype                 String?          @db.VarChar(255)
   parking                     String?          @db.VarChar(255)
+  protocol                    String?          @db.VarChar(255) @default("OCPP")
   number_of_connectors        String?          @db.VarChar(255)
   Connector_type              String?          @db.VarChar(255)
   connector_total_capacity    String?          @db.VarChar(255)

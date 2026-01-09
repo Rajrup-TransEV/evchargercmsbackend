@@ -26,7 +26,7 @@ const asssign_buy_charger = async (req, res) => {
         Chargerserialnum, ChargerName, Chargerhost, Segment, Subsegment, Total_Capacity,
         Chargertype, parking, number_of_connectors, Connector_type, connector_total_capacity,
         lattitude, longitute, full_address, charger_use_type,
-        twenty_four_seven_open_status, charger_image, chargerbuyer, chargeridentity
+        twenty_four_seven_open_status, charger_image, chargerbuyer, chargeridentity, protocol,
     } = req.body;
 
     const ranuid = generateRandomUID();
@@ -75,6 +75,7 @@ const asssign_buy_charger = async (req, res) => {
                 Connector_type,
                 connector_total_capacity,
                 lattitude,
+                protocol,
                 longitute,
                 full_address,
                 charger_use_type,

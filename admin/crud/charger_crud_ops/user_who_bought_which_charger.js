@@ -48,6 +48,7 @@ const user_who_bought_the_charger_details = async (req, res) => {
                 connector_total_capacity: true,
                 lattitude: true,
                 longitute: true,
+                protocol: true,
                 full_address: true,
                 charger_use_type: true,
                 twenty_four_seven_open_status: true,

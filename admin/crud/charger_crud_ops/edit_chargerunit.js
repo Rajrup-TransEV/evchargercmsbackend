@@ -48,6 +48,7 @@ const edit_charger_details = async (req, res) => {
             Subsegment,
             Total_Capacity,
             Chargertype,
+            protocol,
             parking,
             number_of_connectors,
             Connector_type,
@@ -116,6 +117,14 @@ const edit_charger_details = async (req, res) => {
             const filelocation = "edit_chargerunit.js"
             logging(messagetype,message,filelocation)
             updatedFields.push(`Total Capacity: ${Total_Capacity}`);
+        }
+        if (protocol) {
+            updateData.protocol = protocol;
+            const messagetype = "update"
+            const message = `Protocol: ${protocol}`
+            const filelocation = "edit_chargerunit.js"
+            logging(messagetype,message,filelocation)
+            updatedFields.push(`Protocol: ${protocol}`);
         }
         if (Chargertype) {
             updateData.Chargertype = Chargertype;
