@@ -37,7 +37,7 @@ const checkstartresponse = async (req, res) => {
             select: { balance: true },
         });
 
-        const balance = parseFloat(wallet?.balance || "0") - 100; // string → number
+        const balance = parseFloat(wallet?.balance || "0"); // string → number
 
         // 4. Compute max kWh = (X - Y) / (R * (1 + Z/100))
         const denominator = tariffPerKwh * (1 + gstValue / 100);
