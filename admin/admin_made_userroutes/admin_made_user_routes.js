@@ -90,6 +90,8 @@ import Getbillbyadminid from "../crud/transactions/getbillbyadminid.js"
 import updatehub from "../crud/hub_crud/updatehubdata.js"
 import setgst from "../crud/wallet_crud/setgst.js"
 import setwallethardlimit from "../crud/wallet_crud/setwallethardlimit.js"
+import adminGetCombinedChargingSessions from "../../androidpac/controller/crud/chargingsessions/admin_get_combined_sessions.js"
+import adminGetValidChargingSessionRevenue from "../../androidpac/controller/crud/chargingsessions/admin_get_valid_charging_session_revenue.js"
 
 const adminmadeuserroutes = Router()
 //create admin made by super admin
@@ -232,6 +234,10 @@ adminmadeuserroutes.get("/expenses",expenses)
 adminmadeuserroutes.post("/thisu",thisu)
 //transactionhistory list
 adminmadeuserroutes.get("/thl",thl)
+//combined charging sessions (Charging + Transactions)
+adminmadeuserroutes.post("/admingetcombinedchargingsessions",adminGetCombinedChargingSessions)
+//valid charging session revenue
+adminmadeuserroutes.post("/admingetvalidchargingsessionrevenue",adminGetValidChargingSessionRevenue)
 //help and support create message
 adminmadeuserroutes.post("/has",createmessage)
 //get all of the help and support messages
