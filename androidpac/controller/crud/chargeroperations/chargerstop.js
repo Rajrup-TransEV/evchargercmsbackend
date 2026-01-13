@@ -58,28 +58,14 @@ const chargerstop = async(req,res)=>{
           const consumedkwhx = result.consumedkwh;
           const totalcostx = consumedkwhx* hubtariff
           if (result.status == "true"){
-            const savesession = await prisma.charingsessions.create({
-              data:{
-                uid:crypto.randomUUID(),
-                sessionid:result.sessionid,
-                chargerid:chargerid,
-                userid:userid,
-                startime:result.startime,
-                stoptime:result.stoptime,
-                meterstart:result.meterstart,
-                meterstop:result.meterstop,
-                consumedkwh:result.consumedkwh,
-                totalcost:totalcostx,
-                associatedadminid:ASSOCIATED_ADMIN
-              }
+            return res.status(200).json({
+              message:"Charger stopped successfully",
+              consumedkwh:consumedkwhx
             })
-            if (savesession){
-              logging("charger_status_change", JSON.stringify(result), "chargerbookings.js");
-              return res.status(200).json({message:"Charger stopped successfully"})
-            }else{
+          }
+            else{
               return res.status(400).json({message:"Charger stopped failed"})
             }
-          }
    
     } catch (error) {
         console.log(error)    
