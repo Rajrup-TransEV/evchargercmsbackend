@@ -90,6 +90,7 @@ import Getbillbyadminid from "../crud/transactions/getbillbyadminid.js"
 import updatehub from "../crud/hub_crud/updatehubdata.js"
 import setgst from "../crud/wallet_crud/setgst.js"
 import setwallethardlimit from "../crud/wallet_crud/setwallethardlimit.js"
+import getwallethardlimit from "../crud/wallet_crud/getwallethardlimit.js"
 import adminGetCombinedChargingSessions from "../../androidpac/controller/crud/chargingsessions/admin_get_combined_sessions.js"
 import adminGetValidChargingSessionRevenue from "../../androidpac/controller/crud/chargingsessions/admin_get_valid_charging_session_revenue.js"
 
@@ -280,5 +281,7 @@ adminmadeuserroutes.post("/getbillbyadminid",Getbillbyadminid)
 adminmadeuserroutes.post("/setgst",setgst)
 //set wallet hard limit
 adminmadeuserroutes.post("/setwallethardlimit",setwallethardlimit)
+// get wallet hard limit
+adminmadeuserroutes.get("/getwallethardlimit",getwallethardlimit)
 
 export default adminmadeuserroutes;

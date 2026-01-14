@@ -18,6 +18,7 @@ import chargerbookings from "../controller/crud/chargerbookings/chargerbookings.
 import getlistofbookings from "../controller/crud/chargerbookings/getlistofbookedchargers.js"
 // import chargerstarttransactions from "../controller/crud/chargeroperations/chargerstart.js"
 import createminthreshhold from "../controller/crud/min_threshhold/createthreshhold.js"
+import getminthreshhold from "../controller/crud/min_threshhold/getminthreshold.js"
 import feedbackcreate from "../controller/crud/feedbackops/feedbackcreate.js"
 import listoffeedbacks from "../controller/crud/feedbackops/feedbacklist.js"
 import feedbackdetailbyid from "../controller/crud/feedbackops/feedbackdetailbyid.js"
@@ -89,6 +90,8 @@ userRoutes.post("/chargerstop",chargerstop)
 userRoutes.post("/setchargeron",setChargerOn)
 //set minimum balance route
 userRoutes.post("/createmb",createminthreshhold)
+//get minimum balance route
+userRoutes.get("/getmb",getminthreshhold)
 //feedback create
 userRoutes.post("/fbgen",feedbackcreate)
 //listof feedback
