@@ -26,7 +26,7 @@ const asssign_buy_charger = async (req, res) => {
         Chargerserialnum, ChargerName, Chargerhost, Segment, Subsegment, Total_Capacity,
         Chargertype, parking, number_of_connectors, Connector_type, connector_total_capacity,
         lattitude, longitute, full_address, charger_use_type,
-        twenty_four_seven_open_status, charger_image, chargerbuyer, chargeridentity, protocol,
+        twenty_four_seven_open_status, charger_image, chargerbuyeremail, chargeridentity, protocol,
     } = req.body;
 
     const ranuid = generateRandomUID();
@@ -35,12 +35,12 @@ const asssign_buy_charger = async (req, res) => {
        
 
         const usersearch = await prisma.userProfile.findFirst({
-            where: { email: chargerbuyer },
+            where: { email: chargerbuyeremail },
             select: { uid: true }
         });
 
         if (!usersearch) {
-            logging("error", "User not found with the provided chargerbuyer email.", "charger_unit_ops.js");
+            logging("error", "User not found with the provided chargerbuyeremail email.", "charger_unit_ops.js");
             return res.status(404).json({ message: "User not found with the given email" });
         }
 
@@ -57,6 +57,10 @@ const asssign_buy_charger = async (req, res) => {
             const imageName = `${ranuid}-${crypto.randomUUID()}.png`;
             imageFilePath = path.join('chargerimages', imageName);
             normalizepathch = imageFilePath.replace(/\\/g, '/');
+            const uploadDir = path.join(process.cwd(), 'chargerimages');
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
             fs.writeFileSync(imageFilePath, buffer);
         }
 
@@ -94,7 +98,7 @@ const asssign_buy_charger = async (req, res) => {
         }
 
         const associateuserfetch = await prisma.userProfile.findFirstOrThrow({
-            where: { email: chargerbuyer },
+            where: { email: chargerbuyeremail },
             select: { email: true, firstname: true }
         });
 
@@ -154,7 +158,13 @@ const asssign_buy_charger = async (req, res) => {
             }
         });
 
-        const chargerocppur = `ws://srv586896.hstgr.cloud/${ranuid}`;
+        const domain =
+        process.env.HAL_CHARGER_DOMAIN && process.env.HAL_CHARGER_DOMAIN.trim() !== ""
+            ? process.env.HAL_CHARGER_DOMAIN
+            : "hal.ocpp.transev.site";
+
+        const chargerocppur = `ws://${domain}/rest/${ranuid}`;
+
 
         return res.status(201).json({
             message: "Charger unit has been created successfully",
