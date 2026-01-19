@@ -32,14 +32,8 @@ const asssign_buy_charger = async (req, res) => {
     const ranuid = generateRandomUID();
 
     try {
-       
 
-        const usersearch = await prisma.userProfile.findFirst({
-            where: { email: chargerbuyeremail },
-            select: { uid: true }
-        });
-
-        const existingCharger = await prisma.charger_Unit.findFirst({
+         const existingCharger = await prisma.charger_Unit.findFirst({
         where: {
             OR: [
             { Chargerserialnum: Chargerserialnum },
@@ -52,6 +46,11 @@ const asssign_buy_charger = async (req, res) => {
             logging("error", "Charger with the same serial number or identity already exists.", "charger_unit_ops.js");
             return res.status(409).json({ message: "Charger with the same serial number or identity already exists." });
         }
+       
+        const usersearch = await prisma.userProfile.findFirst({
+            where: { email: chargerbuyeremail },
+            select: { uid: true }
+        });
 
         if (!usersearch) {
             logging("error", "User not found with the provided chargerbuyeremail email.", "charger_unit_ops.js");
