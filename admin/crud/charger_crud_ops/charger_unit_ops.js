@@ -163,7 +163,7 @@ const asssign_buy_charger = async (req, res) => {
             ? process.env.HAL_CHARGER_DOMAIN
             : "hal.ocpp.transev.site";
 
-        const chargerocppur = `ws://${domain}/rest/${ranuid}`;
+        const chargerocppur = `ws://${domain}/${ranuid}`;
 
 
         return res.status(201).json({
