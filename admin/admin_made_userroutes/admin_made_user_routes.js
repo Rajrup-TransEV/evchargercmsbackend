@@ -4,6 +4,7 @@ import adminuserlogin from "../admin_made_userauth/signin/signin.js"
 import asssign_buy_charger from "../crud/charger_crud_ops/charger_unit_ops.js"
 import alladminuserdata from "../crud/admin_made_user_cruds/fetch_all_admin_data.js"
 import get_all_charger from "../crud/charger_crud_ops/get_all_charger_unit_ops.js"
+import search_all_chargers from "../crud/charger_crud_ops/search_all_chargers.js"
 import edit_charger_details from "../crud/charger_crud_ops/edit_chargerunit.js"
 import delete_charger_units from "../crud/charger_crud_ops/delete_charger_units.js"
 import user_who_bought_the_charger_details from "../crud/charger_crud_ops/user_who_bought_which_charger.js"
@@ -107,6 +108,8 @@ adminmadeuserroutes.get("/getalladmindata",alladminuserdata)
 adminmadeuserroutes.post("/getadminbyemail",get_single_admin_data)
 //all of the charger list data
 adminmadeuserroutes.get("/listofcharges",get_all_charger)
+//search all charger units
+adminmadeuserroutes.get("/searchallchargers", search_all_chargers)
 // get all charrger units for a specific adminuid
 adminmadeuserroutes.post("/getchargersforadminuid",get_all_charger_by_adminuid)
 //edit charger details one by one

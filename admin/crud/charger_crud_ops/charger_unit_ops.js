@@ -39,6 +39,20 @@ const asssign_buy_charger = async (req, res) => {
             select: { uid: true }
         });
 
+        const existingCharger = await prisma.charger_Unit.findFirst({
+        where: {
+            OR: [
+            { Chargerserialnum: Chargerserialnum },
+            { chargeridentity: chargeridentity }
+            ]
+        }
+        });
+
+        if (existingCharger) {
+            logging("error", "Charger with the same serial number or identity already exists.", "charger_unit_ops.js");
+            return res.status(409).json({ message: "Charger with the same serial number or identity already exists." });
+        }
+
         if (!usersearch) {
             logging("error", "User not found with the provided chargerbuyeremail email.", "charger_unit_ops.js");
             return res.status(404).json({ message: "User not found with the given email" });
