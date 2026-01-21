@@ -7,6 +7,7 @@ import get_all_charger from "../crud/charger_crud_ops/get_all_charger_unit_ops.j
 import search_all_chargers from "../crud/charger_crud_ops/search_all_chargers.js"
 import edit_charger_details from "../crud/charger_crud_ops/edit_chargerunit.js"
 import delete_charger_units from "../crud/charger_crud_ops/delete_charger_units.js"
+import delete_charger_unit_ops from "../crud/charger_crud_ops/delete_charger_unit_guarded.js"
 import user_who_bought_the_charger_details from "../crud/charger_crud_ops/user_who_bought_which_charger.js"
 import updateuserdata from "../crud/admin_made_user_cruds/update_admin_made_users.js"
 import delete_user_profile from "../crud/admin_made_user_cruds/delete_admin_made_users.js"
@@ -116,6 +117,8 @@ adminmadeuserroutes.post("/getchargersforadminuid",get_all_charger_by_adminuid)
 adminmadeuserroutes.post("/editchargerdetails",edit_charger_details)
 //delete charger details one by one
 adminmadeuserroutes.post("/deletechargerunits",delete_charger_units)
+//delete charger unit guarded
+adminmadeuserroutes.post("/deleteacharger",delete_charger_unit_ops)
 // which user bought which charger that details
 adminmadeuserroutes.post("/getchargerbyuserid",user_who_bought_the_charger_details)
 //get single charger details
