@@ -1,11 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../logging/logging_generate.js";
-import { getCache, setCache } from "../../../utils/cacheops.js";
+import { setCache } from "../../../utils/cacheops.js";
 
 const prisma = new PrismaClient();
 
 /**
- * DELETE CHARGER UNIT (admin/user authorized)
+ * DELETE CHARGER UNIT (charger-associated authority)
  *
  * Body:
  *   {
@@ -14,19 +14,31 @@ const prisma = new PrismaClient();
  *     "admin_id": "ADMIN_UID_OPTIONAL"
  *   }
  *
- * Authorization:
- * - If user_id provided: charger.userId must match
- * - Else if admin_id provided: charger.associatedadminid must match
- * - Else: reject
+ * Authorization (OR):
+ * - If user_id provided: Charger_Unit.userId must match user_id
+ * - If admin_id provided: Charger_Unit.associatedadminid must match admin_id
  *
  * Cleanup:
- * - Remove charger_uid from any hub.hubchargers array (container cleanup only)
- * - Delete dependent QR codes (best-effort)
- * - Delete Charger_Unit
+ * - Remove charger uid from Addhub.hubchargers (Json array of charger uids)
+ * - Delete QRCode rows where QRCode.chargerid == charger_uid
+ * - Delete other non-FK references (Favorites, Bookings, sessions, etc.) where relevant
+ * - Delete Charger_Unit by uid
  *
  * Cache:
- * - Rebuild and refresh "all_charger_units" cache key.
+ * - Rebuild and refresh "all_charger_units"
  */
+
+function toStr(x) {
+  return String(x ?? "").trim();
+}
+
+function asStringArrayFromJson(value) {
+  // hubchargers is Json? — in practice you store an array of strings.
+  // This parser is strict: only returns string array, else [].
+  if (!value) return [];
+  if (Array.isArray(value)) return value.filter((v) => typeof v === "string");
+  return [];
+}
 
 const delete_charger_unit_ops = async (req, res) => {
   const apiauthkey = req.headers["apiauthkey"];
@@ -39,33 +51,27 @@ const delete_charger_unit_ops = async (req, res) => {
   const { charger_uid, user_id, admin_id } = req.body ?? {};
 
   try {
-    // ---- Validate input ----
-    const chargerUid = String(charger_uid ?? "").trim();
-    const userId = user_id == null ? null : String(user_id).trim();
-    const adminId = admin_id == null ? null : String(admin_id).trim();
+    const chargerUid = toStr(charger_uid);
+    const userId = user_id == null ? "" : toStr(user_id);
+    const adminId = admin_id == null ? "" : toStr(admin_id);
 
     if (!chargerUid) {
       logging("error", "charger_uid is required", "delete_charger_unit_ops.js");
       return res.status(400).json({ message: "charger_uid is required" });
     }
 
-    // Need at least one actor
-    const hasUser = !!(userId && userId.length > 0);
-    const hasAdmin = !!(adminId && adminId.length > 0);
+    const hasUser = userId.length > 0;
+    const hasAdmin = adminId.length > 0;
 
     if (!hasUser && !hasAdmin) {
       logging("error", "user_id or admin_id is required", "delete_charger_unit_ops.js");
       return res.status(400).json({ message: "user_id or admin_id is required" });
     }
 
-    // ---- Fetch charger ----
+    // Fetch charger for authorization (charger-based authority)
     const charger = await prisma.charger_Unit.findFirst({
       where: { uid: chargerUid },
-      select: {
-        uid: true,
-        userId: true,
-        associatedadminid: true,
-      },
+      select: { uid: true, userId: true, associatedadminid: true },
     });
 
     if (!charger) {
@@ -73,10 +79,7 @@ const delete_charger_unit_ops = async (req, res) => {
       return res.status(404).json({ message: "Charger not found" });
     }
 
-    // ---- Authorization (charger-based, NOT hub-based) ----
-    // If both provided, OR semantics: either matching authorizes.
     let authorized = false;
-
     if (hasUser && charger.userId && charger.userId === userId) authorized = true;
     if (hasAdmin && charger.associatedadminid && charger.associatedadminid === adminId) authorized = true;
 
@@ -85,73 +88,64 @@ const delete_charger_unit_ops = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to delete this charger" });
     }
 
-    // ---- Transaction: cleanup + delete ----
+    // Do cleanup + delete atomically
     await prisma.$transaction(async (tx) => {
-      // 1) Remove this charger uid from any hub.hubchargers arrays
-      // We do it safely without assuming hubchargers is always array in JS,
-      // because Prisma JSON/array types can vary.
+      // 1) Remove from hubchargers JSON arrays
+      // Since hubchargers is Json?, Prisma can't "has" reliably here → scan hubs.
       const hubs = await tx.addhub.findMany({
-        where: {
-          hubchargers: {
-            has: chargerUid,
-          },
-        },
-        select: {
-          uid: true,
-          hubchargers: true,
-        },
+        select: { uid: true, hubchargers: true },
       });
 
       for (const hub of hubs) {
-        const list = Array.isArray(hub.hubchargers) ? hub.hubchargers : [];
+        const list = asStringArrayFromJson(hub.hubchargers);
+        if (list.length === 0) continue;
+
+        if (!list.includes(chargerUid)) continue;
+
         const next = list.filter((x) => x !== chargerUid);
 
-        // Only update if it actually changed
-        if (next.length !== list.length) {
-          await tx.addhub.update({
-            where: { uid: hub.uid },
-            data: { hubchargers: next },
-          });
-        }
+        await tx.addhub.update({
+          where: { uid: hub.uid },
+          data: { hubchargers: next },
+        });
       }
 
-      // 2) Delete dependent QR codes (best-effort)
-      // If your schema uses a different model name, adjust here.
-      // This is safe if QRCode model exists in Prisma.
-      if (tx.qRCode?.deleteMany) {
-        // If QRCode has a foreign key field like chargerUid / chargerUnitId, change accordingly.
-        // Most likely it references Charger_Unit by some FK. Since we haven't seen it,
-        // we try the most probable field name: chargerUid.
-        try {
-          await tx.qRCode.deleteMany({
-            where: { chargerUid: chargerUid },
-          });
-        } catch (_) {
-          // Fallback attempt: some schemas use chargerId or charger_unit_id.
-          // We will not guess more to avoid accidental deletes.
-        }
-      } else if (tx.qRCode?.deleteMany === undefined && tx.qRCode === undefined) {
-        // No QRCode model in prisma client; skip.
-      }
+      // 2) Delete QRCode children (schema-accurate FK field: chargerid)
+      await tx.qRCode.deleteMany({
+        where: { chargerid: chargerUid },
+      });
 
-      // 3) Delete the charger unit
+      // 3) Optional cleanup of string-references (no FK, but prevents orphan junk)
+      await tx.favorites.deleteMany({ where: { chargeruid: chargerUid } });
+      await tx.bookings.deleteMany({ where: { chargeruid: chargerUid } });
+      await tx.charingsessions.deleteMany({ where: { chargerid: chargerUid } });
+      await tx.chargerTransaction.deleteMany({ where: { chargerid: chargerUid } });
+      await tx.transactionsdetails.deleteMany({ where: { chargeruid: chargerUid } });
+      // If you want to also clean UserBilling, uncomment:
+      // await tx.userBilling.deleteMany({ where: { chargerid: chargerUid } });
+
+      // 4) Finally delete charger unit (uid is @unique)
       await tx.charger_Unit.delete({
         where: { uid: chargerUid },
       });
     });
 
-    // ---- Refresh cache ("all_charger_units") ----
-    // Rebuild exactly like get_all_charger_unit_ops does.
-    // This keeps the system truthful immediately after deletion.
+    // Refresh "all_charger_units" cache (rebuild same way as your list endpoint)
     try {
       const chargers = await prisma.charger_Unit.findMany();
       const hubs = await prisma.addhub.findMany();
 
       const chargersWithHubs = chargers.map((c) => {
-        const matchedHub = hubs.find((hub) => {
-          const arr = Array.isArray(hub?.hubchargers) ? hub.hubchargers : [];
-          return arr.includes(c?.uid);
-        });
+        const cuid = c?.uid;
+
+        let matchedHub = null;
+        for (const hub of hubs) {
+          const list = asStringArrayFromJson(hub?.hubchargers);
+          if (cuid && list.includes(cuid)) {
+            matchedHub = hub;
+            break;
+          }
+        }
 
         return {
           ...c,
@@ -169,7 +163,6 @@ const delete_charger_unit_ops = async (req, res) => {
 
       await setCache("all_charger_units", chargersWithHubs, 3600);
     } catch (e) {
-      // Cache refresh failure should NOT fail the delete; log only.
       logging("error", `Cache refresh failed - ${e.message}`, "delete_charger_unit_ops.js");
     }
 

@@ -128,12 +128,77 @@ const prisma = new PrismaClient()
             logging(messagetype,message,filelocation)
             return res.statu(503).json({message:"user creation failed"})
         }
+        const loginUrl = `${process.env.DASHBOARD_URL}/login`;
         const to=email
         const subject  = "Your email and password for login in service"
         const text = `Hello - ${firstname} Your email is - ${email} and password is -> ${password} for login to the dashboard, your role is - ${role} . Thanks for choosing our service`
+        const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Account Credentials</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, Helvetica, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0"
+               style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+          <tr>
+            <td style="background:#4ADE80; padding:22px; text-align:center;">
+              <h2 style="margin:0; color:#064e3b;">Welcome Aboard!</h2>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:30px; color:#333;">
+              <p style="font-size:15px;">
+                Hello <strong>${firstname} ${lastname}</strong>,
+              </p>
+
+              <p style="font-size:14px; line-height:1.6;">
+                Your account has been successfully created. Please find your login credentials below:
+              </p>
+
+              <table width="100%" cellpadding="12" cellspacing="0"
+                     style="background:#FFFBEB; border:1px solid #FDE047; border-radius:6px; margin:22px 0;">
+                <tr><td><strong>Email:</strong> ${email}</td></tr>
+                <tr><td><strong>Phone Number:</strong> ${phonenumber}</td></tr>
+                <tr><td><strong>Password:</strong> ${password}</td></tr>
+                <tr><td><strong>Role:</strong> ${role}</td></tr>
+              </table>
+
+              <p style="font-size:14px;">
+                For security reasons, we recommend changing your password after your first login.
+              </p>
+
+              <p style="font-size:14px;">
+                If you need assistance, feel free to contact our support team.
+              </p>
+
+              <p style="font-size:14px;">
+                Best regards,<br>
+                <strong>Team Transmogrify Global Pvt Ltd</strong>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background:#FDE047; padding:14px; text-align:center;
+                       font-size:12px; color:#78350f;">
+              © 2025 Transmogrify Global Pvt Ltd. All rights reserved.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
     // Add the email job to the queue
-    console.log('Adding email job to queue:', { to, subject, text });
-    await emailQueue.add({ to, subject, text }, {
+    console.log('Adding email job to queue:', { to, subject, text, html });
+    await emailQueue.add({ to, subject, text, html }, {
         attempts: 5, // Number of retry attempts
         backoff: 10000 // Wait 10 seconds before retrying
     });
