@@ -16,21 +16,36 @@ const adminuserlogin = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
+    // const { phone, email, password } = req.body;
+    // if ((email==="" && password==="") || (phone==="" && password==="")) {
+    //     const messagetype = "error"
+    //     const message = "No value provided for one or more fields."
+    //     const filelocation = "adminmadeuserauth/signin.js"
+    //     logging(messagetype,message,filelocation)
+    //     return res.status(400).json({ error: 'No value provided for one or more fields.' });
+    // }
+
     const { phone, email, password } = req.body;
-    if (phone==="" || email==="" || password===""){
-        const messagetype = "error"
-        const message = "No value provided for one or more fields."
-        const filelocation = "adminmadeuserauth/signin.js"
-        logging(messagetype,message,filelocation)
-        return res.status(400).json({ error: 'No value provided for one or more fields.' });
+
+    // normalize (optional but recommended)
+    const cleanEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const cleanPhone = typeof phone === "string" ? phone.trim() : "";
+    const cleanPassword = typeof password === "string" ? password : "";
+
+    // enforce: (email OR phone) AND password
+    if ((!cleanEmail && !cleanPhone) || !cleanPassword) {
+    return res.status(400).json({ message: "email or phone and password are required" });
     }
+
+    // Build OR only from provided identifiers (NO undefined)
+    const or = [];
+    if (cleanEmail) or.push({ email: cleanEmail });
+    if (cleanPhone) or.push({ phonenumber: cleanPhone });
+
     try {
         const existingUser = await prisma.userProfile.findFirst({
             where: {
-                OR: [
-                    { email: email },
-                    { phonenumber: phone }
-                ]
+                OR: or
             },
             select: {
                 firstname:true,
