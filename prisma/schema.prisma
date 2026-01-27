@@ -15,25 +15,25 @@ datasource db {
 
 //application user and super user user model
 model User {
-  id                 String                @id @default(uuid())
-  uid             String?           @unique @db.VarChar(255)
-  username        String?           @unique @db.VarChar(255)
-  email           String?           @unique @db.VarChar(255)
-  password        String?           @db.VarChar(255)
-  userType        String?           @db.VarChar(255)
+  id       String  @id @default(uuid())
+  uid      String? @unique @db.VarChar(255)
+  username String? @unique @db.VarChar(255)
+  email    String? @unique @db.VarChar(255)
+  password String? @db.VarChar(255)
+  userType String? @db.VarChar(255)
 
-  phonenumber     String?           @db.VarChar(255)
-  profilepicture String?            @db.VarChar(255)
-  otp             String?           @db.VarChar(255)
-  otpExpiration   DateTime?
-  emailVerified   Boolean?
-  associatedadminid String?        @db.VarChar(255)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  phonenumber       String?   @db.VarChar(255)
+  profilepicture    String?   @db.VarChar(255)
+  otp               String?   @db.VarChar(255)
+  otpExpiration     DateTime?
+  emailVerified     Boolean?
+  associatedadminid String?   @db.VarChar(255)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   // appuserprofile   AppUserProfile[]
- wallets    wallet[]
- vehicles Assigntovechicles[]
+  wallets  wallet[]
+  vehicles Assigntovechicles[]
 }
 
 // model AppUserProfile {
@@ -50,243 +50,240 @@ model User {
 
 //   userId String?
 //   user User?   @relation(fields: [userId],references: [uid])
- 
+
 // }
-
-
-
 
 //super admin created admin details
 model UserProfile {
-  id                 String                @id @default(uuid())
-  uid               String?          @unique   @db.VarChar(255)
-  firstname         String?          @db.VarChar(255)
-  lastname          String?          @db.VarChar(255)
-  email             String?     @unique @db.VarChar(255)
-  password          String?     @db.VarChar(255)
-  address           String?     @db.VarChar(255)
-  phonenumber       String?      @unique  @db.VarChar(255)
-  role              String?     @db.VarChar(255)
-  designation       String?     @db.VarChar(255)
-  otp               String?     @db.VarChar(255)
-  associatedadminid String?        @db.VarChar(255)
-  otpExpiration DateTime?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  
-  financialDetails  Financial_details? @relation("UserFinancialDetails") // Define relation name
-  chargerUnits      Charger_Unit[]     // Define the relationship with Charger_Unit
-  wallets    wallet[]
-  vehicleowener Assigntovehicleowener[]
-  hubs  Addhub[]
-  associatevehicle  Assigntovechicles[]
+  id                String    @id @default(uuid())
+  uid               String?   @unique @db.VarChar(255)
+  firstname         String?   @db.VarChar(255)
+  lastname          String?   @db.VarChar(255)
+  email             String?   @unique @db.VarChar(255)
+  password          String?   @db.VarChar(255)
+  address           String?   @db.VarChar(255)
+  phonenumber       String?   @unique @db.VarChar(255)
+  role              String?   @db.VarChar(255)
+  designation       String?   @db.VarChar(255)
+  otp               String?   @db.VarChar(255)
+  associatedadminid String?   @db.VarChar(255)
+  otpExpiration     DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  financialDetails Financial_details?      @relation("UserFinancialDetails") // Define relation name
+  chargerUnits     Charger_Unit[] // Define the relationship with Charger_Unit
+  wallets          wallet[]
+  vehicleowener    Assigntovehicleowener[]
+  hubs             Addhub[]
+  associatevehicle Assigntovechicles[]
 }
 
 //fiancial details for all of users 
 model Financial_details {
- id                 String                @id @default(uuid())
-  uid               String?          @unique @db.VarChar(255)
-  bank_account_number String?        @db.VarChar(255)
-  isfc_code        String?           @db.VarChar(255)
-  bank_name        String?           @db.VarChar(255)
-  branch_name      String?           @db.VarChar(255)
-  branch_address    String?          @db.VarChar(255)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  associatedadminid String?        @db.VarChar(255)
+  id                  String   @id @default(uuid())
+  uid                 String?  @unique @db.VarChar(255)
+  bank_account_number String?  @db.VarChar(255)
+  isfc_code           String?  @db.VarChar(255)
+  bank_name           String?  @db.VarChar(255)
+  branch_name         String?  @db.VarChar(255)
+  branch_address      String?  @db.VarChar(255)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  associatedadminid   String?  @db.VarChar(255)
 
-  userProfileId    String?             @unique  @db.VarChar(255) // Ensure this is unique for a one-to-one relationship
-  userProfile      UserProfile?     @relation("UserFinancialDetails", fields: [userProfileId], references: [uid]) // Define relation name and fields
-  
+  userProfileId String?      @unique @db.VarChar(255) // Ensure this is unique for a one-to-one relationship
+  userProfile   UserProfile? @relation("UserFinancialDetails", fields: [userProfileId], references: [uid]) // Define relation name and fields
 }
 
 //chargerunit buying model
 model Charger_Unit {
-  id                 String                @id @default(uuid())
-  uid                         String?          @unique @db.VarChar(255)
-  chargeridentity             String?          @db.VarChar(655)
-  Chargerserialnum             String?         @db.VarChar(255)
-  ChargerName                 String?          @db.VarChar(255)
-  Chargerhost                 String?          @db.VarChar(255)
-  Segment                     String?          @db.VarChar(255)
-  Subsegment                  String?          @db.VarChar(255)
-  Total_Capacity              String?          @db.VarChar(255)
-  Chargertype                 String?          @db.VarChar(255)
-  parking                     String?          @db.VarChar(255)
-  protocol                    String?          @db.VarChar(255) @default("OCPP")
-  number_of_connectors        String?          @db.VarChar(255)
-  Connector_type              String?          @db.VarChar(255)
-  connector_total_capacity    String?          @db.VarChar(255)
-  lattitude                   String?          @db.VarChar(255)
-  longitute                   String?          @db.VarChar(255)
-  full_address                String?          @db.VarChar(255)
-  charger_use_type            String?          @db.VarChar(255)   // if the charger will be used for private or commercial
-  twenty_four_seven_open_status String?        @db.VarChar(255)
-  charger_image               String?          @db.VarChar(255)
-  googlemapslink              String?          @db.VarChar(255)
-  userId                      String?             // Foreign key to UserProfile
-  chargerbuyer                        UserProfile?     @relation(fields: [userId], references: [uid])
-  
-  createdAt        DateTime         @default(now())
-  //updatedAt        DateTime         @updatedAt
-  associatedadminid String?        @db.VarChar(255)
+  id                            String       @id @default(uuid())
+  uid                           String?      @unique @db.VarChar(255)
+  chargeridentity               String?      @db.VarChar(655)
+  Chargerserialnum              String?      @db.VarChar(255)
+  ChargerName                   String?      @db.VarChar(255)
+  Chargerhost                   String?      @db.VarChar(255)
+  Segment                       String?      @db.VarChar(255)
+  Subsegment                    String?      @db.VarChar(255)
+  Total_Capacity                String?      @db.VarChar(255)
+  Chargertype                   String?      @db.VarChar(255)
+  parking                       String?      @db.VarChar(255)
+  protocol                      String?      @default("OCPP") @db.VarChar(255)
+  number_of_connectors          String?      @db.VarChar(255)
+  Connector_type                String?      @db.VarChar(255)
+  connector_total_capacity      String?      @db.VarChar(255)
+  lattitude                     String?      @db.VarChar(255)
+  longitute                     String?      @db.VarChar(255)
+  full_address                  String?      @db.VarChar(255)
+  charger_use_type              String?      @db.VarChar(255) // if the charger will be used for private or commercial
+  twenty_four_seven_open_status String?      @db.VarChar(255)
+  charger_image                 String?      @db.VarChar(255)
+  googlemapslink                String?      @db.VarChar(255)
+  userId                        String? // Foreign key to UserProfile
+  chargerbuyer                  UserProfile? @relation(fields: [userId], references: [uid])
 
+  createdAt         DateTime @default(now())
+  //updatedAt        DateTime         @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 
   QRCode QRCode[]
 }
+
 //all of the role will goes here
-model AssignRoles{
-  id                 String                @id @default(uuid())
-  uid                         String?          @unique @db.VarChar(255)
-  userid                      String?          @db.VarChar(255)
-  rolename                    String?          @db.VarChar(255)
-  roledesc                    String?          @db.VarChar(255)
-  associatedadminid           String?          @db.VarChar(255)
-  createdAt        DateTime                    @default(now())
-  updatedAt        DateTime                    @updatedAt
+model AssignRoles {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  userid            String?  @db.VarChar(255)
+  rolename          String?  @db.VarChar(255)
+  roledesc          String?  @db.VarChar(255)
+  associatedadminid String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 //vehicle registration model
 model Assigntovechicles {
-  id              String                @id @default(uuid())
-  uid             String?         @unique @db.VarChar(255)
-  vehiclename     String?         @db.VarChar(255)
-  vehiclemodel    String?         @db.VarChar(255)
-  vehiclelicense  String?         @unique  @db.VarChar(255)
-  vehiclevin      String?         @unique  @db.VarChar(255) @default(uuid())
-  vehiclebatterycapacity String?  @default("0")
-  vehiclerange     String?        @default("0")
-  vehicleowner    String?         @db.VarChar(255)
-  vehiclecategory String?         @db.VarChar(255)
-  vehicletype     String?         @db.VarChar(255)
-  vehicleowenerId String?         @db.VarChar(255)    // Ensure one vehicle per driver
-  vehicleowener   Assigntovehicleowener?  @relation(fields: [vehicleowenerId], references: [uid])
-  userId          String?         @db.VarChar(255)      // Foreign key for User
-  user            User?           @relation(fields: [userId], references: [uid])
-  adminuid        String?         @db.VarChar(255)
-  associateadmin UserProfile?     @relation(fields: [adminuid],references: [uid])
-  isvehicleassigned Boolean?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id                     String                 @id @default(uuid())
+  uid                    String?                @unique @db.VarChar(255)
+  vehiclename            String?                @db.VarChar(255)
+  vehiclemodel           String?                @db.VarChar(255)
+  vehiclelicense         String?                @unique @db.VarChar(255)
+  vehiclevin             String?                @unique @default(uuid()) @db.VarChar(255)
+  vehiclebatterycapacity String?                @default("0")
+  vehiclerange           String?                @default("0")
+  vehicleowner           String?                @db.VarChar(255)
+  vehiclecategory        String?                @db.VarChar(255)
+  vehicletype            String?                @db.VarChar(255)
+  vehicleowenerId        String?                @db.VarChar(255) // Ensure one vehicle per driver
+  vehicleowener          Assigntovehicleowener? @relation(fields: [vehicleowenerId], references: [uid])
+  userId                 String?                @db.VarChar(255) // Foreign key for User
+  user                   User?                  @relation(fields: [userId], references: [uid])
+  adminuid               String?                @db.VarChar(255)
+  associateadmin         UserProfile?           @relation(fields: [adminuid], references: [uid])
+  isvehicleassigned      Boolean?
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
 }
 
 //vehicle owener model
 model Assigntovehicleowener {
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  vehicleowenerfirstname     String?       @db.VarChar(255)
-  vehicleowenerlastename     String?       @db.VarChar(255)
- vehicleoweneremail           String?      @unique @db.VarChar(255)
- phonenumber                  String?      @db.VarChar(255)
-  vehicleowenerlicense       String?       @unique @db.VarChar(255)
- vehicleowenergovdocs       String?        @db.VarChar(255)
-  vehicleowenernationality   String?       @db.VarChar(255)
- adminid                     String?       @unique @db.VarChar(255)
- adminuserprofile UserProfile? @relation(fields: [adminid],references: [uid])
- vehicleoweneraddress       String?        @db.VarChar(255)
- vehicleowenerrole          String?        @db.VarChar(255)
+  id                       String       @id @default(uuid())
+  uid                      String?      @unique @db.VarChar(255)
+  vehicleowenerfirstname   String?      @db.VarChar(255)
+  vehicleowenerlastename   String?      @db.VarChar(255)
+  vehicleoweneremail       String?      @unique @db.VarChar(255)
+  phonenumber              String?      @db.VarChar(255)
+  vehicleowenerlicense     String?      @unique @db.VarChar(255)
+  vehicleowenergovdocs     String?      @db.VarChar(255)
+  vehicleowenernationality String?      @db.VarChar(255)
+  adminid                  String?      @unique @db.VarChar(255)
+  adminuserprofile         UserProfile? @relation(fields: [adminid], references: [uid])
+  vehicleoweneraddress     String?      @db.VarChar(255)
+  vehicleowenerrole        String?      @db.VarChar(255)
 
-  vehicles            Assigntovechicles[] // One driver can have multiple vehicles
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+  vehicles  Assigntovechicles[] // One driver can have multiple vehicles
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 }
 
 //to be implemented in future
 model RazorpayData {
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  orderId             String?              @unique @db.VarChar(255)
-  paymentId           String?              @unique @db.VarChar(255)
-  amount              String?              @db.VarChar(255)
-  currency            String?              @db.VarChar(255)
-  status              String?              @db.VarChar(255)
-  attempts            String?              @db.VarChar(255)
-  method              String?              @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid           String?          @db.VarChar(255)
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  orderId           String?  @unique @db.VarChar(255)
+  paymentId         String?  @unique @db.VarChar(255)
+  amount            String?  @db.VarChar(255)
+  currency          String?  @db.VarChar(255)
+  status            String?  @db.VarChar(255)
+  attempts          String?  @db.VarChar(255)
+  method            String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
+
 //group of models for analytics and retention
-model Analytics{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  totalnumberofusers  String?              @db.VarChar(255)
-  totalnumberofuserprofiles String?        @db.VarChar(255)
-  perdaynewusercount   String?             @db.VarChar(255)
-  countofroles  String?                    @db.VarChar(255)
-  countofchargerunits String?              @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid           String?      @db.VarChar(255)
+model Analytics {
+  id                        String   @id @default(uuid())
+  uid                       String?  @unique @db.VarChar(255)
+  totalnumberofusers        String?  @db.VarChar(255)
+  totalnumberofuserprofiles String?  @db.VarChar(255)
+  perdaynewusercount        String?  @db.VarChar(255)
+  countofroles              String?  @db.VarChar(255)
+  countofchargerunits       String?  @db.VarChar(255)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  associatedadminid         String?  @db.VarChar(255)
 }
+
 //daily signup log retention model
 model DailySignup {
-  id                 String                @id @default(uuid())
-  uid            String?  @db.VarChar(255)
-  date           DateTime @default(now())
-  newSignupCount Int      @default(0)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid           String?          @db.VarChar(255)
+  id                String   @id @default(uuid())
+  uid               String?  @db.VarChar(255)
+  date              DateTime @default(now())
+  newSignupCount    Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-model LogRetention{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  messagetype        String?               @db.VarChar(255)
-  messages   Json?
-  filelocation   String?                   @db.VarChar(255)
+model LogRetention {
+  id           String  @id @default(uuid())
+  uid          String? @unique @db.VarChar(255)
+  messagetype  String? @db.VarChar(255)
+  messages     Json?
+  filelocation String? @db.VarChar(255)
 
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid           String?      @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
-
 
 //model for generating qr code
 
 model QRCode {
-  id                 String                @id @default(uuid())
-  uid         String?      @unique @db.VarChar(255)
-  chargerid   String?      @db.VarChar(255)   // This will reference Charger_Unit.uid
-  qrcodedata  String?      @db.VarChar(255)
-  
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  associatedadminid           String?          @db.VarChar(255)
+  id         String  @id @default(uuid())
+  uid        String? @unique @db.VarChar(255)
+  chargerid  String? @db.VarChar(255) // This will reference Charger_Unit.uid
+  qrcodedata String? @db.VarChar(255)
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  associatedadminid String?       @db.VarChar(255)
   // Establishing the relationship
-  charger     Charger_Unit? @relation(fields: [chargerid], references: [uid])
+  charger           Charger_Unit? @relation(fields: [chargerid], references: [uid])
 }
 
 //model for generating wallet
-model wallet{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  userprofilerelatedwallet String?         @db.VarChar(255)
-  userprofile   UserProfile? @relation(fields: [userprofilerelatedwallet],references: [uid])
-  appuserrelatedwallet String?              @db.VarChar(255)
-  user User? @relation(fields: [appuserrelatedwallet],references: [uid])
-  balance String?                            @db.VarChar(255)
-  iswalletrechargedone Boolean?
-  recharger_made_by_which_user   String?      @db.VarChar(255)
-  associatedadminuid String?                  @db.VarChar(255)
+model wallet {
+  id                           String       @id @default(uuid())
+  uid                          String?      @unique @db.VarChar(255)
+  userprofilerelatedwallet     String?      @db.VarChar(255)
+  userprofile                  UserProfile? @relation(fields: [userprofilerelatedwallet], references: [uid])
+  appuserrelatedwallet         String?      @db.VarChar(255)
+  user                         User?        @relation(fields: [appuserrelatedwallet], references: [uid])
+  balance                      String?      @db.VarChar(255)
+  iswalletrechargedone         Boolean?
+  recharger_made_by_which_user String?      @db.VarChar(255)
+  associatedadminuid           String?      @db.VarChar(255)
 
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model walletreachargehistory{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  userassociatedid            String?      @db.VarChar(255)
-  previousbalance String?                  @db.VarChar(255)
-  balanceleft String?                      @db.VarChar(255)
-  addedbalance String?                     @db.VarChar(255)
-  numberofrecharge String?                 @db.VarChar(255)
-  associatedadminid           String?          @db.VarChar(255)
-  gst String? @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model walletreachargehistory {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  userassociatedid  String?  @db.VarChar(255)
+  previousbalance   String?  @db.VarChar(255)
+  balanceleft       String?  @db.VarChar(255)
+  addedbalance      String?  @db.VarChar(255)
+  numberofrecharge  String?  @db.VarChar(255)
+  associatedadminid String?  @db.VarChar(255)
+  gst               String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 // model reateofpayment{
@@ -299,216 +296,214 @@ model walletreachargehistory{
 // }
 
 model Counter {
-  id                 String                @id @default(uuid())
+  id    String @id @default(uuid())
   value Int    @default(100)
 }
 
-model Addhub{
-    id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  hubname String?                          @db.VarChar(255)
-  hubchargers Json?    
-  hubtariff  String?                       @db.VarChar(255)
-  hublocation String?                      @db.VarChar(255)
-  adminuid String?                         @db.VarChar(255)
- adminuserprofile UserProfile? @relation(fields: [adminuid],references: [uid])
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+model Addhub {
+  id                String       @id @default(uuid())
+  uid               String?      @unique @db.VarChar(255)
+  hubname           String?      @db.VarChar(255)
+  hubchargers       Json?
+  hubtariff         String?      @db.VarChar(255)
+  hublocation       String?      @db.VarChar(255)
+  adminuid          String?      @db.VarChar(255)
+  adminuserprofile  UserProfile? @relation(fields: [adminuid], references: [uid])
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  associatedadminid String?      @db.VarChar(255)
 }
 
-model Transactionsdetails{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  paymentid  String?                       @db.VarChar(255)
-  walletid String?                         @db.VarChar(255)
-  userid String?                           @db.VarChar(255)
-  price String?                            @db.VarChar(255)
-  chargeruid String?                       @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+model Transactionsdetails {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  paymentid         String?  @db.VarChar(255)
+  walletid          String?  @db.VarChar(255)
+  userid            String?  @db.VarChar(255)
+  price             String?  @db.VarChar(255)
+  chargeruid        String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-model TransactionHistory{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique  @db.VarChar(255)
-  paymentid  String?                       @db.VarChar(255)
-  walletid String?                         @db.VarChar(255)
-  userid String?                           @db.VarChar(255)
-  price String?                            @db.VarChar(255)
-  gst String?                              @db.VarChar(255)
-  gstdeductedamount String?                 @db.VarChar(255)
-  taxableamount     String?                 @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+model TransactionHistory {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  paymentid         String?  @db.VarChar(255)
+  walletid          String?  @db.VarChar(255)
+  userid            String?  @db.VarChar(255)
+  price             String?  @db.VarChar(255)
+  gst               String?  @db.VarChar(255)
+  gstdeductedamount String?  @db.VarChar(255)
+  taxableamount     String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-
-model iptracker{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  ipaddress String?                        @db.VarChar(255)
-  filepath String?                         @db.VarChar(255)
-  datetimeofaccess String?                 @db.VarChar(255)
-  messages String?                         @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+model iptracker {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  ipaddress         String?  @db.VarChar(255)
+  filepath          String?  @db.VarChar(255)
+  datetimeofaccess  String?  @db.VarChar(255)
+  messages          String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-model Favorites{
- id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  chargeruid String?                       @db.VarChar(255)
-  useruid String?                          @db.VarChar(255)
-   isfavorite   Boolean? @default(false)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+model Favorites {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  chargeruid        String?  @db.VarChar(255)
+  useruid           String?  @db.VarChar(255)
+  isfavorite        Boolean? @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
 model Bookings {
-   id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  chargeruid String?                       @db.VarChar(255)
-  useruid String?                          @db.VarChar(255)
-  isbooked Boolean?  @default(false)
-  bookingtimefrom  DateTime?
-  bookingtimeto DateTime?
-  remindersent Boolean?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+  id                String    @id @default(uuid())
+  uid               String?   @unique @db.VarChar(255)
+  chargeruid        String?   @db.VarChar(255)
+  useruid           String?   @db.VarChar(255)
+  isbooked          Boolean?  @default(false)
+  bookingtimefrom   DateTime?
+  bookingtimeto     DateTime?
+  remindersent      Boolean?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  associatedadminid String?   @db.VarChar(255)
 }
 
-model Minimumbalance{
-   id                 String                @id @default(uuid())
-  uid                 String?              @unique  @db.VarChar(255)
-  minbalance String?                       @db.VarChar(255)
-   createdAt           DateTime            @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+model Minimumbalance {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  minbalance        String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-model HelpandSupport{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  name String?                             @db.VarChar(255)
-  email String?                            @db.VarChar(255)
-  phonenumber String?                      @db.VarChar(255)
-  message String?                          @db.VarChar(255)
-  adminuid String?                         @db.VarChar(255)
-  messagestatus Boolean? @default(true)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid   String?              @db.VarChar(255)
+model HelpandSupport {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  name              String?  @db.VarChar(255)
+  email             String?  @db.VarChar(255)
+  phonenumber       String?  @db.VarChar(255)
+  message           String?  @db.VarChar(255)
+  adminuid          String?  @db.VarChar(255)
+  messagestatus     Boolean? @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-model DisputFrom{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  userid String?                           @db.VarChar(255)
-  customername String?                     @db.VarChar(255)
-  relatedtoev String?                      @db.VarChar(255)
-  reason String?                           @db.VarChar(255)
-  morethanonecharge String?                @db.VarChar(255)
-  wrongcharged String?                     @db.VarChar(255)
-  didnotreceiverefund String?              @db.VarChar(255)
-  paidforothermeans String?                @db.VarChar(255)
-  disputtransaction String?                @db.VarChar(255)
-  chargedregularly String?                 @db.VarChar(255)
-  notlistedabove String?                   @db.VarChar(255)
-  transactiondetails String?               @db.VarChar(255)
-  disputedetails String?                   @db.VarChar(255)
-  associatedadminid String?                @db.VarChar(255)
-  resolvedstatus Boolean?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model DisputFrom {
+  id                  String   @id @default(uuid())
+  uid                 String?  @unique @db.VarChar(255)
+  userid              String?  @db.VarChar(255)
+  customername        String?  @db.VarChar(255)
+  relatedtoev         String?  @db.VarChar(255)
+  reason              String?  @db.VarChar(255)
+  morethanonecharge   String?  @db.VarChar(255)
+  wrongcharged        String?  @db.VarChar(255)
+  didnotreceiverefund String?  @db.VarChar(255)
+  paidforothermeans   String?  @db.VarChar(255)
+  disputtransaction   String?  @db.VarChar(255)
+  chargedregularly    String?  @db.VarChar(255)
+  notlistedabove      String?  @db.VarChar(255)
+  transactiondetails  String?  @db.VarChar(255)
+  disputedetails      String?  @db.VarChar(255)
+  associatedadminid   String?  @db.VarChar(255)
+  resolvedstatus      Boolean?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
-model Feedback{
-  id                 String              @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  username            String?              @db.VarChar(255)
-  email               String?              @db.VarChar(255)
-  ratingnumber        String?              @db.VarChar(255)
-  feedbackmessage     String?              @db.VarChar(600)
-  feedbacktype        String?              @db.VarChar(255)
-  associatedadminid   String?              @db.VarChar(255)
-  isserveytook       Boolean?              @default(false)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model Feedback {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  username          String?  @db.VarChar(255)
+  email             String?  @db.VarChar(255)
+  ratingnumber      String?  @db.VarChar(255)
+  feedbackmessage   String?  @db.VarChar(600)
+  feedbacktype      String?  @db.VarChar(255)
+  associatedadminid String?  @db.VarChar(255)
+  isserveytook      Boolean? @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
-model FAQ{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  faqquestion         String?              @db.VarChar(255)
-  faqdescription      String?              @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model FAQ {
+  id             String   @id @default(uuid())
+  uid            String?  @unique @db.VarChar(255)
+  faqquestion    String?  @db.VarChar(255)
+  faqdescription String?  @db.VarChar(255)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
-model Contactform{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  firstname           String?              @db.VarChar(255)
-  lastname            String?              @db.VarChar(255)
-  email               String?              @db.VarChar(255)
-  message             String?              @db.VarChar(600)
-  associatedadminid   String?              @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model Contactform {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  firstname         String?  @db.VarChar(255)
+  lastname          String?  @db.VarChar(255)
+  email             String?  @db.VarChar(255)
+  message           String?  @db.VarChar(600)
+  associatedadminid String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
-model Charingsessions{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  sessionid           String?              @db.VarChar(255)
-  userid String? @db.VarChar(255)
-  chargerid String? @db.VarChar(255)
-  startime String? @db.VarChar(255)
-  stoptime String? @db.VarChar(255)
-  meterstart String? @db.VarChar(255)
-  meterstop String? @db.VarChar(255)
-  consumedkwh String? @db.VarChar(255)
-  totalcost String? @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid String? @db.VarChar(255)
+model Charingsessions {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  sessionid         String?  @db.VarChar(255)
+  userid            String?  @db.VarChar(255)
+  chargerid         String?  @db.VarChar(255)
+  startime          String?  @db.VarChar(255)
+  stoptime          String?  @db.VarChar(255)
+  meterstart        String?  @db.VarChar(255)
+  meterstop         String?  @db.VarChar(255)
+  consumedkwh       String?  @db.VarChar(255)
+  totalcost         String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-model ChargerTransaction{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  chargerid String? @db.VarChar(255)
-  userid String? @db.VarChar(255)
-  transactionid String? @db.VarChar(255)
-  connectorid String? @db.VarChar(255)
-  max_kwh String? @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  associatedadminid String? @db.VarChar(255)
+model ChargerTransaction {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  chargerid         String?  @db.VarChar(255)
+  userid            String?  @db.VarChar(255)
+  transactionid     String?  @db.VarChar(255)
+  connectorid       String?  @db.VarChar(255)
+  max_kwh           String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  associatedadminid String?  @db.VarChar(255)
 }
 
-
-model UserBilling{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  userid String? @db.VarChar(255)
-  chargerid String? @db.VarChar(255)
-  username String? @db.VarChar(255)
-  walletid String? @db.VarChar(255)
-  lasttransaction String? @db.VarChar(255)
-  balancededuct String? @db.VarChar(255)
-  energyconsumption String? @db.VarChar(255)
-  chargingtime String? @db.VarChar(255)
-  associatedadminid String? @db.VarChar(255)
-  billingpdf String? @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model UserBilling {
+  id                String   @id @default(uuid())
+  uid               String?  @unique @db.VarChar(255)
+  userid            String?  @db.VarChar(255)
+  chargerid         String?  @db.VarChar(255)
+  username          String?  @db.VarChar(255)
+  walletid          String?  @db.VarChar(255)
+  lasttransaction   String?  @db.VarChar(255)
+  balancededuct     String?  @db.VarChar(255)
+  energyconsumption String?  @db.VarChar(255)
+  chargingtime      String?  @db.VarChar(255)
+  associatedadminid String?  @db.VarChar(255)
+  billingpdf        String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 // model DynamicRate{
@@ -521,18 +516,18 @@ model UserBilling{
 //   updatedAt           DateTime             @updatedAt
 // }
 
-model GstCreate{
-  id                 String                @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  gst String? @db.VarChar(255)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model GstCreate {
+  id        String   @id @default(uuid())
+  uid       String?  @unique @db.VarChar(255)
+  gst       String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model WalletHardLimit{
-  id                  String               @id @default(uuid())
-  uid                 String?              @unique @db.VarChar(255)
-  hardlimit           String?              @db.VarChar(255) @default("50")
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+model WalletHardLimit {
+  id        String   @id @default(uuid())
+  uid       String?  @unique @db.VarChar(255)
+  hardlimit String?  @default("50") @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
