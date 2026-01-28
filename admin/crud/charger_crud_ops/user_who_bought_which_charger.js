@@ -15,11 +15,11 @@ const user_who_bought_the_charger_details = async (req, res) => {
         return res.status(403).json({ message: "API route access forbidden" });
     }
 
-    const { get_charger_id, get_user_id } = req.body;
+    const { get_charger_id, adminid } = req.body;
 
     try {
         // Validate input
-        if (!get_charger_id==="" || !get_user_id==="") {
+        if (!get_charger_id==="" || !adminid==="") {
             const messagetype = "error";
             const message = "Charger ID and User ID are required";
             const filelocation = "user_who_bought_which_charger.js";
@@ -31,7 +31,7 @@ const user_who_bought_the_charger_details = async (req, res) => {
         const get_charger_details = await prisma.charger_Unit.findMany({
             where: {
                 uid: get_charger_id,
-                userId: get_user_id
+                userId: adminid
             },
             select: {
                 uid: true,
@@ -69,7 +69,7 @@ const user_who_bought_the_charger_details = async (req, res) => {
         // Fetch associated user details
         const associate_user = await prisma.userProfile.findFirstOrThrow({
             where: {
-                uid: get_user_id
+                uid: adminid
             },
             select: {
                 uid: true,
