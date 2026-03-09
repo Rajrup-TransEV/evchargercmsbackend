@@ -21,12 +21,18 @@ const generateSinglePDF = async (data, filename) => {
     doc.text(`User ID: ${data.userid}`);
     doc.text(`Username: ${data.username}`);
     doc.text(`Wallet ID: ${data.walletid}`);
-    doc.text(`Last Transaction: ₹${data.lasttransaction}`);
-    doc.text(`Deducted Amount: ₹${data.balancededuct}`);
     doc.text(`Energy Consumed: ${data.energyconsumption} kWh`);
     doc.text(`Charger ID: ${data.chargerid}`);
     doc.text(`Charging Duration (ms): ${data.chargingtime}`);
-    doc.end();
+    doc.moveDown();
+
+    doc.fontSize(14).text("Amount Breakdown");
+    doc.moveDown(0.5);
+
+    doc.fontSize(12).text(`Taxable Amount: ₹${data.taxableamount}`);
+    doc.text(`GST Amount: ₹${data.gstamount}`);
+    doc.text(`Total Amount: ₹${data.totalamount}`);
+    doc.text(`Deducted Amount: ₹${data.balancededuct}`);
 
     return new Promise((resolve, reject) => {
         stream.on("finish", () => resolve(filepath));
@@ -34,19 +40,22 @@ const generateSinglePDF = async (data, filename) => {
     });
 };
 
-const generatebill = async (userid) => {
+const generatebill = async (userid, sessionid) => {
     try {
         await fs.ensureDir(UPLOADS_DIR);
 
-        const [userdetails, walletdetails, transactionhistoryList, charingsessions] = await Promise.all([
+        const [userdetails, walletdetails, transactionhistoryList, charingsession] = await Promise.all([
             prisma.user.findFirstOrThrow({ where: { uid: userid } }),
             prisma.wallet.findFirstOrThrow({ where: { appuserrelatedwallet: userid } }),
             prisma.transactionHistory.findMany({ 
                 where: { userid: userid }, 
                 orderBy: { createdAt: 'desc' }
             }),
-            prisma.charingsessions.findMany({
-                where: { userid: userid },
+            prisma.charingsessions.findFirstOrThrow({
+                where: {
+                    userid: userid,
+                    sessionid: sessionid
+                },
                 select: {
                     sessionid: true,
                     chargerid: true,
@@ -61,49 +70,54 @@ const generatebill = async (userid) => {
             })
         ]);
 
-        if (charingsessions.length === 0) {
-            logging("info", `No charging sessions found for user ${userid}`, "billgenerate.js");
+        const paymentId = `charge_${sessionid}`;
+
+        const relatedTransaction = transactionhistoryList.find(
+            (tx) => tx.paymentid === paymentId
+        );
+
+        if (!relatedTransaction) {
+            logging(
+                "info",
+                `No matching transaction found for user ${userid} and session ${sessionid}`,
+                "billgenerate.js"
+            );
             return 0;
         }
 
-        const latestTransaction = transactionhistoryList[0];
-        if (!latestTransaction) {
-            logging("info", `No transaction history found for user ${userid}`, "billgenerate.js");
-            return 0;
-        }
+        const start = new Date(charingsession.startime);
+        const stop = new Date(charingsession.stoptime);
+        const durationMs = stop - start;
 
-        for (const session of charingsessions) {
-            const start = new Date(session.startime);
-            const stop = new Date(session.stoptime);
-            const durationMs = stop - start;
+        const billingId = crypto.randomUUID();
+        const filename = `bill_${userid}_${charingsession.sessionid}_${Date.now()}.pdf`;
 
-            const billingId = crypto.randomUUID();
-            const filename = `bill_${userid}_${session.sessionid}_${Date.now()}.pdf`;
+        const billingdata = {
+            uid: billingId,
+            userid: userid,
+            username: userdetails.username,
+            walletid: walletdetails.uid,
+            lasttransaction: relatedTransaction.price,
+            balancededuct: charingsession.totalcost,
+            energyconsumption: charingsession.consumedkwh,
+            chargerid: charingsession.chargerid,
+            chargingtime: durationMs.toString(),
+            associatedadminid: userdetails.associatedadminid,
+            taxableamount: relatedTransaction.taxableamount,
+            gstamount: relatedTransaction.gstdeductedamount || relatedTransaction.gst,
+            totalamount: relatedTransaction.price,
+        };
 
-            const billingdata = {
-                uid: billingId,
-                userid: userid,
-                username: userdetails.username,
-                walletid: walletdetails.uid,
-                lasttransaction: latestTransaction.price,
-                balancededuct: session.totalcost,
-                energyconsumption: session.consumedkwh,
-                chargerid: session.chargerid,
-                chargingtime: durationMs.toString(),
-                associatedadminid: userdetails.associatedadminid
-            };
+        const pdfPath = await generateSinglePDF(billingdata, filename);
 
-            const pdfPath = await generateSinglePDF(billingdata, filename);
+        await prisma.userBilling.create({
+            data: {
+                ...billingdata,
+                billingpdf: path.join("uploads", "userbilling", filename)
+            }
+        });
 
-            await prisma.userBilling.create({
-                data: {
-                    ...billingdata,
-                    billingpdf: path.join("uploads", "userbilling", filename)
-                }
-            });
-        }
-
-        logging("info", `Billing and PDFs generated for ${charingsessions.length} sessions of user ${userid}`, "billgenerate.js");
+        logging("info", `Billing and PDFs generated for sessions of user ${userid}`, "billgenerate.js");
         return 1;
 
     } catch (err) {

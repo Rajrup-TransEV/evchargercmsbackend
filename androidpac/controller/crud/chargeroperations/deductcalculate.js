@@ -120,7 +120,7 @@ const deductcalculate = async (req, res) => {
       },
     });
 
-    const billResult = await generatebill(userid);
+    const billResult = await generatebill(userid, sessionid);
     if (billResult == 1) {
       logging("info", `Billing generated for user ${userid}`, "billgenerate.js");
     } else if (billResult == 0) {
