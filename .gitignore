@@ -193,6 +193,9 @@ sketch
 //upload qr code
 uploads
 
-# IDE Artifacts
+# IDE Artifacts and Local Tooling
 .vscode/
+forUpload*.txt
+forUpload/
+tree.txt
 # End of https://www.toptal.com/developers/gitignore/api/node,react,angular
