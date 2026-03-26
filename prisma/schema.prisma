@@ -444,6 +444,23 @@ model ChargerTransaction {
   associatedadminid String?  @db.VarChar(255)
 }
 
+// model UserBilling {
+//   id                String   @id @default(uuid())
+//   uid               String?  @unique @db.VarChar(255)
+//   userid            String?  @db.VarChar(255)
+//   chargerid         String?  @db.VarChar(255)
+//   username          String?  @db.VarChar(255)
+//   walletid          String?  @db.VarChar(255)
+//   lasttransaction   String?  @db.VarChar(255)
+//   balancededuct     String?  @db.VarChar(255)
+//   energyconsumption String?  @db.VarChar(255)
+//   chargingtime      String?  @db.VarChar(255)
+//   associatedadminid String?  @db.VarChar(255)
+//   createdAt         DateTime @default(now())
+//   updatedAt         DateTime @updatedAt
+//   billingpdf        String?  @db.VarChar(255)
+// }
+
 model UserBilling {
   id                String   @id @default(uuid())
   uid               String?  @unique @db.VarChar(255)
@@ -455,6 +472,11 @@ model UserBilling {
   balancededuct     String?  @db.VarChar(255)
   energyconsumption String?  @db.VarChar(255)
   chargingtime      String?  @db.VarChar(255)
+
+  taxableamount     String?  @db.VarChar(255)
+  gstamount         String?  @db.VarChar(255)
+  totalamount       String?  @db.VarChar(255)
+
   associatedadminid String?  @db.VarChar(255)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
