@@ -44,6 +44,9 @@ import chargerstop from "../controller/crud/chargeroperations/chargerstop.js"
 import getallthebills from "../../admin/crud/transactions/getallbill.js"
 import getbillbyid from "../../admin/crud/transactions/getbillbyid.js"
 import getbillbyuserid from "../../admin/crud/transactions/getbillbyuserid.js"
+import getbilldata from "../../admin/crud/transactions/getbilldata.js";
+import getbilldatabyid from "../../admin/crud/transactions/getbilldatabyid.js";
+import getallbilldata from "../../admin/crud/transactions/getallbilldata.js";
 import getwalletdatabyuserid from "../../admin/crud/wallet_crud/getwalletbyuserid.js"
 import find_wh_o_s_w from "../../admin/crud/wallet_recharge_history/wall_history_for_asingle_user.js"
 // import createminrate from "../controller/crud/min_threshhold/createminrate.js"
@@ -136,6 +139,9 @@ userRoutes.get("/getallthebills",getallthebills)
 userRoutes.post("/getbillbyid",getbillbyid)
 //get bill by user id
 userRoutes.post("/getbillbyuserid",getbillbyuserid)
+userRoutes.post("/getbilldata", getbilldata);
+userRoutes.post("/getbilldatabyid", getbilldatabyid);
+userRoutes.post("/getallbilldata", getallbilldata);
 userRoutes.post("/getwalletbyuserid",getwalletdatabyuserid)
 userRoutes.post("/userwalletrechargehistory",find_wh_o_s_w)
 //create min rate

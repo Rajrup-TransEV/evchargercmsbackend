@@ -68,6 +68,9 @@ import walletdatagetbyadminid from "../crud/wallet_crud/walletdatagetbyadminid.j
 import GetAHubDetails from "../crud/hub_crud/gethubdetail.js"
 import thisu from "../crud/transactions/thisu.js"
 import thl from "../crud/transactions/transactionhistory.js"
+import getbilldatabyadminid from "../crud/transactions/getbilldatabyadminid.js";
+import getbilldatabyid from "../crud/transactions/getbilldatabyid.js";
+import getallbilldata from "../crud/transactions/getallbilldata.js";
 import createmessage from "../crud/helpandsupport/crearemessage.js"
 import viewallmessages from "../crud/helpandsupport/viewallmessages.js"
 import details from "../crud/helpandsupport/detailsofamessage.js"
@@ -241,6 +244,9 @@ adminmadeuserroutes.get("/expenses",expenses)
 adminmadeuserroutes.post("/thisu",thisu)
 //transactionhistory list
 adminmadeuserroutes.get("/thl",thl)
+adminmadeuserroutes.post("/getbilldatabyadminid", getbilldatabyadminid);
+adminmadeuserroutes.post("/getbilldatabyid", getbilldatabyid);
+adminmadeuserroutes.post("/getallbilldata", getallbilldata);
 //combined charging sessions (Charging + Transactions)
 adminmadeuserroutes.post("/admingetcombinedchargingsessions",adminGetCombinedChargingSessions)
 //valid charging session revenue
