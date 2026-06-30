@@ -41,6 +41,8 @@ import deductcalculate from "../controller/crud/chargeroperations/deductcalculat
 import checkstartresponse from "../controller/crud/chargeroperations/checkstartresponse.js"
 import getchargingsessionbyuserid from "../controller/crud/chargingsessions/getchargingsessionbyuserid'.js"
 import chargerstop from "../controller/crud/chargeroperations/chargerstop.js"
+
+import getongoingtransaction from "../controller/crud/chargeroperations/getongoingtransaction.js"
 import getallthebills from "../../admin/crud/transactions/getallbill.js"
 import getbillbyid from "../../admin/crud/transactions/getbillbyid.js"
 import getbillbyuserid from "../../admin/crud/transactions/getbillbyuserid.js"
@@ -89,6 +91,7 @@ userRoutes.post("/checktransaction",checktransaction)
 userRoutes.post("/chargeroperative",setChargerOperative)
 //set charger stop
 userRoutes.post("/chargerstop",chargerstop)
+userRoutes.post("/getongoingtransaction",getongoingtransaction)
 //set charger on
 userRoutes.post("/setchargeron",setChargerOn)
 //set minimum balance route
