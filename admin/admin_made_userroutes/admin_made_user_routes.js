@@ -98,6 +98,7 @@ import setwallethardlimit from "../crud/wallet_crud/setwallethardlimit.js"
 import getwallethardlimit from "../crud/wallet_crud/getwallethardlimit.js"
 import adminGetCombinedChargingSessions from "../../androidpac/controller/crud/chargingsessions/admin_get_combined_sessions.js"
 import adminGetValidChargingSessionRevenue from "../../androidpac/controller/crud/chargingsessions/admin_get_valid_charging_session_revenue.js"
+import adminEmergencyUnlockConnector from "../crud/charger_crud_ops/admin_emergency_unlock_connector.js"
 
 const adminmadeuserroutes = Router()
 //create admin made by super admin
@@ -237,6 +238,7 @@ adminmadeuserroutes.get("/yearlyrev",yearlyRevenue)
 adminmadeuserroutes.post("/getip",ipTracker)
 //charger test endpoint controller
 adminmadeuserroutes.post("/chargercontroller",chargercontroller)
+adminmadeuserroutes.post("/emergencyunlockconnector",adminEmergencyUnlockConnector)
 //expense tracking 
 adminmadeuserroutes.get("/expenses",expenses)
 
