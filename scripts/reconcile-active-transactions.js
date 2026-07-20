@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { normalizeTransactionId } from "../lib/charging/transaction-core.js";
 
