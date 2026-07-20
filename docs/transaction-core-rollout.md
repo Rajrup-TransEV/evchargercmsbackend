@@ -3,6 +3,10 @@
 This change preserves the existing `/users` routes and response fields while
 making the OCPP transaction ID the lifecycle key.
 
+Frontend integration, request/response contracts, TypeScript models, polling,
+and UI behavior are documented in
+[`frontend-charging-session-api.md`](./frontend-charging-session-api.md).
+
 ## Identity map
 
 - `User` is the passenger/mobile-app identity.
