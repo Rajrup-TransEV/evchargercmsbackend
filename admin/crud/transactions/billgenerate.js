@@ -4,126 +4,140 @@ import crypto from "crypto";
 import fs from "fs-extra";
 import path from "path";
 import PDFDocument from "pdfkit";
+import { normalizeTransactionId } from "../../../lib/charging/transaction-core.js";
 
 const prisma = new PrismaClient();
 const UPLOADS_DIR = path.join(process.cwd(), "uploads", "userbilling");
 
-const generateSinglePDF = async (data, filename) => {
-    const filepath = path.join(UPLOADS_DIR, filename);
-    const doc = new PDFDocument();
-    const stream = fs.createWriteStream(filepath);
-    doc.pipe(stream);
+const generateSinglePDF = async (data, filepath) => {
+  const temporaryPath = `${filepath}.${crypto.randomUUID()}.tmp`;
+  const doc = new PDFDocument();
+  const stream = fs.createWriteStream(temporaryPath);
+  doc.pipe(stream);
 
-    doc.fontSize(18).text("Customer Bill", { align: "center" });
-    doc.moveDown();
+  doc.fontSize(18).text("Customer Bill", { align: "center" });
+  doc.moveDown();
+  doc.fontSize(12).text(`Billing ID: ${data.uid}`);
+  doc.text(`User ID: ${data.userid}`);
+  doc.text(`Username: ${data.username}`);
+  doc.text(`Wallet ID: ${data.walletid}`);
+  doc.text(`Energy Consumed: ${data.energyconsumption} kWh`);
+  doc.text(`Charger ID: ${data.chargerid}`);
+  doc.text(`Charging Duration (ms): ${data.chargingtime}`);
+  doc.moveDown();
+  doc.fontSize(14).text("Amount Breakdown");
+  doc.moveDown(0.5);
+  doc.fontSize(12).text(`Taxable Amount: ₹${data.taxableamount}`);
+  doc.text(`GST Amount: ₹${data.gstamount}`);
+  doc.text(`Total Amount: ₹${data.totalamount}`);
+  doc.text(`Deducted Amount: ₹${data.balancededuct}`);
+  doc.end();
 
-    doc.fontSize(12).text(`Billing ID: ${data.uid}`);
-    doc.text(`User ID: ${data.userid}`);
-    doc.text(`Username: ${data.username}`);
-    doc.text(`Wallet ID: ${data.walletid}`);
-    doc.text(`Energy Consumed: ${data.energyconsumption} kWh`);
-    doc.text(`Charger ID: ${data.chargerid}`);
-    doc.text(`Charging Duration (ms): ${data.chargingtime}`);
-    doc.moveDown();
-
-    doc.fontSize(14).text("Amount Breakdown");
-    doc.moveDown(0.5);
-
-    doc.fontSize(12).text(`Taxable Amount: ₹${data.taxableamount}`);
-    doc.text(`GST Amount: ₹${data.gstamount}`);
-    doc.text(`Total Amount: ₹${data.totalamount}`);
-    doc.text(`Deducted Amount: ₹${data.balancededuct}`);
-
-    return new Promise((resolve, reject) => {
-        stream.on("finish", () => resolve(filepath));
-        stream.on("error", reject);
-    });
+  await new Promise((resolve, reject) => {
+    stream.on("finish", resolve);
+    stream.on("error", reject);
+    doc.on("error", reject);
+  });
+  await fs.move(temporaryPath, filepath, { overwrite: true });
 };
 
 const generatebill = async (userid, sessionid) => {
-    try {
-        await fs.ensureDir(UPLOADS_DIR);
+  const normalizedSessionId = normalizeTransactionId(sessionid);
+  try {
+    await fs.ensureDir(UPLOADS_DIR);
 
-        const [userdetails, walletdetails, transactionhistoryList, charingsession] = await Promise.all([
-            prisma.user.findFirstOrThrow({ where: { uid: userid } }),
-            prisma.wallet.findFirstOrThrow({ where: { appuserrelatedwallet: userid } }),
-            prisma.transactionHistory.findMany({ 
-                where: { userid: userid }, 
-                orderBy: { createdAt: 'desc' }
-            }),
-            prisma.charingsessions.findFirstOrThrow({
-                where: {
-                    userid: userid,
-                    sessionid: sessionid
-                },
-                select: {
-                    sessionid: true,
-                    chargerid: true,
-                    userid: true,
-                    startime: true,
-                    stoptime: true,
-                    meterstart: true,
-                    meterstop: true,
-                    consumedkwh: true,
-                    totalcost: true
-                }
-            })
-        ]);
-
-        const paymentId = `charge_${sessionid}`;
-
-        const relatedTransaction = transactionhistoryList.find(
-            (tx) => tx.paymentid === paymentId
-        );
-
-        if (!relatedTransaction) {
-            logging(
-                "info",
-                `No matching transaction found for user ${userid} and session ${sessionid}`,
-                "billgenerate.js"
-            );
-            return 0;
-        }
-
-        const start = new Date(charingsession.startime);
-        const stop = new Date(charingsession.stoptime);
-        const durationMs = stop - start;
-
-        const billingId = crypto.randomUUID();
-        const filename = `bill_${userid}_${charingsession.sessionid}_${Date.now()}.pdf`;
-
-        const billingdata = {
-            uid: billingId,
-            userid: userid,
-            username: userdetails.username,
-            walletid: walletdetails.uid,
-            lasttransaction: relatedTransaction.price,
-            balancededuct: charingsession.totalcost,
-            energyconsumption: charingsession.consumedkwh,
-            chargerid: charingsession.chargerid,
-            chargingtime: durationMs.toString(),
-            associatedadminid: userdetails.associatedadminid,
-            taxableamount: relatedTransaction.taxableamount,
-            gstamount: relatedTransaction.gstdeductedamount || relatedTransaction.gst,
-            totalamount: relatedTransaction.price,
-        };
-
-        const pdfPath = await generateSinglePDF(billingdata, filename);
-
-        await prisma.userBilling.create({
-            data: {
-                ...billingdata,
-                billingpdf: path.join("uploads", "userbilling", filename)
-            }
+    const existing = await prisma.userBilling.findFirst({
+      where: {
+        OR: [
+          { sessionid: normalizedSessionId },
+          {
+            userid: String(userid),
+            sessionid: null,
+            billingpdf: { contains: `_${normalizedSessionId}_` },
+          },
+        ],
+      },
+    });
+    if (existing) {
+      if (!existing.sessionid) {
+        await prisma.userBilling.update({
+          where: { id: existing.id },
+          data: { sessionid: normalizedSessionId },
         });
-
-        logging("info", `Billing and PDFs generated for sessions of user ${userid}`, "billgenerate.js");
-        return 1;
-
-    } catch (err) {
-        logging("error", `Billing generation failed: ${err.message}`, "billgenerate.js");
-        return 3;
+      }
+      return 1;
     }
+
+    const [appUser, staffUser, charingsession, relatedTransaction] =
+      await Promise.all([
+        prisma.user.findFirst({ where: { uid: String(userid) } }),
+        prisma.userProfile.findFirst({ where: { uid: String(userid) } }),
+        prisma.charingsessions.findUnique({
+          where: { sessionid: normalizedSessionId },
+        }),
+        prisma.transactionHistory.findUnique({
+          where: { paymentid: `charge_${normalizedSessionId}` },
+        }),
+      ]);
+    const userdetails = appUser || staffUser;
+    if (!userdetails || !charingsession || !relatedTransaction) return 0;
+    if (
+      charingsession.userid !== String(userid) ||
+      relatedTransaction.userid !== String(userid)
+    ) {
+      throw new Error("Billing inputs do not belong to the requested user");
+    }
+
+    const wallet = await prisma.wallet.findUnique({
+      where: { uid: relatedTransaction.walletid },
+    });
+    if (!wallet) throw new Error("Billing wallet not found");
+
+    const durationMs = Math.max(
+      new Date(charingsession.stoptime).getTime() -
+        new Date(charingsession.startime).getTime(),
+      0
+    );
+    const filename = `bill_${String(userid)}_${normalizedSessionId}.pdf`;
+    const billingdata = {
+      uid: crypto.randomUUID(),
+      userid: String(userid),
+      username: userdetails.username || userdetails.firstname || "Customer",
+      walletid: wallet.uid,
+      lasttransaction: relatedTransaction.price,
+      balancededuct: charingsession.totalcost,
+      energyconsumption: charingsession.consumedkwh,
+      chargerid: charingsession.chargerid,
+      chargingtime: Number.isFinite(durationMs) ? String(durationMs) : "0",
+      associatedadminid: userdetails.associatedadminid,
+      taxableamount: relatedTransaction.taxableamount,
+      gstamount: relatedTransaction.gstdeductedamount || relatedTransaction.gst,
+      totalamount: relatedTransaction.price,
+    };
+
+    await generateSinglePDF(billingdata, path.join(UPLOADS_DIR, filename));
+    try {
+      await prisma.userBilling.create({
+        data: {
+          ...billingdata,
+          sessionid: normalizedSessionId,
+          billingpdf: path.join("uploads", "userbilling", filename),
+        },
+      });
+    } catch (error) {
+      if (error?.code !== "P2002") throw error;
+    }
+
+    logging(
+      "info",
+      `Billing generated for user ${userid}, transaction ${normalizedSessionId}`,
+      "billgenerate.js"
+    );
+    return 1;
+  } catch (err) {
+    logging("error", `Billing generation failed: ${err.message}`, "billgenerate.js");
+    return 3;
+  }
 };
 
 export default generatebill;

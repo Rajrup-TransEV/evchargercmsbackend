@@ -1,26 +1,78 @@
 import { PrismaClient } from "@prisma/client";
 import logging from "../../../../logging/logging_generate.js";
 import dotenv from "dotenv";
-import generatebill from "../../../../admin/crud/transactions/billgenerate.js";
 import crypto from "crypto";
+import { loadChargingPolicy } from "../../../../lib/charging/policy.js";
+import { calculateChargingCost } from "../../../../lib/charging/pricing.js";
+import {
+  TRANSACTION_STATUS,
+  isPrismaUniqueError,
+  normalizeTransactionId,
+  parseFiniteDecimal,
+} from "../../../../lib/charging/transaction-core.js";
 dotenv.config();
 
 const prisma = new PrismaClient();
 
-const ensureBillOnce = async (userid, sessionid) => {
-  const existingBill = await prisma.userBilling.findFirst({
-    where: {
-      userid: userid,
-      billingpdf: { contains: String(sessionid) },
-    },
-  });
-
-  if (existingBill) {
-    return "already_exists";
+class CallbackError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
   }
+}
 
-  return await generatebill(userid, sessionid);
-};
+function consumedKwhFromPayload({ consumedkwh, meterstart, meterstop }) {
+  if (consumedkwh !== undefined && consumedkwh !== null && consumedkwh !== "") {
+    return parseFiniteDecimal(consumedkwh, "consumedkwh", { minimum: 0 });
+  }
+  const start = parseFiniteDecimal(meterstart, "meterstart", { minimum: 0 });
+  const stop = parseFiniteDecimal(meterstop, "meterstop", { minimum: 0 });
+  if (stop < start) {
+    throw new TypeError("meterstop cannot be lower than meterstart");
+  }
+  return (stop - start) / 1000;
+}
+
+async function alreadyProcessedResponse(
+  res,
+  transactionid,
+  expectedUserid,
+  expectedChargerid
+) {
+  const [session, bill] = await Promise.all([
+    prisma.charingsessions.findUnique({ where: { sessionid: transactionid } }),
+    prisma.userBilling.findUnique({ where: { sessionid: transactionid } }),
+  ]);
+  if (!session) return null;
+  if (
+    session.userid !== expectedUserid ||
+    session.chargerid !== expectedChargerid
+  ) {
+    throw new CallbackError(
+      409,
+      "Completion payload does not match the existing charging session"
+    );
+  }
+  if (!bill) {
+    await prisma.billingJob.upsert({
+      where: { transactionid },
+      create: { transactionid, userid: expectedUserid },
+      update: {
+        userid: expectedUserid,
+        status: "PENDING",
+        nextattemptat: new Date(),
+        lastError: null,
+      },
+    });
+  }
+  return res.status(200).json({
+    message: "Charging session already processed",
+    already_processed: true,
+    bill_result: 1,
+    billing_status: bill ? "completed" : "queued",
+    transactionid,
+  });
+}
 
 const deductcalculate = async (req, res) => {
   const apiauthkey = req.headers["apiauthkey"];
@@ -39,200 +91,224 @@ const deductcalculate = async (req, res) => {
     consumedkwh,
   } = req.body;
 
-  const ASSOCIATED_ADMIN = process.env.ASSOCIATED_ADMIN;
-
   try {
-    if (!sessionid) {
+    if (sessionid === undefined || sessionid === null || sessionid === "") {
       return res.status(400).json({ message: "Missing sessionid in request body" });
     }
-
     if (!chargerid) {
       return res.status(400).json({ message: "Missing chargerid in request body" });
     }
-
     if (!userid) {
       return res.status(400).json({ message: "Missing userid in request body" });
     }
 
-    // Idempotency: OCPP completed-transaction queue can retry after CMS already committed.
-    const existingSession = await prisma.charingsessions.findFirst({
-      where: { sessionid: String(sessionid) },
-    });
+    const transactionid = normalizeTransactionId(sessionid);
+    const normalizedUserid = String(userid);
+    const normalizedChargerid = String(chargerid);
+    const duplicateResponse = await alreadyProcessedResponse(
+      res,
+      transactionid,
+      normalizedUserid,
+      normalizedChargerid
+    );
+    if (duplicateResponse) return duplicateResponse;
 
-    if (existingSession) {
-      const billResult = await ensureBillOnce(userid, sessionid);
-      return res.status(200).json({
-        message: "Charging session already processed",
-        already_processed: true,
-        bill_result: billResult,
+    const chargingTransaction = await prisma.chargerTransaction.findUnique({
+      where: { transactionid },
+    });
+    if (!chargingTransaction) {
+      return res.status(409).json({
+        message: "Charging start has not been recorded for this transaction",
+        transactionid,
+        retryable: true,
       });
     }
-
-    const existingHistory = await prisma.transactionHistory.findFirst({
-      where: { paymentid: `charge_${sessionid}` },
-    });
-
-    if (existingHistory) {
-      return res.status(200).json({
-        message: "Charging transaction history already processed",
-        already_processed: true,
+    if (
+      chargingTransaction.userid !== normalizedUserid ||
+      chargingTransaction.chargerid !== normalizedChargerid
+    ) {
+      return res.status(409).json({
+        message: "Completion payload does not match the recorded charging transaction",
+        transactionid,
       });
     }
 
     await prisma.charger_Unit.findFirstOrThrow({
-      where: { uid: chargerid },
+      where: { uid: normalizedChargerid },
     });
+    const policy = await loadChargingPolicy(prisma, {
+      userid: normalizedUserid,
+      chargerid: normalizedChargerid,
+    });
+    const kwhConsumed = consumedKwhFromPayload({
+      consumedkwh,
+      meterstart,
+      meterstop,
+    });
+    const cost = calculateChargingCost({
+      consumedKwh: kwhConsumed,
+      tariffPerKwh: policy.tariffPerKwh,
+      gstPercent: policy.gstPercent,
+    });
+    const associatedAdmin = process.env.ASSOCIATED_ADMIN;
 
-    const findhub = await prisma.addhub.findFirstOrThrow({
-      where: {
-        hubchargers: { array_contains: [chargerid] },
+    const txResult = await prisma.$transaction(
+      async (tx) => {
+        // MySQL row locking is essential because charging completion, Razorpay,
+        // admin recharge, and wallet edits can otherwise overwrite one another.
+        const lockedWallets = await tx.$queryRaw`
+          SELECT id, uid, balance
+          FROM wallet
+          WHERE uid = ${policy.wallet.uid}
+          FOR UPDATE
+        `;
+        if (lockedWallets.length !== 1) {
+          throw new CallbackError(409, "Wallet could not be locked uniquely");
+        }
+
+        const duplicate = await tx.charingsessions.findUnique({
+          where: { sessionid: transactionid },
+        });
+        if (duplicate) return { alreadyProcessed: true };
+
+        const exactTransaction = await tx.chargerTransaction.findUnique({
+          where: { transactionid },
+        });
+        if (
+          !exactTransaction ||
+          exactTransaction.userid !== normalizedUserid ||
+          exactTransaction.chargerid !== normalizedChargerid
+        ) {
+          throw new CallbackError(409, "Recorded transaction changed during completion");
+        }
+        if (exactTransaction.status === TRANSACTION_STATUS.COMPLETED) {
+          throw new CallbackError(
+            409,
+            "Transaction is marked completed without a charging session; reconciliation is required"
+          );
+        }
+
+        const currentBalance = parseFiniteDecimal(
+          lockedWallets[0].balance ?? 0,
+          "wallet balance"
+        );
+        const currentBalancePaise = Math.round(currentBalance * 100);
+        if (!Number.isSafeInteger(currentBalancePaise)) {
+          throw new CallbackError(409, "Wallet balance exceeds the supported range");
+        }
+        const updatedBalancePaise = currentBalancePaise - cost.totalPaise;
+        const updatedBalance = updatedBalancePaise / 100;
+        const hardLimit = Number(policy.hardLimit || 0);
+        if (updatedBalance < hardLimit) {
+          logging(
+            "warn",
+            `OCPP finalization below hard limit for user ${normalizedUserid}: projected ₹${updatedBalance.toFixed(2)}, hard limit ₹${hardLimit.toFixed(2)}`,
+            "deductcalculate.js"
+          );
+        }
+
+        await tx.wallet.update({
+          where: { uid: policy.wallet.uid },
+          data: { balance: updatedBalance.toFixed(2) },
+        });
+        await tx.charingsessions.create({
+          data: {
+            uid: crypto.randomUUID(),
+            sessionid: transactionid,
+            chargerid: normalizedChargerid,
+            userid: normalizedUserid,
+            startime: starttime == null ? null : String(starttime),
+            stoptime: stoptime == null ? null : String(stoptime),
+            meterstart: meterstart == null ? null : String(meterstart),
+            meterstop: meterstop == null ? null : String(meterstop),
+            consumedkwh: String(cost.consumedKwh),
+            totalcost: cost.totalText,
+            associatedadminid: associatedAdmin,
+          },
+        });
+        await tx.transactionHistory.create({
+          data: {
+            uid: crypto.randomUUID(),
+            paymentid: `charge_${transactionid}`,
+            walletid: policy.wallet.uid,
+            userid: normalizedUserid,
+            price: cost.totalText,
+            gst: cost.gstText,
+            gstdeductedamount: cost.gstText,
+            taxableamount: cost.taxableText,
+            associatedadminid: associatedAdmin,
+          },
+        });
+        await tx.chargerTransaction.update({
+          where: { transactionid },
+          data: {
+            status: TRANSACTION_STATUS.COMPLETED,
+            completedat: new Date(),
+            nextstopattemptat: null,
+            laststoperror: null,
+          },
+        });
+        await tx.billingJob.upsert({
+          where: { transactionid },
+          create: { transactionid, userid: normalizedUserid },
+          update: {
+            userid: normalizedUserid,
+            status: "PENDING",
+            nextattemptat: new Date(),
+            lastError: null,
+          },
+        });
+
+        return { alreadyProcessed: false, updatedBalance };
       },
-    });
-
-    const hubtariff = parseFloat(findhub.hubtariff);
-    if (!Number.isFinite(hubtariff) || hubtariff <= 0) {
-      return res.status(400).json({ message: "Invalid hub tariff" });
-    }
-
-    const minimumbalance = await prisma.minimumbalance.findFirst();
-    if (!minimumbalance) {
-      return res.status(404).json({ message: "No minimum balance found" });
-    }
-
-    const gstRecord = await prisma.gstCreate.findFirst();
-    const gstPercent = parseFloat(gstRecord?.gst || "0");
-
-    const hardLimitRecord = await prisma.walletHardLimit.findFirst();
-    const hardLimit = parseFloat(hardLimitRecord?.hardlimit || "0");
-
-    const walletdetails = await prisma.wallet.findFirstOrThrow({
-      where: {
-        OR: [
-          { appuserrelatedwallet: userid },
-          { userprofilerelatedwallet: userid },
-        ],
-      },
-      select: { balance: true, uid: true },
-    });
-
-    const kwhConsumed =
-      consumedkwh !== undefined && consumedkwh !== null
-        ? parseFloat(consumedkwh)
-        : (parseFloat(meterstop) - parseFloat(meterstart)) / 1000;
-
-    if (!Number.isFinite(kwhConsumed) || kwhConsumed <= 0) {
-      return res.status(400).json({ message: "Invalid kWh consumption" });
-    }
-
-    const totalCost = kwhConsumed * hubtariff;
-    const taxableAmount = totalCost / (1 + gstPercent / 100);
-    const gstAmount = totalCost - taxableAmount;
-
-    const currentBalance = parseFloat(walletdetails.balance || "0");
-    const projectedBalance = currentBalance - totalCost;
-
-    // Final OCPP StopTransaction is accounting truth: energy has already been delivered.
-    // Do not reject completion because of hard-limit overshoot.
-    // Start-hook + OCPP auto-cutoff are responsible for preventing large overshoot upfront.
-    // Rejecting here would make the OCPP retry queue repeat forever and leave billing incomplete.
-    const belowHardLimit = projectedBalance < hardLimit;
-    if (belowHardLimit) {
-      logging(
-        "warn",
-        `OCPP finalization below hard limit for user ${userid}: projected ₹${projectedBalance.toFixed(2)}, hard limit ₹${hardLimit.toFixed(2)}`,
-        "deductcalculate.js"
-      );
-    }
-
-    const updatedBalance = projectedBalance.toFixed(2);
-
-    const txResult = await prisma.$transaction(async (tx) => {
-      const duplicateSession = await tx.charingsessions.findFirst({
-        where: { sessionid: String(sessionid) },
-      });
-
-      if (duplicateSession) {
-        return { alreadyProcessed: true };
+      {
+        isolationLevel: "ReadCommitted",
+        maxWait: 10_000,
+        timeout: 20_000,
       }
-
-      const duplicateHistory = await tx.transactionHistory.findFirst({
-        where: { paymentid: `charge_${sessionid}` },
-      });
-
-      if (duplicateHistory) {
-        return { alreadyProcessed: true };
-      }
-
-      await tx.wallet.update({
-        where: { uid: walletdetails.uid },
-        data: {
-          balance: updatedBalance.toString(),
-        },
-      });
-
-      await tx.charingsessions.create({
-        data: {
-          uid: crypto.randomUUID(),
-          sessionid: String(sessionid),
-          chargerid,
-          userid,
-          startime: starttime,
-          stoptime: stoptime,
-          meterstart: String(meterstart),
-          meterstop: String(meterstop),
-          consumedkwh: kwhConsumed.toString(),
-          totalcost: totalCost.toFixed(2),
-          associatedadminid: ASSOCIATED_ADMIN,
-        },
-      });
-
-      await tx.transactionHistory.create({
-        data: {
-          uid: crypto.randomUUID(),
-          paymentid: `charge_${sessionid}`,
-          walletid: walletdetails.uid,
-          userid: userid,
-          price: totalCost.toFixed(2),
-          gst: gstAmount.toFixed(2),
-          gstdeductedamount: gstAmount.toFixed(2),
-          taxableamount: taxableAmount.toFixed(2),
-          associatedadminid: ASSOCIATED_ADMIN,
-        },
-      });
-
-      return { alreadyProcessed: false };
-    });
+    );
 
     if (txResult.alreadyProcessed) {
-      const billResult = await ensureBillOnce(userid, sessionid);
-      return res.status(200).json({
-        message: "Charging session already processed",
-        already_processed: true,
-        bill_result: billResult,
-      });
-    }
-
-    const billResult = await ensureBillOnce(userid, sessionid);
-    if (billResult == 1) {
-      logging("info", `Billing generated for user ${userid}`, "billgenerate.js");
-    } else if (billResult == 0) {
-      logging("info", `Billing not generated for user ${userid}`, "billgenerate.js");
-    } else {
-      logging("info", `Billing generation failed for user ${userid}`, "billgenerate.js");
+      return alreadyProcessedResponse(
+        res,
+        transactionid,
+        normalizedUserid,
+        normalizedChargerid
+      );
     }
 
     return res.status(200).json({
       message: "Charging session completed successfully",
-      consumed: kwhConsumed,
-      total_cost: totalCost.toFixed(2),
-      taxable_amount: taxableAmount.toFixed(2),
-      gst_charged: gstAmount.toFixed(2),
-      remainingBalance: parseFloat(updatedBalance),
-      bill_result: billResult,
+      consumed: cost.consumedKwh,
+      total_cost: cost.totalText,
+      taxable_amount: cost.taxableText,
+      gst_charged: cost.gstText,
+      remainingBalance: Number(txResult.updatedBalance.toFixed(2)),
+      // Preserve the historic numeric success contract while moving slow PDF work
+      // off the OCPP callback path.
+      bill_result: 1,
+      billing_status: "queued",
+      transactionid,
     });
   } catch (error) {
+    if (isPrismaUniqueError(error)) {
+      const transactionid = normalizeTransactionId(sessionid);
+      const duplicateResponse = await alreadyProcessedResponse(
+        res,
+        transactionid,
+        String(userid),
+        String(chargerid)
+      );
+      if (duplicateResponse) return duplicateResponse;
+    }
     console.log("Error in deductcalculate: ", error);
-    return res.status(500).json({ error: error.message });
+    const status =
+      error instanceof CallbackError
+        ? error.status
+        : error instanceof TypeError || error instanceof RangeError
+          ? 400
+          : 500;
+    return res.status(status).json({ error: error.message });
   }
 };
 

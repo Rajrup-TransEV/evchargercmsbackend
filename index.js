@@ -17,6 +17,7 @@ import rateLimit from 'express-rate-limit';
 import flushCache from "./utils/flushcache.js";
 import dotenv from 'dotenv';
 import os from 'os';
+import { startChargingWorkers } from './lib/charging/workers.js';
 dotenv.config()
 
 const prisma = new PrismaClient();
@@ -122,4 +123,5 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://0.0.0.0:${PORT}`);
+    startChargingWorkers();
 });

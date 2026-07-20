@@ -39,15 +39,27 @@ const rechargewallet = async (req, res) => {
         return { ok: false, status: 404, body: { message: "No user data found for the given email/admin." } };
       }
 
-      // 2) Load wallet (include balance)
-      const wallet = await tx.wallet.findFirst({
-        where: { appuserrelatedwallet: user.uid },
-        select: { uid: true, balance: true },
-      });
-
-      if (!wallet) {
-        return { ok: false, status: 404, body: { message: "Error: No wallet data found" } };
+      // 2) Lock the wallet so recharge and OCPP finalization cannot overwrite
+      // each other's balance calculation.
+      const wallets = await tx.$queryRaw`
+        SELECT id, uid, balance
+        FROM wallet
+        WHERE appuserrelatedwallet = ${user.uid}
+        FOR UPDATE
+      `;
+      if (wallets.length !== 1) {
+        return {
+          ok: false,
+          status: wallets.length === 0 ? 404 : 409,
+          body: {
+            message:
+              wallets.length === 0
+                ? "Error: No wallet data found"
+                : "Multiple wallets found; reconciliation is required",
+          },
+        };
       }
+      const wallet = wallets[0];
 
       // 3) Get last recharge history to increment numberofrecharge
       const lastRecharge = await tx.walletreachargehistory.findFirst({

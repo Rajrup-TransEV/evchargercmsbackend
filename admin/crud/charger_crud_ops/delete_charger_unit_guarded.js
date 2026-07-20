@@ -3,6 +3,16 @@ import logging from "../../../logging/logging_generate.js";
 import { setCache } from "../../../utils/cacheops.js";
 
 const prisma = new PrismaClient();
+const LIVE_TRANSACTION_STATUSES = [
+  "ACTIVE",
+  "STOP_PROCESSING",
+  "STOP_REQUESTED",
+  "STOP_RETRYING",
+  "STOP_FAILED",
+  "RECONCILE_REQUIRED",
+];
+
+class DeleteConflict extends Error {}
 
 /**
  * DELETE CHARGER UNIT (charger-associated authority)
@@ -90,6 +100,42 @@ const delete_charger_unit_ops = async (req, res) => {
 
     // Do cleanup + delete atomically
     await prisma.$transaction(async (tx) => {
+      const [liveTransactions, startIntents, chargerTransactions] =
+        await Promise.all([
+          tx.chargerTransaction.count({
+            where: {
+              chargerid: chargerUid,
+              status: { in: LIVE_TRANSACTION_STATUSES },
+            },
+          }),
+          tx.chargingStartIntent.count({ where: { chargerid: chargerUid } }),
+          tx.chargerTransaction.findMany({
+            where: { chargerid: chargerUid },
+            select: { transactionid: true },
+          }),
+        ]);
+      if (liveTransactions > 0 || startIntents > 0) {
+        throw new DeleteConflict(
+          "Charger has an active transaction or start request and cannot be deleted"
+        );
+      }
+
+      const transactionIds = chargerTransactions.map((item) => item.transactionid);
+      const pendingBills =
+        transactionIds.length === 0
+          ? 0
+          : await tx.billingJob.count({
+              where: {
+                transactionid: { in: transactionIds },
+                status: { not: "COMPLETED" },
+              },
+            });
+      if (pendingBills > 0) {
+        throw new DeleteConflict(
+          "Charger has pending billing work and cannot be deleted"
+        );
+      }
+
       // 1) Remove from hubchargers JSON arrays
       // Since hubchargers is Json?, Prisma can't "has" reliably here → scan hubs.
       const hubs = await tx.addhub.findMany({
@@ -119,6 +165,12 @@ const delete_charger_unit_ops = async (req, res) => {
       await tx.favorites.deleteMany({ where: { chargeruid: chargerUid } });
       await tx.bookings.deleteMany({ where: { chargeruid: chargerUid } });
       await tx.charingsessions.deleteMany({ where: { chargerid: chargerUid } });
+      if (transactionIds.length > 0) {
+        await tx.billingJob.deleteMany({
+          where: { transactionid: { in: transactionIds } },
+        });
+      }
+      await tx.chargingStartIntent.deleteMany({ where: { chargerid: chargerUid } });
       await tx.chargerTransaction.deleteMany({ where: { chargerid: chargerUid } });
       await tx.transactionsdetails.deleteMany({ where: { chargeruid: chargerUid } });
       // If you want to also clean UserBilling, uncomment:
@@ -171,6 +223,9 @@ const delete_charger_unit_ops = async (req, res) => {
   } catch (error) {
     console.log(error);
     logging("error", `${error.message}`, "delete_charger_unit_ops.js");
+    if (error instanceof DeleteConflict) {
+      return res.status(409).json({ message: error.message });
+    }
     return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };

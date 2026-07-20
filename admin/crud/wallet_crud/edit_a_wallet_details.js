@@ -26,28 +26,16 @@ const edit_wallet = async (req, res) => {
         //     return res.status(400).json({ message: "Required fields " });
         // }
         // Find the wallet by ID
-        const findWallet = await prisma.wallet.findUnique({
-            where: { uid: walletid },
-            select: {
-                uid: true,
-                userprofilerelatedwallet: true,
-                appuserrelatedwallet: true,
-                balance: true,
-                iswalletrechargedone: true,
-                recharger_made_by_which_user: true
-            }
-        });
-
-        if (!findWallet) {
-            return res.status(404).json({ error: "No wallet data found" });
-        }
-
         // Create an object to hold the data to update
         const updateData = {};
 
         // Update fields if provided in the request body
         if (balance !== undefined) {
-            updateData.balance = balance;
+            const parsedBalance = Number(balance);
+            if (!Number.isFinite(parsedBalance)) {
+                return res.status(400).json({ message: "Balance must be a finite number" });
+            }
+            updateData.balance = parsedBalance.toFixed(2);
         }
         if (iswalletrechargedone !== undefined) {
             updateData.iswalletrechargedone = iswalletrechargedone;
@@ -56,11 +44,21 @@ const edit_wallet = async (req, res) => {
             updateData.recharger_made_by_which_user = recharger_made_by_which_user;
         }
 
-        // Update the wallet in the database
-        const updatedWallet = await prisma.wallet.update({
-            where: { uid: walletid },
-            data: updateData
-        });
+        // Serialize manual edits with charging deductions and recharge callbacks.
+        const updatedWallet = await prisma.$transaction(async (tx) => {
+            const locked = await tx.$queryRaw`
+                SELECT id, uid FROM wallet WHERE uid = ${String(walletid)} FOR UPDATE
+            `;
+            if (locked.length !== 1) return null;
+            return tx.wallet.update({
+                where: { uid: String(walletid) },
+                data: updateData
+            });
+        }, { isolationLevel: "ReadCommitted", maxWait: 10000, timeout: 20000 });
+
+        if (!updatedWallet) {
+            return res.status(404).json({ error: "No wallet data found" });
+        }
 
         const messagetype = "success";
         const message = `Wallet has been updated successfully -> details: ${updatedWallet}`;

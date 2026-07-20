@@ -219,8 +219,8 @@ model QRCode {
 model wallet {
   id                           String       @id @default(uuid())
   uid                          String?      @unique @db.VarChar(255)
-  userprofilerelatedwallet     String?      @db.VarChar(255)
-  appuserrelatedwallet         String?      @db.VarChar(255)
+  userprofilerelatedwallet     String?      @unique @db.VarChar(255)
+  appuserrelatedwallet         String?      @unique @db.VarChar(255)
   balance                      String?      @db.VarChar(255)
   iswalletrechargedone         Boolean?
   recharger_made_by_which_user String?      @db.VarChar(255)
@@ -272,7 +272,7 @@ model Addhub {
 model Transactionsdetails {
   id                String   @id @default(uuid())
   uid               String?  @unique @db.VarChar(255)
-  paymentid         String?  @db.VarChar(255)
+  paymentid         String?  @unique @db.VarChar(255)
   walletid          String?  @db.VarChar(255)
   userid            String?  @db.VarChar(255)
   price             String?  @db.VarChar(255)
@@ -285,7 +285,7 @@ model Transactionsdetails {
 model TransactionHistory {
   id                String   @id @default(uuid())
   uid               String?  @unique @db.VarChar(255)
-  paymentid         String?  @db.VarChar(255)
+  paymentid         String   @unique @db.VarChar(255)
   walletid          String?  @db.VarChar(255)
   userid            String?  @db.VarChar(255)
   price             String?  @db.VarChar(255)
@@ -417,7 +417,7 @@ model Contactform {
 model Charingsessions {
   id                String   @id @default(uuid())
   uid               String?  @unique @db.VarChar(255)
-  sessionid         String?  @db.VarChar(255)
+  sessionid         String   @unique @db.VarChar(255)
   chargerid         String?  @db.VarChar(255)
   startime          String?  @db.VarChar(255)
   stoptime          String?  @db.VarChar(255)
@@ -432,16 +432,27 @@ model Charingsessions {
 }
 
 model ChargerTransaction {
-  id                String   @id @default(uuid())
-  uid               String?  @unique @db.VarChar(255)
-  chargerid         String?  @db.VarChar(255)
-  userid            String?  @db.VarChar(255)
-  transactionid     String?  @db.VarChar(255)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  connectorid       String?  @db.VarChar(255)
-  max_kwh           String?  @db.VarChar(255)
-  associatedadminid String?  @db.VarChar(255)
+  id                String    @id @default(uuid())
+  uid               String?   @unique @db.VarChar(255)
+  chargerid         String?   @db.VarChar(255)
+  userid            String?   @db.VarChar(255)
+  transactionid     String    @unique @db.VarChar(255)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  connectorid       String?   @db.VarChar(255)
+  max_kwh           String?   @db.VarChar(255)
+  associatedadminid String?   @db.VarChar(255)
+  status            String    @default("UNKNOWN") @db.VarChar(32)
+  stoprequestedat   DateTime?
+  completedat       DateTime?
+  stopattempts      Int       @default(0)
+  laststoperror     String?   @db.Text
+  laststopattemptat DateTime?
+  nextstopattemptat DateTime?
+
+  @@index([userid, status, createdAt])
+  @@index([chargerid, status, createdAt])
+  @@index([status, nextstopattemptat])
 }
 
 // model UserBilling {
@@ -462,25 +473,57 @@ model ChargerTransaction {
 // }
 
 model UserBilling {
-  id                String   @id @default(uuid())
-  uid               String?  @unique @db.VarChar(255)
-  userid            String?  @db.VarChar(255)
-  chargerid         String?  @db.VarChar(255)
-  username          String?  @db.VarChar(255)
-  walletid          String?  @db.VarChar(255)
-  lasttransaction   String?  @db.VarChar(255)
-  balancededuct     String?  @db.VarChar(255)
-  energyconsumption String?  @db.VarChar(255)
-  chargingtime      String?  @db.VarChar(255)
+  id                String  @id @default(uuid())
+  uid               String? @unique @db.VarChar(255)
+  userid            String? @db.VarChar(255)
+  chargerid         String? @db.VarChar(255)
+  username          String? @db.VarChar(255)
+  walletid          String? @db.VarChar(255)
+  lasttransaction   String? @db.VarChar(255)
+  balancededuct     String? @db.VarChar(255)
+  energyconsumption String? @db.VarChar(255)
+  chargingtime      String? @db.VarChar(255)
 
-  taxableamount     String?  @db.VarChar(255)
-  gstamount         String?  @db.VarChar(255)
-  totalamount       String?  @db.VarChar(255)
+  taxableamount String? @db.VarChar(255)
+  gstamount     String? @db.VarChar(255)
+  totalamount   String? @db.VarChar(255)
 
   associatedadminid String?  @db.VarChar(255)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   billingpdf        String?  @db.VarChar(255)
+  sessionid         String?  @unique @db.VarChar(255)
+}
+
+model BillingJob {
+  id            String    @id @default(uuid())
+  transactionid String    @unique @db.VarChar(255)
+  userid        String    @db.VarChar(255)
+  status        String    @default("PENDING") @db.VarChar(32)
+  attempts      Int       @default(0)
+  maxattempts   Int       @default(10)
+  nextattemptat DateTime  @default(now())
+  lastError     String?   @db.Text
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status, nextattemptat])
+}
+
+model ChargingStartIntent {
+  id          String   @id @default(uuid())
+  userid      String   @unique @db.VarChar(255)
+  chargerid   String   @db.VarChar(255)
+  connectorid String   @db.VarChar(255)
+  status      String   @default("REQUESTING") @db.VarChar(32)
+  expiresat   DateTime
+  lastError   String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([chargerid, connectorid])
+  @@index([expiresat])
 }
 
 model GstCreate {

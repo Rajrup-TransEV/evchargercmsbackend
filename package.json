@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test",
+    "prisma:generate": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
+    "preflight:transaction-core": "node scripts/preflight-transaction-core.js",
+    "reconcile:active-transactions": "node scripts/reconcile-active-transactions.js"
   },
   "keywords": [],
   "author": "",
