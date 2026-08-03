@@ -43,6 +43,7 @@ import getchargingsessionbyuserid from "../controller/crud/chargingsessions/getc
 import chargerstop from "../controller/crud/chargeroperations/chargerstop.js"
 
 import getongoingtransaction from "../controller/crud/chargeroperations/getongoingtransaction.js"
+import getmoneytransactionhistory from "../controller/crud/transactions/getmoneytransactionhistory.js"
 import getallthebills from "../../admin/crud/transactions/getallbill.js"
 import getbillbyid from "../../admin/crud/transactions/getbillbyid.js"
 import getbillbyuserid from "../../admin/crud/transactions/getbillbyuserid.js"
@@ -92,6 +93,53 @@ userRoutes.post("/chargeroperative",setChargerOperative)
 //set charger stop
 userRoutes.post("/chargerstop",chargerstop)
 userRoutes.post("/getongoingtransaction",getongoingtransaction)
+/**
+ * @openapi
+ * /users/moneytransactionhistory:
+ *   get:
+ *     tags: [App User Money]
+ *     summary: Get the authenticated app user's money transaction history
+ *     description: Returns wallet recharges and charging debits in one newest-first ledger. The user scope comes only from the bearer token; no userid parameter is accepted.
+ *     operationId: getAppUserMoneyTransactionHistory
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema: { type: integer, minimum: 1, default: 1 }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [all, wallet_recharge, charging_debit]
+ *           default: all
+ *     responses:
+ *       '200':
+ *         description: Paginated money ledger. Empty history is returned as an empty data array.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AppUserMoneyHistoryResponse'
+ *       '400':
+ *         description: Invalid pagination or type filter.
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *       '401':
+ *         description: Missing, invalid, expired, or non-app-user bearer token.
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ErrorResponse' }
+ *       '500':
+ *         description: Transaction history could not be loaded.
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ErrorResponse' }
+ */
+userRoutes.get("/moneytransactionhistory",getmoneytransactionhistory)
 //set charger on
 userRoutes.post("/setchargeron",setChargerOn)
 //set minimum balance route
