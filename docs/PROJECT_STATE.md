@@ -10,7 +10,11 @@ Implemented locally:
 - unified wallet-recharge credits and charging-debit entries
 - newest-first pagination with a maximum page size of 50
 - optional `all`, `wallet_recharge`, and `charging_debit` filters
-- current wallet balance, charging-session details, and generated-bill summary
+- current wallet balance and charging-session details
+- a complete client-side PDF-generation payload for every charging debit,
+  enriched from `UserBilling`, app-user, CPO-admin, and charger records where
+  available
+- no public or returned server filesystem path for billing PDFs
 - OpenAPI visibility through `/swagger` and `/openapi.json` when enabled
 
 Verified:

@@ -67,11 +67,56 @@ Empty history is a successful `200` with `data: []`, `total: 0`, and
       },
       "bill": {
         "id": "bill-public-id",
-        "session_id": "9451203",
-        "taxable_amount": "19.07",
-        "gst_amount": "3.43",
-        "total_amount": "22.50",
-        "billing_pdf": "uploads/userbilling/bill.pdf"
+        "source": "USER_BILLING",
+        "title": "Customer Bill",
+        "invoice_number": "bill-public-id",
+        "issued_at": "2026-08-03T03:00:01.000Z",
+        "updated_at": "2026-08-03T03:00:01.000Z",
+        "currency": "INR",
+        "customer": {
+          "id": "passenger-user-id",
+          "name": "Passenger User",
+          "email": "passenger@example.com",
+          "phone": "9999999999",
+          "address": null
+        },
+        "issuer": {
+          "id": "cpo-admin-id",
+          "name": "Charge Operator",
+          "email": "operator@example.com",
+          "phone": "8888888888",
+          "address": "Operator address",
+          "designation": "Administrator",
+          "gstin": null
+        },
+        "charger": {
+          "id": "CP-001",
+          "name": "Main Charger",
+          "serial_number": "SERIAL-001",
+          "address": "Charging location",
+          "connector_type": "CCS2",
+          "protocol": "OCPP"
+        },
+        "charging": {
+          "session_id": "9451203",
+          "started_at": "2026-08-03T02:00:00Z",
+          "stopped_at": "2026-08-03T03:00:00Z",
+          "duration_ms": "3600000",
+          "meter_start_wh": "1000",
+          "meter_stop_wh": "2250",
+          "energy_consumed_kwh": "1.25"
+        },
+        "payment": {
+          "reference": "charge_9451203",
+          "wallet_id": "wallet-123"
+        },
+        "amounts": {
+          "taxable": "19.07",
+          "gst": "3.43",
+          "total": "22.50",
+          "balance_deducted": "22.50",
+          "last_transaction": "22.50"
+        }
       }
     },
     {
@@ -109,9 +154,34 @@ Money remains a decimal string because the legacy database stores monetary
 values as strings. Frontend code must not use binary floating-point arithmetic
 for settlement decisions.
 
-For a charging debit, `charging_session` and `bill` may temporarily be `null`
-if the related legacy row or asynchronous bill has not been created. The
-financial debit remains valid and should still be displayed.
+Every charging debit returns a `bill` object suitable for client-side PDF
+generation. When a durable `UserBilling` row exists, `bill.source` is
+`USER_BILLING` and its stored values take precedence. Before that worker-created
+row exists, the API returns the available transaction and session values with
+`bill.source: DERIVED_FROM_TRANSACTION`. A wallet recharge has `bill: null`
+because this contract represents charging bills, not wallet top-up receipts.
+
+The API deliberately does not return `billing_pdf` or another server filesystem
+path. The frontend can generate the PDF directly from the bill object. Nullable
+fields must be omitted from the rendered document rather than guessed. In
+particular, the legacy schema has no customer address or issuer GSTIN field, so
+those values are currently `null`.
+
+### Bill PDF field groups
+
+- `customer`: authenticated app-user identity available in the legacy user row.
+- `issuer`: the associated CPO admin's non-secret contact/profile fields.
+- `charger`: charger identity, serial number, connector type, protocol, and
+  stored location.
+- `charging`: exact session ID, times, duration, meter readings, and energy.
+- `payment`: charging reference and wallet ID.
+- `amounts`: taxable amount, GST, total, wallet deduction, and the legacy last
+  transaction amount.
+
+All money and measurement values remain strings. `duration_ms` is the legacy
+duration in milliseconds. `meter_start_wh` and `meter_stop_wh` are cumulative
+charger readings in Wh; `energy_consumed_kwh` is the session consumption in
+kWh.
 
 ## Errors
 

@@ -6,6 +6,15 @@ test("OpenAPI includes the app-user money transaction endpoint", () => {
   const operation = swaggerSpec.paths?.["/users/moneytransactionhistory"]?.get;
   assert.equal(operation?.operationId, "getAppUserMoneyTransactionHistory");
   assert.deepEqual(operation?.security, [{ bearerAuth: [] }]);
+
+  const bill = swaggerSpec.components?.schemas?.BillSummary;
+  assert.ok(bill?.properties?.customer);
+  assert.ok(bill?.properties?.issuer);
+  assert.ok(bill?.properties?.charger);
+  assert.ok(bill?.properties?.charging);
+  assert.ok(bill?.properties?.payment);
+  assert.ok(bill?.properties?.amounts);
+  assert.equal(bill?.properties?.billing_pdf, undefined);
 });
 
 test("API docs routes honor API_DOCS_ENABLED", () => {

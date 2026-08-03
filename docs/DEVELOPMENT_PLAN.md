@@ -33,6 +33,7 @@ Implemented surfaces:
 - bearer-token user scoping
 - pagination and type filtering
 - charging-session and bill enrichment
+- self-contained frontend PDF-generation data without public file storage
 - OpenAPI and Swagger visibility
 - focused and full Node test coverage
 
