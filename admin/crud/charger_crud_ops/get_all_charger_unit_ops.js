@@ -4,6 +4,12 @@ import { getCache, setCache } from "../../../utils/cacheops.js";
 
 const prisma = new PrismaClient();
 
+const withCoordinateAliases = (chargers) => chargers.map((charger) => ({
+    ...charger,
+    latitude: charger.lattitude ?? null,
+    longitude: charger.longitute ?? null,
+}));
+
 const get_all_charger = async (req, res) => {
     const apiauthkey = req.headers['apiauthkey'];
 
@@ -16,7 +22,7 @@ const get_all_charger = async (req, res) => {
         const cacheddata = await getCache("all_charger_units");
         if (cacheddata) {
             logging("success", "Data retrieved from cache", "get_all_charger_unit_ops.js");
-            return res.status(200).json({ message: "List of charger data is coming", data: cacheddata });
+            return res.status(200).json({ message: "List of charger data is coming", data: withCoordinateAliases(cacheddata) });
         }
 
         // Fetch all chargers
@@ -56,7 +62,7 @@ const get_all_charger = async (req, res) => {
         logging("success", "List of charger data is coming", "get_all_charger_unit_ops.js");
         return res.status(200).json({
             message: "List of charger data is coming",
-            data: chargersWithHubs
+            data: withCoordinateAliases(chargersWithHubs)
         });
 
     } catch (error) {
